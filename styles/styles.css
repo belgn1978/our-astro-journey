@@ -59,3 +59,19 @@ section {
 section {
   scroll-margin-top: 80px; /* Adjust based on your header height */
 }
+.cta-container {
+  width: 100%;
+  display: flex;
+  Flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.cta-container h1 {
+  font-size: 3rem;
+  font-weight: bold;
+}
+.cta-img {
+  width: 50%;
+  height: quto;
+object-fit: contain;
+}
