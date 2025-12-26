@@ -73,7 +73,8 @@ section {
 .cta-img {
   width: 50%;
   height: quto;
-object-fit: contain;
+  object-fit: contain;
+  border-radius: 5px;
 }
 #section-about {
   margin: 0 auto;
