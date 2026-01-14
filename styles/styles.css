@@ -88,11 +88,11 @@ section {
   width: 70%;
   text-align: center;
 }
-.section-heading {
+.section-heading, .heading {
   font-size: 2.5rem;
   font-weight: bold;
 }
-.section-subheading {
+.section-subheading, .subheading {
   font-size: 1.7rem;
 }
 .session-container {
@@ -100,6 +100,10 @@ section {
   flex-direction: column;
   align-items: center;
   justify-content:center;
+}
+.subheading a, p a {
+  color: inherit;
+
 }
 .image-group {
   display: flex;
