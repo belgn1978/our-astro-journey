@@ -1,5 +1,3 @@
-<!-- @format -->
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -7,79 +5,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="Matt Brambley" />
     <link rel="stylesheet" href="./styles/reset.css" />
-    <link rel="stylesheet" href="/styles/styles.css" />
-    <title>Our Astonomy Journey</title>
+    <link rel="stylesheet" href="./styles/styles.css" />
+    <title>Our Astronomy Journey</title>
   </head>
 
   <body>
-   <header id="header-main">
-    <div class="logo-container"><a href="#section-cta" class="nav-link" id="logo">OAJ</a></div>
-    <nav id="navigation-main">
-      <a href="#section-about" class="nav-link">About</a>
-      <a href="#section-projects" class="nav-link" disabled>Projects</a>
-      <a href="#section-gallery" class="nav-link" disabled>Gallery</a>
-    </nav>
-   </header>
+    <header id="header-main">
+      <div class="logo-container"><a href="#section-cta" class="nav-link" id="logo">OAJ</a></div>
+      <nav id="navigation-main">
+        <a href="#section-about" class="nav-link">About</a>
+        <div class="dropdown">
+          <span class="nav-link">Projects</span>
+          <div class="dropdown-content">
+            <a href="#image-processing">Image Processing Practice</a>
+            <div class="sub-links">
+              <a href="#jwst">JWST Images</a>
+              <a href="#hubble">Hubble Images</a>
+              <a href="#other">Other Sources</a>
+              <div class="sub-sub-links">
+                <a href="#astro">AstroBackyard</a>
+                <a href="#galaxy">Galactic Hunter</a>
+              </div>
+            </div>
+            <a href="#equipment-testing">Equipment Testing</a>
+          </div>
+        </div>
+        <a href="#section-gallery" class="nav-link">Gallery</a>
+      </nav>
+    </header>
+
     <section id="section-cta">
       <div class="cta-container">
-        <img src="https://th.bing.com/th/id/R.af5641cf84e889ccf46d93dc1524c814?rik=lMj%2blUchMAmJLA&riu=http%3a%2f%2fwww.gannett-cdn.com%2f-mm-%2f414987c999396602f2d4a57b00240c702f293a5a%2fc%3d0-50-534-352%26r%3dx1803%26c%3d3200x1800%2flocal%2f-%2fmedia%2f2015%2f01%2f20%2fUSATODAY%2fUSATODAY%2f635573577805533864-635573330936639965-Andromeda-Galaxy.jpg&ehk=wMhLzoxCddlpbsLsygnpCk2mrZUrhg5oEI4M%2fGhjMPc%3d&risl=&pid=ImgRaw&r=0" alt="" class="cta-img">
-
+        <img src="https://th.bing.com/th/id/R.af5641cf84e889ccf46d93dc1524c814?rik=lMj%2blUchMAmJLA&riu=http%3a%2f%2fwww.gannett-cdn.com%2f-mm-%2f414987c999396602f2d4a57b00240c702f293a5a%2fc%3d0-50-534-352%26r%3dx1803%26c%3d3200x1800%2flocal%2f-%2fmedia%2f2015%2f01%2f20%2fUSATODAY%2fUSATODAY%2f635573577805533864-635573330936639965-Andromeda-Galaxy.jpg&ehk=wMhLzoxCddlpbsLsygnpCk2mrZUrhg5oEI4M%2fGhjMPc%3d&risl=&pid=ImgRaw&r=0" alt="Andromeda Galaxy" class="cta-img">
         <h1 id="cta-heading">Our Astronomy Journey</h1>
         <h2 id="cta-subheading">Follow our Astronomy journey as we learn and explore</h2>
       </div>
     </section>
+
     <section id="section-about">
       <h2 class="section-heading">About Us</h2>
       <h3 class="section-subheading">This is our story</h3>
       <article>
         <p>My name is Matt and my Daughters name is Lacey and this will be our story.</p><hr>
         <p>Neither of us have any background in Astrophotography but I do have an ever growing interest and Lacey is also studying photography at school.</p><hr>
-        <p>We will be starting out using my mobile phone for the photography to start with to help keep costs as low as possible and we will be working in my back garden. I live in a botle 7 are so light pollution is an issue but with a bit of practice in post processing this should hopefully not ruin the images we get.</p><hr>
+        <p>We will be starting out using my mobile phone for the photography to start with to help keep costs as low as possible and we will be working in my back garden. I live in a Bortle 7 area so light pollution is an issue but with a bit of practice in post processing this should hopefully not ruin the images we get.</p><hr>
         <p>My plan is to get bigger and better equipment as and when funds are available to do so. So content will improve overtime.</p><hr>
       </article>
     </section>
+
     <section id="section-projects">
-      <div id="image-processing">
-        <h2 class="heading">Image processing practice</h2>
+      <div id="image-processing" class="project-section">
+        <h2 class="heading">Image Processing Practice</h2>
         <p>I will be downloading raw data sets from multiple places to practice processing images in <a href="https://siril.org/" target="_blank">Siril</a>.</p>
-        <div class="jwst">
+        
+        <div id="jwst" class="project-subsection">
           <h3 class="subheading">Images from JWST</h3>
+          <p>Content coming soon...</p>
         </div>
-        <div class="hubble">
+        
+        <div id="hubble" class="project-subsection">
           <h3 class="subheading">Images from Hubble</h3>
+          <p>Content coming soon...</p>
         </div>
-        <div class="other">
-          <div class="astro">
-            <h3 class="subheading">Images from <a href="https://astrobackyard.com/" target="_blank">AstroBackyard</a>.</h3>
+        
+        <div id="other" class="project-subsection">
+          <h3 class="subheading">Other Sources</h3>
+          
+          <div id="astro" class="project-subsection">
+            <h3 class="subheading">Images from <a href="https://astrobackyard.com/" target="_blank">AstroBackyard</a></h3>
+            <p>Content coming soon...</p>
           </div>
-          <div class="galaxy">
+          
+          <div id="galaxy" class="project-subsection">
             <h3 class="subheading">Images from <a href="https://www.galactic-hunter.com/" target="_blank">Galactic Hunter</a></h3>
+            <p>Content coming soon...</p>
           </div>
         </div>
       </div>
-      <div id="equipment-testing"></div>
+      
+      <div id="equipment-testing" class="project-section">
+        <h2 class="heading">Equipment Testing</h2>
+        <p>Content coming soon...</p>
+      </div>
     </section>
+
     <section id="section-gallery">
       <div class="main-container">
         <h2 class="section-heading">Gallery</h2>
         <div class="session-container">
           <h3 class="section-subheading">The Moon - 05/01/2025</h3>
           <p>These where all taken on my Google Pixel 10 Pro XL. I had just gone to check on how deep the snow was and spotted the moon. They where all taken from my front door so there was some street lights and no tripod.</p>
-          <p>The first set where taken in night site mode while the second set where taken in normal photo mode but max zoom.</p>
+          <p>The first set where taken in night sight mode while the second set where taken in normal photo mode but max zoom.</p>
           <div class="image-group">
-            <img class="image" src="images/PXL_20260105_204338603.NIGHT.jpg" alt="">
-            <img class="image" src="images/PXL_20260105_204341229.NIGHT.jpg" alt="">
-            <img class="image" src="images/PXL_20260105_204344944.NIGHT.jpg" alt="">
+            <img class="image" src="images/PXL_20260105_204338603.NIGHT.jpg" alt="Moon photo taken in night sight mode">
+            <img class="image" src="images/PXL_20260105_204341229.NIGHT.jpg" alt="Moon photo taken in night sight mode">
+            <img class="image" src="images/PXL_20260105_204344944.NIGHT.jpg" alt="Moon photo taken in night sight mode">
           </div>
           <div class="image-group">
-            <img src="images/PXL_20260105_204424853.BURST-01.jpg" alt="" class="image">
-            <img src="images/PXL_20260105_204424853.BURST-01~2.jpg" alt="" class="image">
-            <img src="images/PXL_20260105_204424853.BURST-02.original.jpg" alt="" class="image">
+            <img src="images/PXL_20260105_204424853.BURST-01.jpg" alt="Moon photo taken in normal mode with max zoom" class="image">
+            <img src="images/PXL_20260105_204424853.BURST-01~2.jpg" alt="Moon photo taken in normal mode with max zoom" class="image">
+            <img src="images/PXL_20260105_204424853.BURST-02.original.jpg" alt="Moon photo taken in normal mode with max zoom" class="image">
           </div>
         </div>
       </div>
     </section>
-    
-    
   </body>
 </html>
