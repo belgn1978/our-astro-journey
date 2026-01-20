@@ -190,10 +190,12 @@ section {
 .image-group {
   display: flex;
   flex-direction: row;
-  width: 80%;
+  width: 100%;
+  max-width: 1200px;
   justify-content: space-evenly;
-  margin: 2rem 0 2rem 0;
+  margin: 2rem 0;
   align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 .image {
@@ -203,18 +205,26 @@ section {
   max-width: 100%;
   aspect-ratio: 1 / 1;
 }
+.image-container {
+  width: 30%;
+}
+.image-container .image {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+}
 
 /* Project sections styling */
 #section-projects {
   flex-direction: column;
 }
 
-.project-section {
+/* .project-section {
   width: 100%;
   max-width: 1200px;
   margin: 2rem 0;
   padding: 2rem;
-}
+} */
 
 .project-subsection {
   margin: 1.5rem 0;
