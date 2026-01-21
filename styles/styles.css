@@ -108,7 +108,6 @@ body {
 .sub-links a {
   padding-left: 28px;
   font-size: 0.95rem;
-  
 }
 
 .sub-sub-links {
@@ -119,13 +118,12 @@ body {
 .sub-sub-links a {
   padding-left: 44px;
   font-size: 0.9rem;
-  
 }
 
 /* Sections */
 section {
   min-height: 100vh;
-  padding: 2rem;
+  padding: 4rem 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -134,17 +132,30 @@ section {
   scroll-margin-top: 80px;
 }
 
+.content-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 .cta-container {
   width: 100%;
+  max-width: 1200px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 1.5rem;
 }
 
 .cta-container h1 {
   font-size: 3rem;
   font-weight: bold;
+  text-align: center;
+}
+
+.cta-container h2 {
+  text-align: center;
 }
 
 .cta-img {
@@ -155,63 +166,89 @@ section {
 }
 
 #section-about {
-  margin: 0 auto;
-  display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+}
+
+#section-about .content-wrapper {
+  text-align: center;
 }
 
 #section-about article {
-  width: 70%;
-  text-align: center;
+  margin-top: 2rem;
+}
+
+#section-about article p {
+  margin: 1rem 0;
+}
+
+#section-about article hr {
+  border: none;
+  border-top: 1px solid rgba(134, 145, 156, 0.3);
+  margin: 1.5rem auto;
+  width: 50%;
 }
 
 .section-heading, .heading {
   font-size: 2.5rem;
   font-weight: bold;
+  margin-bottom: 1rem;
 }
 
 .section-subheading, .subheading {
   font-size: 1.7rem;
+  margin-bottom: 1rem;
 }
 
 .session-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  margin-top: 2rem;
+}
+
+.session-container p {
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 .subheading a, p a {
   color: inherit;
+  text-decoration: underline;
+}
+
+.subheading a:hover, p a:hover {
+  color: white;
 }
 
 .image-group {
   display: flex;
   flex-direction: row;
   width: 100%;
-  max-width: 1200px;
   justify-content: space-evenly;
   margin: 2rem 0;
   align-items: flex-start;
   flex-wrap: wrap;
+  gap: 1rem;
 }
 
-.image {
-  width: 30%;
-  height: auto;
-  object-fit: cover;
-  max-width: 100%;
-  aspect-ratio: 1 / 1;
-}
 .image-container {
   width: 30%;
+  text-align: center;
 }
+
 .image-container .image {
   width: 100%;
   aspect-ratio: 1/1;
   object-fit: cover;
+  border-radius: 4px;
+  transition: transform 0.3s ease;
+}
+
+.image-container .img-link:hover .image {
+  transform: scale(1.05);
+}
+
+.image-container p {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--color-light);
 }
 
 /* Project sections styling */
@@ -219,66 +256,341 @@ section {
   flex-direction: column;
 }
 
-/* .project-section {
-  width: 100%;
-  max-width: 1200px;
+.project-section {
   margin: 2rem 0;
-  padding: 2rem;
-} */
+}
 
 .project-subsection {
-  margin: 1.5rem 0;
+  margin: 2rem 0;
   padding-left: 2rem;
 }
 
-/* Media Queries */
-@media screen and (max-width: 700px) {
+/* Footer styling */
+footer {
+  background: var(--color-dark);
+  border-top: 2px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 3rem 2rem;
+  color: var(--color-light);
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.social-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.footer-heading {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: white;
+}
+
+.social-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.social-links a {
+  color: var(--color-light);
+  font-size: 1.5rem;
+  transition: color 0.3s, transform 0.3s;
+}
+
+.social-links a:hover {
+  color: white;
+  transform: translateY(-3px);
+}
+
+.copyright-container {
+  text-align: right;
+  font-size: 0.9rem;
+}
+
+/* ============================================ */
+/* MEDIA QUERIES FOR MOBILE RESPONSIVENESS */
+/* ============================================ */
+
+/* Tablet and smaller desktop (1024px and below) */
+@media screen and (max-width: 1024px) {
   .cta-container h1 {
-    font-size: 2.4rem;
+    font-size: 2.5rem;
   }
-  .section-heading {
-    font-size: 1.7rem;
-  }
+  
   .cta-img {
-    width: 80%;
+    width: 60%;
+  }
+  
+  .image-container {
+    width: 45%;
+  }
+  
+  section {
+    padding: 3rem 1.5rem;
   }
 }
 
-@media screen and (max-width: 530px) {
+/* Tablets (768px and below) */
+@media screen and (max-width: 768px) {
+  #header-main {
+    padding: 1rem 1.5rem;
+    flex-wrap: wrap;
+  }
+  
+  #navigation-main {
+    gap: 1.5rem;
+    font-size: 0.9rem;
+  }
+  
   .cta-container h1 {
+    font-size: 2.2rem;
+  }
+  
+  .cta-container h2 {
+    font-size: 1.2rem;
+  }
+  
+  .cta-img {
+    width: 70%;
+  }
+  
+  .section-heading, .heading {
+    font-size: 2rem;
+  }
+  
+  .section-subheading, .subheading {
+    font-size: 1.5rem;
+  }
+  
+  .image-container {
+    width: 48%;
+  }
+  
+  .project-subsection {
+    padding-left: 1rem;
+  }
+  
+  section {
+    padding: 2.5rem 1.5rem;
+    scroll-margin-top: 70px;
+  }
+}
+
+/* Mobile landscape and small tablets (700px and below) */
+@media screen and (max-width: 700px) {
+  .cta-container h1 {
+    font-size: 1.9rem;
+  }
+  
+  .cta-img {
+    width: 80%;
+  }
+  
+  .section-heading, .heading {
     font-size: 1.8rem;
   }
-  .section-heading {
-    font-size: 1.4rem;
+  
+  .image-container {
+    width: 100%;
+    margin-bottom: 1.5rem;
   }
-  .section-subheading {
-    font-size: 1.2rem;
-    font-weight: 600;
+  
+  .image-group {
+    flex-direction: column;
+    align-items: center;
   }
-  section p {
-    font-size: 1rem;
+  
+  #section-about article hr {
+    width: 70%;
   }
+}
+
+/* Mobile devices (600px and below) */
+@media screen and (max-width: 600px) {
   #header-main {
-    padding: 1rem;
+    padding: 0.8rem 1rem;
   }
+  
   #navigation-main {
     gap: 1rem;
+    font-size: 0.85rem;
   }
+  
+  .nav-link {
+    font-size: 0.85rem;
+  }
+  
   .dropdown-content {
     position: fixed;
     left: 0;
     right: 0;
     margin-top: 0;
     transform: none;
+    min-width: 100%;
+    border-radius: 0;
+  }
+  
+  .cta-container h1 {
+    font-size: 1.7rem;
+    padding: 0 1rem;
+  }
+  
+  .cta-container h2 {
+    font-size: 1.1rem;
+    padding: 0 1rem;
+  }
+  
+  .cta-img {
+    width: 90%;
+  }
+  
+  .section-heading, .heading {
+    font-size: 1.6rem;
+  }
+  
+  .section-subheading, .subheading {
+    font-size: 1.3rem;
+  }
+  
+  section {
+    padding: 2rem 1rem;
+    min-height: auto;
+  }
+  
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  
+  .copyright-container {
+    text-align: center;
+  }
+  
+  .social-links {
+    justify-content: center;
   }
 }
-footer {
-  background: var(--color-dark); /* Darker/more opaque */
-  border-top: 2px solid rgba(255, 255, 255, 0.1); /* Subtle line */
-  backdrop-filter: blur(10px);
-  padding: 5rem;
-  min-height: 7rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-evenly;
+
+/* Small mobile devices (480px and below) */
+@media screen and (max-width: 480px) {
+  #header-main {
+    padding: 0.7rem 0.8rem;
+  }
+  
+  .logo-container {
+    font-size: 0.9rem;
+  }
+  
+  #navigation-main {
+    gap: 0.7rem;
+    font-size: 0.75rem;
+  }
+  
+  .nav-link {
+    font-size: 0.75rem;
+  }
+  
+  .cta-container {
+    gap: 1rem;
+  }
+  
+  .cta-container h1 {
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+  
+  .cta-container h2 {
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+  
+  .section-heading, .heading {
+    font-size: 1.4rem;
+  }
+  
+  .section-subheading, .subheading {
+    font-size: 1.1rem;
+  }
+  
+  section p, .session-container p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+  
+  .project-subsection {
+    padding-left: 0.5rem;
+  }
+  
+  .sub-links a {
+    padding-left: 20px;
+    font-size: 0.85rem;
+  }
+  
+  .sub-sub-links a {
+    padding-left: 32px;
+    font-size: 0.8rem;
+  }
+  
+  footer {
+    padding: 2rem 1rem;
+  }
+  
+  .footer-heading {
+    font-size: 1rem;
+  }
+  
+  .social-links a {
+    font-size: 1.3rem;
+  }
+  
+  .copyright-container {
+    font-size: 0.85rem;
+  }
+}
+
+/* Very small mobile devices (360px and below) */
+@media screen and (max-width: 360px) {
+  #header-main {
+    padding: 0.6rem;
+  }
+  
+  #navigation-main {
+    gap: 0.5rem;
+    font-size: 0.7rem;
+  }
+  
+  .cta-container h1 {
+    font-size: 1.3rem;
+  }
+  
+  .cta-container h2 {
+    font-size: 0.9rem;
+  }
+  
+  .section-heading, .heading {
+    font-size: 1.2rem;
+  }
+  
+  .section-subheading, .subheading {
+    font-size: 1rem;
+  }
+  
+  section p, .session-container p {
+    font-size: 0.9rem;
+  }
+  
+  section {
+    padding: 1.5rem 0.8rem;
+  }
 }
