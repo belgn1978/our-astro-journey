@@ -132,6 +132,11 @@ section {
   scroll-margin-top: 80px;
 }
 
+/* CTA section needs extra top padding for fixed header */
+#section-cta {
+  padding-top: 6rem;
+}
+
 .content-wrapper {
   width: 100%;
   max-width: 1200px;
@@ -440,6 +445,10 @@ footer {
     border-radius: 0;
   }
   
+  #section-cta {
+    padding-top: 5rem;
+  }
+  
   .cta-container h1 {
     font-size: 1.7rem;
     padding: 0 1rem;
@@ -499,6 +508,10 @@ footer {
   
   .nav-link {
     font-size: 0.75rem;
+  }
+  
+  #section-cta {
+    padding-top: 4.5rem;
   }
   
   .cta-container {
@@ -568,6 +581,10 @@ footer {
   #navigation-main {
     gap: 0.5rem;
     font-size: 0.7rem;
+  }
+  
+  #section-cta {
+    padding-top: 4rem;
   }
   
   .cta-container h1 {
