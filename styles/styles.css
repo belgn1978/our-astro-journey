@@ -267,7 +267,7 @@ section {
 
 .project-subsection {
   margin: 2rem 0;
-  padding-left: 2rem;
+  
 }
 
 /* Footer styling */
@@ -381,9 +381,9 @@ footer {
     width: 48%;
   }
   
-  .project-subsection {
+  /* .project-subsection {
     padding-left: 1rem;
-  }
+  } */
   
   section {
     padding: 2.5rem 1.5rem;
@@ -541,9 +541,9 @@ footer {
     line-height: 1.6;
   }
   
-  .project-subsection {
+  /* .project-subsection {
     padding-left: 0.5rem;
-  }
+  } */
   
   .sub-links a {
     padding-left: 20px;
