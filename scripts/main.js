@@ -1,36 +1,42 @@
 // ============================================
-// ASTRONOMY CALENDAR JAVASCRIPT
+// ASTRONOMY CALENDAR JAVASCRIPT WITH AUTO-UPDATE
 // ============================================
 
 // ============================================
-// HOW TO KEEP EVENTS UPDATED
+// AUTO-UPDATE FEATURE ✨
 // ============================================
 // 
-// This calendar includes major space events like Artemis II, SpaceX launches, etc.
-// To add new events as they're announced:
+// This calendar now AUTOMATICALLY fetches real space launch data!
+// 
+// Data Sources:
+// - Launch Library 2 API (TheSpaceDevs) - Completely FREE, no API key needed
+// - Tracks ALL space agencies: SpaceX, NASA, Blue Origin, Rocket Lab, ESA, JAXA, etc.
+// - Updates every time the page loads with the latest launch schedule
 //
-// 1. Add a new event object to the astronomyEvents array below
-// 2. For space launches and live events, include:
-//    - youtubeUrl: The YouTube channel where it will be streamed
-//    - liveStream: true if it's a live event, false if it's recorded content
+// The calendar shows:
+// 1. STATIC celestial events (eclipses, meteor showers) - manually defined
+// 2. DYNAMIC space launches - automatically fetched from API
 //
-// Example of adding a new launch:
-// {
-//   date: '2026-XX-XX',
-//   title: 'New Space Mission',
-//   type: 'launch',  // Options: 'eclipse', 'meteor', 'supermoon', 'launch'
-//   description: 'Description of the mission',
-//   duration: 'Launch window',
-//   youtubeUrl: 'https://www.youtube.com/nasa',
-//   liveStream: true
-// }
-//
-// When clicked, events with youtubeUrl will open the YouTube channel directly
-// Events without youtubeUrl will show the calendar export modal
+// No maintenance required! The launch schedule updates itself! 🚀
 // ============================================
 
-// Astronomy Events Data for 2026
-const astronomyEvents = [
+// API Configuration
+const LAUNCH_API_URL = 'https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit=100&mode=detailed';
+const YOUTUBE_CHANNELS = {
+  'SpaceX': 'https://www.youtube.com/@SpaceX',
+  'NASA': 'https://www.youtube.com/nasa',
+  'Blue Origin': 'https://www.youtube.com/@blueorigin',
+  'Rocket Lab': 'https://www.youtube.com/@RocketLab',
+  'ULA': 'https://www.youtube.com/@ulalaunch',
+  'ESA': 'https://www.youtube.com/user/ESA',
+  'JAXA': 'https://www.youtube.com/user/jaxachannel',
+  'Roscosmos': 'https://www.youtube.com/@tvroscosmos',
+  'ISRO': 'https://www.youtube.com/@isroofficial',
+  'Arianespace': 'https://www.youtube.com/@Arianespace'
+};
+
+// Static Celestial Events (these don't change, so we define them manually)
+const celestialEvents = [
   {
     date: '2026-02-17',
     title: 'Total Lunar Eclipse',
@@ -44,15 +50,6 @@ const astronomyEvents = [
     type: 'supermoon',
     description: 'First day of spring in the Northern Hemisphere. Day and night are nearly equal in length.',
     duration: 'All day'
-  },
-  {
-    date: '2026-04-01',
-    title: 'Artemis II Launch',
-    type: 'launch',
-    description: 'NASA\'s Artemis II mission will send astronauts around the Moon for the first time since 1972. First crewed mission of the Artemis program.',
-    duration: 'Launch window',
-    youtubeUrl: 'https://www.youtube.com/nasa',
-    liveStream: true
   },
   {
     date: '2026-04-08',
@@ -74,15 +71,6 @@ const astronomyEvents = [
     type: 'supermoon',
     description: 'Longest day of the year in the Northern Hemisphere. The sun reaches its highest point in the sky.',
     duration: 'All day'
-  },
-  {
-    date: '2026-07-15',
-    title: 'SpaceX Starship Mission',
-    type: 'launch',
-    description: 'SpaceX Starship orbital test flight. Watch the most powerful rocket ever built attempt to reach orbit.',
-    duration: 'Launch window',
-    youtubeUrl: 'https://www.youtube.com/@SpaceX',
-    liveStream: true
   },
   {
     date: '2026-07-28',
@@ -111,15 +99,6 @@ const astronomyEvents = [
     type: 'supermoon',
     description: 'First day of fall in the Northern Hemisphere. Day and night are nearly equal in length.',
     duration: 'All day'
-  },
-  {
-    date: '2026-10-15',
-    title: 'Europa Clipper Flyby',
-    type: 'launch',
-    description: 'NASA\'s Europa Clipper spacecraft performs its first close flyby of Jupiter\'s moon Europa, searching for signs of habitability.',
-    duration: 'Mission milestone',
-    youtubeUrl: 'https://www.youtube.com/nasa',
-    liveStream: false
   },
   {
     date: '2026-10-21',
@@ -151,9 +130,95 @@ const astronomyEvents = [
   }
 ];
 
+// Combined events array (celestial + launches)
+let astronomyEvents = [...celestialEvents];
+
 // Calendar State
-let currentDate = new Date(2026, 0, 1); // Start at January 2026
+let currentDate = new Date();
 let selectedEvent = null;
+let launchesLoaded = false;
+
+// ============================================
+// API FETCHING - AUTO-UPDATE LAUNCHES
+// ============================================
+
+/**
+ * Fetch upcoming space launches from Launch Library API
+ */
+async function fetchSpaceLaunches() {
+  try {
+    console.log('🚀 Fetching space launches from API...');
+    const response = await fetch(LAUNCH_API_URL);
+    
+    if (!response.ok) {
+      throw new Error(`API returned ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log(`✅ Fetched ${data.results.length} upcoming launches`);
+    
+    // Convert API data to our event format
+    const launchEvents = data.results
+      .filter(launch => {
+        // Only include launches with dates
+        return launch.net && new Date(launch.net) > new Date();
+      })
+      .map(launch => {
+        const launchDate = new Date(launch.net);
+        const agency = launch.launch_service_provider?.name || 'Unknown';
+        
+        // Determine YouTube channel based on agency
+        let youtubeUrl = null;
+        for (const [key, url] of Object.entries(YOUTUBE_CHANNELS)) {
+          if (agency.includes(key)) {
+            youtubeUrl = url;
+            break;
+          }
+        }
+        
+        // If no specific match, try to find a video URL in the API data
+        if (!youtubeUrl && launch.vidURLs && launch.vidURLs.length > 0) {
+          const firstVideoUrl = launch.vidURLs[0]?.url;
+          if (firstVideoUrl && firstVideoUrl.includes('youtube')) {
+            // Extract channel from video URL if possible
+            youtubeUrl = firstVideoUrl;
+          }
+        }
+        
+        return {
+          date: launchDate.toISOString().split('T')[0],
+          title: launch.name || 'Space Launch',
+          type: 'launch',
+          description: `${agency} - ${launch.mission?.description || 'Launch mission'}`,
+          duration: 'Launch window',
+          youtubeUrl: youtubeUrl,
+          liveStream: true,
+          agency: agency,
+          location: launch.pad?.location?.name || 'TBD'
+        };
+      })
+      .slice(0, 50); // Limit to 50 launches to keep calendar manageable
+    
+    // Combine celestial events with launch events
+    astronomyEvents = [...celestialEvents, ...launchEvents];
+    
+    // Sort by date
+    astronomyEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+    launchesLoaded = true;
+    console.log(`📅 Calendar now has ${astronomyEvents.length} total events`);
+    
+    // Refresh the calendar display
+    updateMonth();
+    generateEventsList();
+    
+  } catch (error) {
+    console.error('❌ Error fetching space launches:', error);
+    console.log('📅 Using static celestial events only');
+    // If API fails, we still have our celestial events
+    astronomyEvents = [...celestialEvents];
+  }
+}
 
 // ============================================
 // MOON PHASE CALCULATION
@@ -273,7 +338,13 @@ function createDayElement(date, otherMonth, isToday = false) {
   events.forEach(event => {
     const eventIndicator = document.createElement('div');
     eventIndicator.className = `event-indicator ${event.type}`;
-    eventIndicator.innerHTML = `<i class="fas fa-star"></i> ${event.title.substring(0, 15)}...`;
+    
+    // Add agency name for launch events
+    const displayTitle = event.agency ? 
+      `${event.agency}: ${event.title.substring(0, 10)}...` : 
+      `${event.title.substring(0, 15)}...`;
+    
+    eventIndicator.innerHTML = `<i class="fas fa-star"></i> ${displayTitle}`;
     eventIndicator.onclick = (e) => {
       e.stopPropagation();
       // If event has YouTube link, open it directly
@@ -349,10 +420,14 @@ function generateEventsList() {
       `;
     }
 
+    // Add location for launch events
+    const locationHTML = event.location ? `<div class="event-location"><i class="fas fa-map-marker-alt"></i> ${event.location}</div>` : '';
+
     eventCard.innerHTML = `
       <div class="event-date">${dateStr}</div>
       <div class="event-title">${event.title}</div>
       <div class="event-description">${event.description}</div>
+      ${locationHTML}
       ${buttonHTML}
     `;
     
@@ -415,7 +490,7 @@ function exportToCalendar(type, event) {
   };
 
   if (type === 'google') {
-    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${formatDate(startDate)}/${formatDate(endDate)}&details=${encodeURIComponent(event.description)}&location=Sky`;
+    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${formatDate(startDate)}/${formatDate(endDate)}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location || 'Sky')}`;
     window.open(url, '_blank');
   } else if (type === 'ical' || type === 'apple' || type === 'outlook') {
     const icsContent = `BEGIN:VCALENDAR
@@ -428,7 +503,7 @@ DTSTART:${formatDate(startDate)}
 DTEND:${formatDate(endDate)}
 SUMMARY:${event.title}
 DESCRIPTION:${event.description}
-LOCATION:Sky
+LOCATION:${event.location || 'Sky'}
 END:VEVENT
 END:VCALENDAR`;
 
@@ -529,11 +604,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // Check if we're on a page with the calendar
   const calendarGrid = document.getElementById('calendarGrid');
   if (calendarGrid) {
+    // Show initial calendar with celestial events
     updateMonth();
     generateEventsList();
     initializeEventListeners();
     
-    console.log('Astronomy Calendar initialized successfully!');
+    // Fetch space launches in the background
+    fetchSpaceLaunches();
+    
+    console.log('✨ Astronomy Calendar initialized successfully!');
+    console.log('🚀 Fetching latest space launch data...');
   }
 });
 
@@ -542,12 +622,11 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============================================
 
 /**
- * Add a custom event (for future expansion)
+ * Manually refresh launch data (can be called from console)
  */
-function addCustomEvent(event) {
-  astronomyEvents.push(event);
-  updateMonth();
-  generateEventsList();
+function refreshLaunches() {
+  console.log('🔄 Manually refreshing space launches...');
+  fetchSpaceLaunches();
 }
 
 /**
@@ -560,13 +639,8 @@ function getEventsForMonth(year, month) {
   });
 }
 
-// Export functions for potential use in other scripts
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    astronomyEvents,
-    getMoonPhase,
-    getEventsForDate,
-    addCustomEvent,
-    getEventsForMonth
-  };
+// Export functions for potential use in other scripts or console
+if (typeof window !== 'undefined') {
+  window.refreshLaunches = refreshLaunches;
+  window.astronomyEvents = astronomyEvents;
 }
