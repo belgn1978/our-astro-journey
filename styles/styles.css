@@ -5,6 +5,7 @@
     --color-moon: #f4f1de;
     --color-sun: #ffb627;
     --color-eclipse: #8b5cf6;
+    --color-launch: #ff4757;
 }
 
 *, *:before, *:after {
@@ -481,6 +482,11 @@ section {
   border-left: 3px solid var(--color-moon);
 }
 
+.event-indicator.launch {
+  background: rgba(255, 71, 87, 0.3);
+  border-left: 3px solid var(--color-launch);
+}
+
 /* Events Sidebar */
 .events-sidebar {
   background: rgba(255, 255, 255, 0.05);
@@ -526,6 +532,10 @@ section {
   border-left-color: var(--color-moon);
 }
 
+.event-card.launch {
+  border-left-color: var(--color-launch);
+}
+
 .event-date {
   font-size: 0.9rem;
   color: var(--color-accent);
@@ -565,6 +575,15 @@ section {
   background: #3a8eef;
   box-shadow: 0 5px 15px rgba(74, 158, 255, 0.3);
   transform: translateY(-2px);
+}
+
+.watch-btn {
+  background: var(--color-launch);
+}
+
+.watch-btn:hover {
+  background: #e63946;
+  box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
 }
 
 /* Modal Styles */
@@ -695,6 +714,10 @@ section {
 
 .legend-color.supermoon {
   background: var(--color-moon);
+}
+
+.legend-color.launch {
+  background: var(--color-launch);
 }
 
 /* ============================================ */

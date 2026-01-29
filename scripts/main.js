@@ -2,6 +2,33 @@
 // ASTRONOMY CALENDAR JAVASCRIPT
 // ============================================
 
+// ============================================
+// HOW TO KEEP EVENTS UPDATED
+// ============================================
+// 
+// This calendar includes major space events like Artemis II, SpaceX launches, etc.
+// To add new events as they're announced:
+//
+// 1. Add a new event object to the astronomyEvents array below
+// 2. For space launches and live events, include:
+//    - youtubeUrl: The YouTube channel where it will be streamed
+//    - liveStream: true if it's a live event, false if it's recorded content
+//
+// Example of adding a new launch:
+// {
+//   date: '2026-XX-XX',
+//   title: 'New Space Mission',
+//   type: 'launch',  // Options: 'eclipse', 'meteor', 'supermoon', 'launch'
+//   description: 'Description of the mission',
+//   duration: 'Launch window',
+//   youtubeUrl: 'https://www.youtube.com/nasa',
+//   liveStream: true
+// }
+//
+// When clicked, events with youtubeUrl will open the YouTube channel directly
+// Events without youtubeUrl will show the calendar export modal
+// ============================================
+
 // Astronomy Events Data for 2026
 const astronomyEvents = [
   {
@@ -17,6 +44,15 @@ const astronomyEvents = [
     type: 'supermoon',
     description: 'First day of spring in the Northern Hemisphere. Day and night are nearly equal in length.',
     duration: 'All day'
+  },
+  {
+    date: '2026-04-01',
+    title: 'Artemis II Launch',
+    type: 'launch',
+    description: 'NASA\'s Artemis II mission will send astronauts around the Moon for the first time since 1972. First crewed mission of the Artemis program.',
+    duration: 'Launch window',
+    youtubeUrl: 'https://www.youtube.com/nasa',
+    liveStream: true
   },
   {
     date: '2026-04-08',
@@ -38,6 +74,15 @@ const astronomyEvents = [
     type: 'supermoon',
     description: 'Longest day of the year in the Northern Hemisphere. The sun reaches its highest point in the sky.',
     duration: 'All day'
+  },
+  {
+    date: '2026-07-15',
+    title: 'SpaceX Starship Mission',
+    type: 'launch',
+    description: 'SpaceX Starship orbital test flight. Watch the most powerful rocket ever built attempt to reach orbit.',
+    duration: 'Launch window',
+    youtubeUrl: 'https://www.youtube.com/@SpaceX',
+    liveStream: true
   },
   {
     date: '2026-07-28',
@@ -66,6 +111,15 @@ const astronomyEvents = [
     type: 'supermoon',
     description: 'First day of fall in the Northern Hemisphere. Day and night are nearly equal in length.',
     duration: 'All day'
+  },
+  {
+    date: '2026-10-15',
+    title: 'Europa Clipper Flyby',
+    type: 'launch',
+    description: 'NASA\'s Europa Clipper spacecraft performs its first close flyby of Jupiter\'s moon Europa, searching for signs of habitability.',
+    duration: 'Mission milestone',
+    youtubeUrl: 'https://www.youtube.com/nasa',
+    liveStream: false
   },
   {
     date: '2026-10-21',
@@ -222,7 +276,12 @@ function createDayElement(date, otherMonth, isToday = false) {
     eventIndicator.innerHTML = `<i class="fas fa-star"></i> ${event.title.substring(0, 15)}...`;
     eventIndicator.onclick = (e) => {
       e.stopPropagation();
-      showEventDetails(event);
+      // If event has YouTube link, open it directly
+      if (event.youtubeUrl) {
+        window.open(event.youtubeUrl, '_blank');
+      } else {
+        showEventDetails(event);
+      }
     };
     dayDiv.appendChild(eventIndicator);
   });
@@ -272,18 +331,40 @@ function generateEventsList() {
       day: 'numeric' 
     });
 
+    // Create button based on event type
+    let buttonHTML = '';
+    if (event.youtubeUrl) {
+      const buttonIcon = event.liveStream ? 'fa-video' : 'fa-youtube';
+      const buttonText = event.liveStream ? 'Watch Live' : 'View on YouTube';
+      buttonHTML = `
+        <button class="export-btn watch-btn" data-url="${event.youtubeUrl}">
+          <i class="fab ${buttonIcon}"></i> ${buttonText}
+        </button>
+      `;
+    } else {
+      buttonHTML = `
+        <button class="export-btn">
+          <i class="fas fa-calendar-plus"></i> Add to Calendar
+        </button>
+      `;
+    }
+
     eventCard.innerHTML = `
       <div class="event-date">${dateStr}</div>
       <div class="event-title">${event.title}</div>
       <div class="event-description">${event.description}</div>
-      <button class="export-btn">
-        <i class="fas fa-calendar-plus"></i> Add to Calendar
-      </button>
+      ${buttonHTML}
     `;
     
-    // Add event listener to export button
-    const exportBtn = eventCard.querySelector('.export-btn');
-    exportBtn.addEventListener('click', () => showEventDetails(event));
+    // Add event listener to button
+    const btn = eventCard.querySelector('.export-btn, .watch-btn');
+    if (event.youtubeUrl) {
+      btn.addEventListener('click', () => {
+        window.open(event.youtubeUrl, '_blank');
+      });
+    } else {
+      btn.addEventListener('click', () => showEventDetails(event));
+    }
     
     eventsList.appendChild(eventCard);
   });
