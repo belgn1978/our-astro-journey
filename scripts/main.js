@@ -335,6 +335,10 @@ function createDayElement(date, otherMonth, isToday = false) {
   dayDiv.appendChild(moonPhase);
 
   const events = getEventsForDate(date);
+  if (events.length > 0) {
+    dayDiv.addEventListener('click', () => showEventDetails(date));
+  }
+
   events.forEach(event => {
     const eventIndicator = document.createElement('div');
     eventIndicator.className = `event-indicator ${event.type}`;
@@ -345,15 +349,10 @@ function createDayElement(date, otherMonth, isToday = false) {
       `${event.title.substring(0, 15)}...`;
     
     eventIndicator.innerHTML = `<i class="fas fa-star"></i> ${displayTitle}`;
-    eventIndicator.onclick = (e) => {
+    eventIndicator.addEventListener('click', (e) => {
       e.stopPropagation();
-      // If event has YouTube link, open it directly
-      if (event.youtubeUrl) {
-        window.open(event.youtubeUrl, '_blank');
-      } else {
-        showEventDetails(event);
-      }
-    };
+      showEventDetails(date);
+    });
     dayDiv.appendChild(eventIndicator);
   });
 
@@ -452,12 +451,54 @@ function generateEventsList() {
 /**
  * Show event details in modal
  */
-function showEventDetails(event) {
-  selectedEvent = event;
+function showEventDetails(target) {
+  const eventDate = target instanceof Date ? target : new Date(target.date);
+  const events = getEventsForDate(eventDate);
+  if (!events.length) return;
+
+  selectedEvent = events[0];
   const modal = document.getElementById('exportModal');
-  if (modal) {
-    modal.classList.add('active');
-  }
+  const body = document.getElementById('eventDetailsBody');
+  const title = document.getElementById('modalTitle');
+  if (!modal || !body || !title) return;
+
+  const dateStr = eventDate.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  title.textContent = `Events on ${dateStr}`;
+  body.innerHTML = events.map(event => {
+    const detailsButton = event.youtubeUrl ?
+      `<button class="details-btn watch-btn" data-url="${event.youtubeUrl}"><i class="fas fa-video"></i> Watch Live</button>` :
+      '';
+
+    const locationHTML = event.location ? `<div class="event-location"><i class="fas fa-map-marker-alt"></i> ${event.location}</div>` : '';
+
+    return `
+      <div class="event-details-card ${event.type}">
+        <div class="event-details-header">
+          <div>
+            <div class="event-title">${event.title}</div>
+            <div class="event-date">${event.date}</div>
+          </div>
+          ${detailsButton}
+        </div>
+        <div class="event-description">${event.description}</div>
+        ${locationHTML}
+      </div>
+    `;
+  }).join('');
+
+  modal.classList.add('active');
+
+  body.querySelectorAll('.details-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      window.open(btn.dataset.url, '_blank');
+    });
+  });
 }
 
 /**

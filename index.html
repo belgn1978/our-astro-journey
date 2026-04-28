@@ -290,31 +290,15 @@
       </div>
     </section>
 
-    <!-- Export Modal -->
+    <!-- Event Details Modal -->
     <div class="modal" id="exportModal">
       <div class="modal-content">
         <div class="modal-header">
-          <h2>Export to Calendar</h2>
+          <h2 id="modalTitle">Event Details</h2>
           <button class="close-modal" id="closeModal"><i class="fas fa-times"></i></button>
         </div>
-        <p>Choose your calendar application:</p>
-        <div class="export-options">
-          <div class="export-option" data-export="google">
-            <i class="fab fa-google"></i>
-            <span>Google Calendar</span>
-          </div>
-          <div class="export-option" data-export="outlook">
-            <i class="fab fa-microsoft"></i>
-            <span>Outlook</span>
-          </div>
-          <div class="export-option" data-export="apple">
-            <i class="fab fa-apple"></i>
-            <span>Apple Calendar</span>
-          </div>
-          <div class="export-option" data-export="ical">
-            <i class="fas fa-download"></i>
-            <span>Download .ics</span>
-          </div>
+        <div id="eventDetailsBody" class="event-details-body">
+          <!-- Event details will be injected here -->
         </div>
       </div>
     </div>
