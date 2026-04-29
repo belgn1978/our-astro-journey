@@ -792,6 +792,60 @@ section {
 /* END CALENDAR SECTION STYLES */
 /* ============================================ */
 
+/* Contact Form Styles */
+.contact-form {
+  max-width: 600px;
+  margin: 2rem auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: var(--color-light);
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-light);
+  font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px rgba(100, 149, 237, 0.3);
+}
+
+.submit-btn {
+  padding: 0.75rem 1.5rem;
+  background: var(--color-accent);
+  color: var(--color-dark);
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.submit-btn:hover {
+  background: #6495ed;
+  transform: translateY(-2px);
+}
+
 /* Footer styling */
 footer {
   background: var(--color-dark);
