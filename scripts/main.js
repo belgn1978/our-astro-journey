@@ -707,12 +707,15 @@ function initializeMobileMenu() {
   if (projectToggle) {
     const toggleDropdown = (event) => {
       event.preventDefault();
+      event.stopPropagation();
       const dropdown = projectToggle.parentElement;
       const isOpen = dropdown.classList.toggle('open');
       projectToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     };
 
-    projectToggle.addEventListener('click', toggleDropdown);
+    projectToggle.addEventListener('click', (event) => {
+      if (window.innerWidth <= 600) toggleDropdown(event);
+    });
 
     projectToggle.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === ' ') {
