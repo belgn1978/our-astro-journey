@@ -63,25 +63,32 @@
 </head>
 
   <body>
+    <a class="skip-link" href="#section-cta">Skip to main content</a>
     <header id="header-main">
       <div class="logo-container"><a href="#section-cta" class="nav-link" id="logo">OAJ</a></div>
-      <nav id="navigation-main">
+      <button id="mobile-menu-button" class="mobile-menu-toggle" aria-label="Open navigation menu" aria-controls="navigation-main" aria-expanded="false">
+        <i class="fas fa-bars"></i>
+      </button>
+      <nav id="navigation-main" aria-label="Primary navigation">
+        <button id="mobile-menu-close" class="mobile-menu-close" aria-label="Close navigation menu">
+          <i class="fas fa-times"></i>
+        </button>
         <a href="#section-about" class="nav-link">About</a>
         <div class="dropdown">
-          <span class="nav-link">Projects</span>
-          <div class="dropdown-content">
-            <a href="#image-processing">Image Processing Practice</a>
-            <div class="sub-links">
-              <a href="#jwst">JWST Images</a>
-              <a href="#hubble">Hubble Images</a>
-              <a href="#other">Other Sources</a>
-              <div class="sub-sub-links">
-                <a href="#astro">AstroBackyard</a>
-                <a href="#galaxy">Galactic Hunter</a>
-                <a href="#cosmic">Cosmic Curiosity</a>
+          <button id="projects-toggle" type="button" class="nav-link dropdown-toggle" aria-haspopup="true" aria-controls="projects-submenu" aria-expanded="false">Projects</button>
+          <div class="dropdown-content" id="projects-submenu" role="menu" aria-labelledby="projects-toggle">
+            <a href="#image-processing" role="menuitem">Image Processing Practice</a>
+            <div class="sub-links" role="group" aria-label="Project sections">
+              <a href="#jwst" role="menuitem">JWST Images</a>
+              <a href="#hubble" role="menuitem">Hubble Images</a>
+              <a href="#other" role="menuitem">Other Sources</a>
+              <div class="sub-sub-links" role="group" aria-label="Additional sources">
+                <a href="#astro" role="menuitem">AstroBackyard</a>
+                <a href="#galaxy" role="menuitem">Galactic Hunter</a>
+                <a href="#cosmic" role="menuitem">Cosmic Curiosity</a>
               </div>
             </div>
-            <a href="#equipment-testing">Equipment Testing</a>
+            <a href="#equipment-testing" role="menuitem">Equipment Testing</a>
           </div>
         </div>
         <a href="#section-gallery" class="nav-link">Gallery</a>
@@ -89,6 +96,7 @@
         <a href="#section-contact" class="nav-link">Contact</a>
       </nav>
     </header>
+    <div id="mobile-nav-backdrop" class="mobile-nav-backdrop" aria-hidden="true"></div>
 
     <section id="section-cta">
       <div class="cta-container">

@@ -649,6 +649,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateMonth();
     generateEventsList();
     initializeEventListeners();
+    initializeMobileMenu();
     
     // Fetch space launches in the background
     fetchSpaceLaunches();
@@ -668,6 +669,57 @@ document.addEventListener('DOMContentLoaded', () => {
 function refreshLaunches() {
   console.log('🔄 Manually refreshing space launches...');
   fetchSpaceLaunches();
+}
+
+function initializeMobileMenu() {
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const mobileMenuClose = document.getElementById('mobile-menu-close');
+  const nav = document.getElementById('navigation-main');
+  const backdrop = document.getElementById('mobile-nav-backdrop');
+  const projectToggle = document.querySelector('.dropdown > .dropdown-toggle');
+
+  if (!mobileMenuButton || !mobileMenuClose || !nav || !backdrop) return;
+
+  const closeMenu = () => {
+    nav.classList.remove('open');
+    backdrop.classList.remove('active');
+    document.body.classList.remove('nav-open');
+    mobileMenuButton.setAttribute('aria-expanded', 'false');
+  };
+
+  const openMenu = () => {
+    nav.classList.add('open');
+    backdrop.classList.add('active');
+    document.body.classList.add('nav-open');
+    mobileMenuButton.setAttribute('aria-expanded', 'true');
+  };
+
+  mobileMenuButton.addEventListener('click', openMenu);
+  mobileMenuClose.addEventListener('click', closeMenu);
+  backdrop.addEventListener('click', closeMenu);
+
+  nav.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 600) closeMenu();
+    });
+  });
+
+  if (projectToggle) {
+    const toggleDropdown = (event) => {
+      event.preventDefault();
+      const dropdown = projectToggle.parentElement;
+      const isOpen = dropdown.classList.toggle('open');
+      projectToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    };
+
+    projectToggle.addEventListener('click', toggleDropdown);
+
+    projectToggle.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        toggleDropdown(event);
+      }
+    });
+  }
 }
 
 /**
