@@ -126,6 +126,10 @@ a:focus-visible {
   align-items: center;
 }
 
+#mobile-navigation-main {
+  display: none;
+}
+
 button.nav-link,
 .dropdown-toggle {
   background: transparent;
@@ -1192,31 +1196,34 @@ footer {
   }
   
   #navigation-main {
+    display: none;
+  }
+
+  #mobile-navigation-main {
     position: fixed;
-    top: 1rem;
-    right: 1rem;
+    top: 0;
+    right: 0;
+    bottom: 0;
     width: min(320px, 90%);
     max-width: 320px;
-    height: auto;
-    max-height: calc(100vh - 2rem);
+    height: 100vh;
     background: linear-gradient(180deg, var(--panel-bg) 0%, rgba(16, 24, 56, 0.98) 100%);
     backdrop-filter: blur(18px);
     flex-direction: column;
     align-items: flex-start;
     padding: 4.25rem 1.5rem 1.5rem;
     gap: 1.25rem;
-    transform-origin: top right;
-    transform: scale(0.14);
-    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    transform: translateX(110%);
     opacity: 0;
     pointer-events: none;
-    transition: transform 0.35s ease, opacity 0.35s ease, clip-path 0.35s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease;
     box-shadow: -18px 0 56px rgba(0, 0, 0, 0.45);
-    z-index: 1200;
+    z-index: 2000;
     overflow-y: auto;
+    display: flex;
   }
   
-  #navigation-main::before {
+  #mobile-navigation-main::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -1224,22 +1231,10 @@ footer {
                 radial-gradient(circle at 24% 12%, rgba(255, 255, 255, 0.06), transparent 14%);
     pointer-events: none;
   }
-  
-  @keyframes starGrow {
-    from {
-      transform: scale(0.14);
-      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-      opacity: 0;
-    }
-    to {
-      transform: scale(1);
-      clip-path: inset(0);
-      opacity: 1;
-    }
-  }
 
-  #navigation-main.open {
-    animation: starGrow 0.35s ease forwards;
+  #mobile-navigation-main.open {
+    transform: translateX(0);
+    opacity: 1;
     pointer-events: auto;
   }
   
@@ -1264,6 +1259,13 @@ footer {
     color: var(--nav-link);
     font-size: 1rem;
     padding: 0.75rem 0;
+  }
+
+  /* Ensure nav links are above decorative pseudo elements and accept pointer events */
+  .nav-link {
+    position: relative;
+    z-index: 1300;
+    cursor: pointer;
   }
 
   .logo-container a {
@@ -1297,6 +1299,7 @@ footer {
     margin: 0;
     border-radius: 0;
     padding-left: 1rem;
+    z-index: 1300;
   }
   
   .dropdown.open .dropdown-content {
@@ -1304,7 +1307,19 @@ footer {
   }
   
   .dropdown-content a {
+    display: block;
+    width: 100%;
     padding: 0.75rem 0;
+    cursor: pointer;
+    position: relative;
+    z-index: 1300;
+  }
+  
+  .dropdown-content .sub-links a,
+  .dropdown-content .sub-sub-links a {
+    cursor: pointer;
+    position: relative;
+    z-index: 1300;
   }
   
   .dropdown .nav-link {
