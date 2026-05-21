@@ -1,0 +1,61 @@
+name: Build and Deploy to IONOS
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install and build Next.js (static export)
+        working-directory: next-app
+        run: |
+          npm ci
+          npm run build
+
+      - name: Clean remote target directory (remove old files)
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.IONOS_HOST }}
+          username: ${{ secrets.IONOS_USERNAME }}
+          key: ${{ secrets.IONOS_SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            set -e
+            TARGET_DIR="${{ secrets.IONOS_TARGET_DIR }}"
+            if [ -z "$TARGET_DIR" ]; then
+              echo "IONOS_TARGET_DIR secret is empty"
+              exit 1
+            fi
+            echo "Removing existing files in $TARGET_DIR"
+            rm -rf "$TARGET_DIR"/* || true
+
+      - name: Deploy to IONOS via SFTP (scp)
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.IONOS_HOST }}
+          username: ${{ secrets.IONOS_USERNAME }}
+          key: ${{ secrets.IONOS_SSH_PRIVATE_KEY }}
+          port: 22
+          source: "next-app/out/*"
+          target: ${{ secrets.IONOS_TARGET_DIR }}
+
+# Notes:
+# - Add repository secrets: IONOS_HOST, IONOS_USERNAME, IONOS_SSH_PRIVATE_KEY, IONOS_TARGET_DIR
+# - To create an SSH deploy key locally:
+#   `ssh-keygen -t ed25519 -C "deploy@our-astro-journey" -f deploy_key -N ""`
+#   then paste `deploy_key.pub` into the IONOS account's authorized keys and
+#   add the private key (`deploy_key`) as the secret `IONOS_SSH_PRIVATE_KEY`.
+# - The workflow runs on push to `main` and can also be triggered manually from Actions.
+# - If your IONOS account needs plain FTP instead of SFTP, I can swap the deploy step.
