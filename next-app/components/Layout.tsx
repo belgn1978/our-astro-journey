@@ -18,13 +18,14 @@ interface LayoutProps {
 export default function Layout({ children, title = 'Our Astro Journey' }: LayoutProps) {
   return (
     <div className="site-shell">
-      <header className="site-header">
+      <a href="#site-main" className="skip-link">Skip to main content</a>
+      <header className="site-header" role="banner">
         <div className="brand">
           <Link href="/">
-            <a>Our Astro Journey</a>
+            <a aria-label={title}>Our Astro Journey</a>
           </Link>
         </div>
-        <nav className="site-nav">
+        <nav className="site-nav" aria-label="Main navigation">
           {navLinks.map((link) => (
             <Link key={link.href} href={link.href}>
               <a>{link.label}</a>
@@ -32,8 +33,10 @@ export default function Layout({ children, title = 'Our Astro Journey' }: Layout
           ))}
         </nav>
       </header>
-      <main className="site-main">{children}</main>
-      <footer className="site-footer">
+      <main className="site-main" id="site-main" role="main">
+        {children}
+      </main>
+      <footer className="site-footer" role="contentinfo">
         <p>© 2026 Our Astro Journey. Beginner astrophotography, moon shots, nebula imaging, telescope tips.</p>
       </footer>
     </div>

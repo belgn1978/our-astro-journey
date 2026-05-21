@@ -1,67 +1,49 @@
-import { FormEvent, useState } from 'react';
 import Head from 'next/head';
 import Layout from '../../components/Layout';
 
 export default function Contact() {
-  const [email, setEmail] = useState('');
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [message, setMessage] = useState('');
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setStatus('loading');
-    setMessage('');
-
-    const response = await fetch('/api/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email })
-    });
-
-    if (response.ok) {
-      setStatus('success');
-      setMessage('Thank you! We will notify you when new content is published.');
-      setEmail('');
-    } else {
-      const errorBody = await response.json().catch(() => null);
-      setStatus('error');
-      setMessage(errorBody?.error || 'Unable to subscribe right now. Please try again later.');
-    }
-  }
-
   return (
     <Layout>
       <Head>
-        <title>Contact & Subscribe | Our Astro Journey</title>
+        <title>Contact | Our Astro Journey</title>
         <meta
           name="description"
-          content="Contact Our Astro Journey and subscribe for email notifications about new astrophotography content."
+          content="Contact Our Astro Journey. Get in touch with questions about astrophotography, image processing, or our journey."
         />
       </Head>
       <article className="page-content">
-        <h1>Subscribe & Contact</h1>
-        <p>Join the newsletter to receive email notifications whenever we publish new astrophotography content.</p>
-        <form className="subscribe-form" onSubmit={handleSubmit}>
-          <label htmlFor="email">Email address</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            disabled={status === 'loading'}
-          />
-          <button type="submit" disabled={status === 'loading'}>
-            {status === 'loading' ? 'Subscribing...' : 'Subscribe'}
-          </button>
-          {message && (
-            <p className={`status-message status-${status}`}>
-              {message}
-            </p>
-          )}
-        </form>
+        <h1>Contact Us</h1>
+        <p>We'd love to hear from you! Whether you have questions about astrophotography, want to share your own experiences, or just want to say hello, feel free to reach out.</p>
+
+        <div className="feature-grid">
+          <article>
+            <h3>📧 Email</h3>
+            <p>Have a question about astrophotography or our content? Send us an email and we'll get back to you as soon as possible.</p>
+            <p><strong>Coming soon</strong></p>
+          </article>
+          <article>
+            <h3>📱 Social Media</h3>
+            <p>Follow us on social media for updates, behind-the-scenes content, and daily astrophotography tips.</p>
+            <p><strong>Links coming soon</strong></p>
+          </article>
+          <article>
+            <h3>💬 Community</h3>
+            <p>Join our community of beginner astrophotographers, share your images, and learn together.</p>
+            <p><strong>Community platform launching soon</strong></p>
+          </article>
+        </div>
+
+        <h2>What We're Currently Working On</h2>
+        <ul>
+          <li>Detailed image processing tutorials with before/after comparisons</li>
+          <li>Equipment reviews and budget recommendations</li>
+          <li>Interactive night sky guides and observation logs</li>
+          <li>Live Q&A sessions about astrophotography</li>
+          <li>Community gallery for reader submissions</li>
+        </ul>
+
+        <h2>Subscribe for Updates</h2>
+        <p>Email subscription feature is coming soon! In the meantime, bookmark this site or check back regularly for new content and updates.</p>
       </article>
     </Layout>
   );
