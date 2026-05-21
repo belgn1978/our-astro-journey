@@ -698,7 +698,8 @@ function initializeMobileMenu() {
   mobileMenuClose.addEventListener('click', closeMenu);
   backdrop.addEventListener('click', closeMenu);
 
-  nav.querySelectorAll('a[href^="#"]').forEach(link => {
+  // Close menu when clicking navigation links (both anchor and dropdown links)
+  nav.querySelectorAll('a[href^="#"], .dropdown-content a').forEach(link => {
     link.addEventListener('click', () => {
       if (window.innerWidth <= 600) closeMenu();
     });
@@ -726,6 +727,98 @@ function initializeMobileMenu() {
 }
 
 /**
+ * Add watermark to image when it's being downloaded
+ * Creates a watermarked version and triggers the download
+ */
+function createWatermarkedImage(imgElement) {
+  return new Promise((resolve) => {
+    const canvas = document.createElement('canvas');
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    
+    img.onload = () => {
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      
+      const ctx = canvas.getContext('2d');
+      
+      // Draw the original image
+      ctx.drawImage(img, 0, 0);
+      
+      // Add semi-transparent overlay
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Add watermark text
+      ctx.font = `bold ${Math.max(24, canvas.width / 12)}px Arial`;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.globalAlpha = 0.6;
+      
+      // Rotate and add watermark
+      ctx.save();
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate(-Math.PI / 4);
+      ctx.fillText('Our Astro Journey', 0, 0);
+      ctx.restore();
+      
+      resolve(canvas);
+    };
+    
+    img.src = imgElement.src || imgElement.currentSrc;
+  });
+}
+
+/**
+ * Intercept image link clicks to add watermark before download
+ */
+function setupImageDownloadWatermarks() {
+  const imageLinks = document.querySelectorAll('.img-link');
+  
+  imageLinks.forEach(link => {
+    link.addEventListener('click', async (e) => {
+      e.preventDefault();
+      
+      const img = link.querySelector('img');
+      if (!img) return;
+      
+      // Create watermarked version
+      const watermarkedCanvas = await createWatermarkedImage(img);
+      
+      // Get filename from link href
+      const href = link.getAttribute('href');
+      const filename = href.split('/').pop() || 'image.jpg';
+      
+      // Convert canvas to blob and download
+      watermarkedCanvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 'image/jpeg', 0.95);
+    });
+  });
+}
+
+/**
+ * Prevent context menu on images (right-click)
+ */
+function protectImages() {
+  const images = document.querySelectorAll('img.image');
+  images.forEach(img => {
+    img.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      return false;
+    });
+  });
+}
+
+/**
  * Get all events for a specific month
  */
 function getEventsForMonth(year, month) {
@@ -735,8 +828,35 @@ function getEventsForMonth(year, month) {
   });
 }
 
+// ============================================
+// INITIALIZATION
+// ============================================
+
+// Initialize everything when DOM is ready
+function initializeApp() {
+  // Initialize mobile menu functionality
+  initializeMobileMenu();
+  
+  // Fetch and display space launches
+  fetchSpaceLaunches();
+  
+  // Setup image download watermarks
+  setupImageDownloadWatermarks();
+  
+  // Protect images from right-click context menu
+  protectImages();
+}
+
+// Run initialization when DOM is loaded
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+  initializeApp();
+}
+
 // Export functions for potential use in other scripts or console
 if (typeof window !== 'undefined') {
   window.refreshLaunches = refreshLaunches;
   window.astronomyEvents = astronomyEvents;
+  window.addWatermarksToImages = addWatermarksToImages;
 }
