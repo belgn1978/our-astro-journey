@@ -19,6 +19,7 @@ export default function Home() {
           <div className="hero-actions">
             <a className="button" href="/contact">Subscribe</a>
             <a className="button button-secondary" href="/gallery">View Gallery</a>
+            <a className="button button-secondary" href="/projects">View Projects</a>
           </div>
         </div>
       </section>

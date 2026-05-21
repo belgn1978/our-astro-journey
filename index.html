@@ -105,27 +105,21 @@
         <button id="mobile-menu-close" class="mobile-menu-close" aria-label="Close navigation menu">
           <i class="fas fa-times"></i>
         </button>
-        <a href="#section-about" class="nav-link">About</a>
-        <div class="dropdown">
-          <button id="mobile-projects-toggle" type="button" class="nav-link dropdown-toggle" aria-haspopup="true" aria-controls="mobile-projects-submenu" aria-expanded="false">Projects</button>
-          <div class="dropdown-content" id="mobile-projects-submenu" role="menu" aria-labelledby="mobile-projects-toggle">
-            <a href="#image-processing" role="menuitem">Image Processing Practice</a>
-            <div class="sub-links" role="group" aria-label="Project sections">
-              <a href="#jwst" role="menuitem">JWST Images</a>
-              <a href="#hubble" role="menuitem">Hubble Images</a>
-              <a href="#other" role="menuitem">Other Sources</a>
-              <div class="sub-sub-links" role="group" aria-label="Additional sources">
-                <a href="#astro" role="menuitem">AstroBackyard</a>
-                <a href="#galaxy" role="menuitem">Galactic Hunter</a>
-                <a href="#cosmic" role="menuitem">Cosmic Curiosity</a>
-              </div>
-            </div>
-            <a href="#equipment-testing" role="menuitem">Equipment Testing</a>
-          </div>
+        <a href="#section-about" class="nav-link mobile-nav-link">About</a>
+        <div class="mobile-submenu" aria-label="Projects">
+          <span class="mobile-submenu-title">Projects</span>
+          <a href="#image-processing" class="nav-link mobile-nav-link">Image Processing Practice</a>
+          <a href="#jwst" class="nav-link mobile-nav-link">JWST Images</a>
+          <a href="#hubble" class="nav-link mobile-nav-link">Hubble Images</a>
+          <a href="#other" class="nav-link mobile-nav-link">Other Sources</a>
+          <a href="#astro" class="nav-link mobile-nav-link">AstroBackyard</a>
+          <a href="#galaxy" class="nav-link mobile-nav-link">Galactic Hunter</a>
+          <a href="#cosmic" class="nav-link mobile-nav-link">Cosmic Curiosity</a>
+          <a href="#equipment-testing" class="nav-link mobile-nav-link">Equipment Testing</a>
         </div>
-        <a href="#section-gallery" class="nav-link">Gallery</a>
-        <a href="#section-news" class="nav-link">News</a>
-        <a href="#section-contact" class="nav-link">Contact</a>
+        <a href="#section-gallery" class="nav-link mobile-nav-link">Gallery</a>
+        <a href="#section-news" class="nav-link mobile-nav-link">News</a>
+        <a href="#section-contact" class="nav-link mobile-nav-link">Contact</a>
       </nav>
     </header>
     <div id="mobile-nav-backdrop" class="mobile-nav-backdrop" aria-hidden="true"></div>

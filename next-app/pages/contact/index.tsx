@@ -1,6 +1,6 @@
 import { FormEvent, useState } from 'react';
 import Head from 'next/head';
-import Layout from '../components/Layout';
+import Layout from '../../components/Layout';
 
 export default function Contact() {
   const [email, setEmail] = useState('');
@@ -49,14 +49,19 @@ export default function Contact() {
             type="email"
             placeholder="you@example.com"
             value={email}
-            onChange={(event) => setEmail(event.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             required
+            disabled={status === 'loading'}
           />
           <button type="submit" disabled={status === 'loading'}>
-            {status === 'loading' ? 'Subscribing…' : 'Subscribe'}
+            {status === 'loading' ? 'Subscribing...' : 'Subscribe'}
           </button>
+          {message && (
+            <p className={`status-message status-${status}`}>
+              {message}
+            </p>
+          )}
         </form>
-        {message && <div className={`status-message ${status}`}>{message}</div>}
       </article>
     </Layout>
   );

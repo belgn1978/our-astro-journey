@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import Layout from '../components/Layout';
+import Layout from '../../components/Layout';
 
 const newsItems = [
   { title: 'New telescope session log', date: '2026-05-12', summary: 'Sharing a backyard imaging session with sky conditions, gear notes, and processing results.' },

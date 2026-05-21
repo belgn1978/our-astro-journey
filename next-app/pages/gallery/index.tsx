@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import Layout from '../components/Layout';
+import Layout from '../../components/Layout';
 
 const galleryItems = [
   { title: 'Moon Night Mode', description: 'Lunar photography taken with a mobile phone and post-processing.', tag: 'Moon' },

@@ -642,6 +642,9 @@ function initializeEventListeners() {
  * Initialize the calendar when DOM is loaded
  */
 document.addEventListener('DOMContentLoaded', () => {
+  // Initialize the mobile navigation on every page where it exists.
+  initializeMobileMenu();
+
   // Check if we're on a page with the calendar
   const calendarGrid = document.getElementById('calendarGrid');
   if (calendarGrid) {
@@ -649,7 +652,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateMonth();
     generateEventsList();
     initializeEventListeners();
-    initializeMobileMenu();
     
     // Fetch space launches in the background
     fetchSpaceLaunches();
@@ -676,7 +678,6 @@ function initializeMobileMenu() {
   const mobileMenuClose = document.getElementById('mobile-menu-close');
   const nav = document.getElementById('mobile-navigation-main');
   const backdrop = document.getElementById('mobile-nav-backdrop');
-  const projectToggle = document.querySelector('#mobile-navigation-main .dropdown > .dropdown-toggle');
 
   if (!mobileMenuButton || !mobileMenuClose || !nav || !backdrop) return;
 
@@ -722,25 +723,6 @@ function initializeMobileMenu() {
     });
   });
 
-  if (projectToggle) {
-    const toggleDropdown = (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      const dropdown = projectToggle.parentElement;
-      const isOpen = dropdown.classList.toggle('open');
-      projectToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-    };
-
-    projectToggle.addEventListener('click', (event) => {
-      if (window.innerWidth <= 600) toggleDropdown(event);
-    });
-
-    projectToggle.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        toggleDropdown(event);
-      }
-    });
-  }
 }
 
 /**

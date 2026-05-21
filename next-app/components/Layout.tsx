@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/about', label: 'About' },
+  { href: '/projects', label: 'Projects' },
   { href: '/gallery', label: 'Gallery' },
   { href: '/news', label: 'News' },
   { href: '/contact', label: 'Contact' }
