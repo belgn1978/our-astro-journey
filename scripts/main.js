@@ -186,7 +186,7 @@ async function fetchSpaceLaunches() {
         }
         
         return {
-          date: launchDate.toISOString().split('T')[0],
+          date: toYMDLocal(launchDate),
           title: launch.name || 'Space Launch',
           type: 'launch',
           description: `${agency} - ${launch.mission?.description || 'Launch mission'}`,
@@ -202,8 +202,8 @@ async function fetchSpaceLaunches() {
     // Combine celestial events with launch events
     astronomyEvents = [...celestialEvents, ...launchEvents];
     
-    // Sort by date
-    astronomyEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+    // Sort by date string (YYYY-MM-DD) to avoid timezone parse issues
+    astronomyEvents.sort((a, b) => a.date.localeCompare(b.date));
     
     launchesLoaded = true;
     console.log(`📅 Calendar now has ${astronomyEvents.length} total events`);
@@ -251,8 +251,24 @@ function getMoonPhase(date) {
  * Get all events for a specific date
  */
 function getEventsForDate(date) {
-  const dateStr = date.toISOString().split('T')[0];
+  // Compare using local dates (YYYY-MM-DD) to avoid timezone shifts
+  const dateStr = toYMDLocal(date);
   return astronomyEvents.filter(event => event.date === dateStr);
+}
+
+// Format a Date as local YYYY-MM-DD
+function toYMDLocal(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+// Parse a YYYY-MM-DD string to a local Date object
+function parseYMD(ymd) {
+  const parts = String(ymd).split('-').map(Number);
+  if (parts.length < 3) return new Date(ymd);
+  return new Date(parts[0], parts[1] - 1, parts[2]);
 }
 
 // ============================================
@@ -339,22 +355,48 @@ function createDayElement(date, otherMonth, isToday = false) {
     dayDiv.addEventListener('click', () => showEventDetails(date));
   }
 
-  events.forEach(event => {
-    const eventIndicator = document.createElement('div');
-    eventIndicator.className = `event-indicator ${event.type}`;
-    
-    // Add agency name for launch events
-    const displayTitle = event.agency ? 
-      `${event.agency}: ${event.title.substring(0, 10)}...` : 
-      `${event.title.substring(0, 15)}...`;
-    
-    eventIndicator.innerHTML = `<i class="fas fa-star"></i> ${displayTitle}`;
-    eventIndicator.addEventListener('click', (e) => {
-      e.stopPropagation();
-      showEventDetails(date);
+  // Create an event list wrapper that shows up to 3 items to avoid resizing
+  if (events.length > 0) {
+    const eventList = document.createElement('div');
+    eventList.className = 'event-list';
+
+    events.forEach((event, idx) => {
+      const eventIndicator = document.createElement('div');
+      eventIndicator.className = `event-indicator ${event.type}`;
+      const displayTitle = event.agency ?
+        `${event.agency}: ${event.title.substring(0, 24)}` :
+        `${event.title.substring(0, 28)}`;
+      // choose icon based on event type
+      let iconClass = 'fa-star';
+      if (event.type === 'eclipse') iconClass = 'fa-moon';
+      else if (event.type === 'meteor') iconClass = 'fa-meteor';
+      else if (event.type === 'launch') iconClass = 'fa-rocket';
+      eventIndicator.innerHTML = `<i class="fas ${iconClass}"></i> ${displayTitle}`;
+      eventIndicator.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showEventDetails(date);
+      });
+
+      // Add up to 3 visible items into the compact list
+      if (idx < 3) {
+        eventList.appendChild(eventIndicator);
+      }
     });
-    dayDiv.appendChild(eventIndicator);
-  });
+
+    // If there are more than 3 events, add a "+N more" indicator that opens details
+    if (events.length > 3) {
+      const moreCount = document.createElement('div');
+      moreCount.className = 'more-indicator';
+      moreCount.textContent = `+${events.length - 3} more`;
+      moreCount.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showEventDetails(date);
+      });
+      eventList.appendChild(moreCount);
+    }
+
+    dayDiv.appendChild(eventList);
+  }
 
   return dayDiv;
 }
@@ -385,15 +427,13 @@ function generateEventsList() {
   
   eventsList.innerHTML = '';
 
-  const sortedEvents = [...astronomyEvents].sort((a, b) => 
-    new Date(a.date) - new Date(b.date)
-  );
+  const sortedEvents = [...astronomyEvents].sort((a, b) => a.date.localeCompare(b.date));
 
   sortedEvents.forEach(event => {
     const eventCard = document.createElement('div');
     eventCard.className = `event-card ${event.type}`;
     
-    const eventDate = new Date(event.date);
+    const eventDate = parseYMD(event.date);
     const dateStr = eventDate.toLocaleDateString('en-US', { 
       weekday: 'long', 
       year: 'numeric', 
@@ -452,7 +492,11 @@ function generateEventsList() {
  * Show event details in modal
  */
 function showEventDetails(target) {
-  const eventDate = target instanceof Date ? target : new Date(target.date);
+  let eventDate = null;
+  if (target instanceof Date) eventDate = target;
+  else if (typeof target === 'string') eventDate = parseYMD(target);
+  else if (target && target.date) eventDate = parseYMD(target.date);
+  else return;
   const events = getEventsForDate(eventDate);
   if (!events.length) return;
 
@@ -522,7 +566,7 @@ function closeModal() {
 function exportToCalendar(type, event) {
   if (!event) return;
 
-  const startDate = new Date(event.date);
+  const startDate = parseYMD(event.date);
   const endDate = new Date(startDate);
   endDate.setHours(endDate.getHours() + 1);
 
@@ -660,6 +704,24 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 Fetching latest space launch data...');
   }
   initializeDropdownToggle();
+  
+  // Initialize weather and dark sky features
+  initializeWeatherWidget();
+  
+  // Setup image download watermarks
+  setupImageDownloadWatermarks();
+  
+  // Protect images from right-click context menu
+  protectImages();
+  
+  // Enable nav debug when requested via URL (?debug=nav) or localStorage flag
+  try {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('debug') === 'nav' || localStorage.getItem('debugNav') === '1') {
+      initializeNavDebugging();
+      console.log('🐞 Nav debug: enabled');
+    }
+  } catch (err) {}
 });
 
 // ============================================
@@ -680,7 +742,16 @@ function initializeMobileMenu() {
   const nav = document.getElementById('mobile-navigation-main');
   const backdrop = document.getElementById('mobile-nav-backdrop');
 
-  if (!mobileMenuButton || !mobileMenuClose || !nav || !backdrop) return;
+  console.log('🔧 initializeMobileMenu called');
+  console.log('  button:', mobileMenuButton ? '✓' : '✗');
+  console.log('  close:', mobileMenuClose ? '✓' : '✗');
+  console.log('  nav:', nav ? '✓' : '✗');
+  console.log('  backdrop:', backdrop ? '✓' : '✗');
+
+  if (!mobileMenuButton || !mobileMenuClose || !nav || !backdrop) {
+    console.error('❌ Mobile menu elements not found');
+    return;
+  }
 
   const closeMenu = () => {
     nav.classList.remove('open');
@@ -688,6 +759,8 @@ function initializeMobileMenu() {
     document.body.classList.remove('nav-open');
     mobileMenuButton.setAttribute('aria-expanded', 'false');
     nav.setAttribute('aria-hidden', 'true');
+    backdrop.setAttribute('aria-hidden', 'true');
+    console.log('🔒 Menu closed');
   };
 
   const openMenu = () => {
@@ -696,27 +769,68 @@ function initializeMobileMenu() {
     document.body.classList.add('nav-open');
     mobileMenuButton.setAttribute('aria-expanded', 'true');
     nav.setAttribute('aria-hidden', 'false');
+    backdrop.setAttribute('aria-hidden', 'false');
+    console.log('📂 Menu opened');
   };
 
   mobileMenuButton.addEventListener('click', openMenu);
   mobileMenuClose.addEventListener('click', closeMenu);
   backdrop.addEventListener('click', closeMenu);
 
+  document.addEventListener('click', (e) => {
+    if (!nav.classList.contains('open')) return;
+    if (nav.contains(e.target) || mobileMenuButton.contains(e.target)) return;
+    closeMenu();
+  });
+
+  nav.addEventListener('click', (e) => {
+    const closestLink = e.target.closest('a[href^="#"]');
+    console.log('👆 Nav click target:', e.target.tagName, 'closest link:', closestLink ? closestLink.getAttribute('href') : 'none');
+  }, true);
+
   // Close menu when clicking in-page anchors inside the mobile navigation.
-  nav.querySelectorAll('a[href^="#"]').forEach(link => {
-    link.addEventListener('click', () => {
-      closeMenu();
-
+  const anchorLinks = nav.querySelectorAll('a[href^="#"]');
+  console.log('🔗 Found', anchorLinks.length, 'anchor links in mobile nav');
+  
+  anchorLinks.forEach((link, idx) => {
+    link.addEventListener('click', (e) => {
       const href = link.getAttribute('href');
-      if (!href || !href.startsWith('#')) return;
-
-      const target = document.querySelector(href);
-      if (target) {
-        setTimeout(() => {
-          try { target.setAttribute('tabindex', '-1'); target.focus({ preventScroll: true }); } catch (err) {}
-          try { history.replaceState(null, '', href); } catch (err) {}
-        }, 420);
+      console.log('📍 Mobile nav link #' + idx + ' clicked:', href);
+      
+      if (!href || !href.startsWith('#')) {
+        console.warn('⚠️ Invalid href:', href);
+        return;
       }
+      
+      e.preventDefault();
+      console.log('🚫 Default prevented');
+      closeMenu();
+      console.log('🔒 Menu closed');
+
+      // Wait until the menu close animation finishes before navigating
+      setTimeout(() => {
+        try {
+          const target = document.querySelector(href);
+          console.log('🎯 Target found:', target ? target.tagName + '#' + target.id : 'NOT FOUND');
+          
+          if (target) {
+            console.log('📜 Scrolling to', href);
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            target.setAttribute('tabindex', '-1');
+            target.focus({ preventScroll: true });
+          }
+          
+          // Also set hash for URL update
+          try {
+            location.hash = href;
+            console.log('🔗 Hash set:', location.hash);
+          } catch (err) {
+            console.warn('Hash error:', err);
+          }
+        } catch (err) {
+          console.error('❌ Scroll error:', err);
+        }
+      }, 380);
     });
   });
 
@@ -752,6 +866,92 @@ function initializeDropdownToggle() {
     }
   });
 
+
+/**
+ * Debugging and monitoring helper for mobile navigation issues.
+ * Activates when URL contains ?debug=nav or localStorage.debugNav === '1'.
+ */
+function initializeNavDebugging() {
+  const createPanel = () => {
+    const panel = document.createElement('div');
+    panel.className = 'debug-log-panel';
+    panel.innerHTML = '<h4>Nav Debug</h4>';
+    document.body.appendChild(panel);
+    return panel;
+  };
+
+  const panel = createPanel();
+
+  const log = (msg) => {
+    console.log(msg);
+    const entry = document.createElement('div');
+    entry.className = 'debug-log-entry';
+    entry.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+    panel.appendChild(entry);
+    panel.scrollTop = panel.scrollHeight;
+  };
+
+  // Highlight and log clicks/touches and detect top-most overlay elements
+  document.addEventListener('click', (e) => {
+    const x = e.clientX, y = e.clientY;
+    const el = document.elementFromPoint(x, y);
+    log(`click -> target: ${el ? el.tagName + (el.id ? '#'+el.id : '') + (el.className ? ' .' + el.className.split(' ').join('.') : '') : 'none'}`);
+    if (el) {
+      el.classList.add('debug-outline');
+      setTimeout(() => el.classList.remove('debug-outline'), 1200);
+    }
+    // Also log the element at the same point using z-index heuristics
+    const candidates = Array.from(document.querySelectorAll('body *')).filter(n => n.nodeType === 1);
+    const overlays = candidates.filter(n => {
+      const s = window.getComputedStyle(n);
+      return (s.position === 'fixed' || s.position === 'absolute') && Number((s.zIndex || 0)) >= 100;
+    });
+    if (overlays.length) {
+      log(`potential overlays (z>=100): ${overlays.slice(0,5).map(o => o.tagName + (o.id?('#'+o.id):'') + (o.className?('.'+o.className.split(' ').join('.')):'' )).join(', ')}`);
+    }
+  }, { capture: true });
+
+  // Monitor state changes to modal, mobile nav, and backdrop
+  const observeTargets = ['exportModal', 'mobile-navigation-main', 'mobile-nav-backdrop'];
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach(m => {
+      const t = m.target;
+      if (t && observeTargets.includes(t.id)) {
+        log(`mutation: ${t.id} changed -> class='${t.className}' aria-hidden='${t.getAttribute('aria-hidden')}'`);
+      }
+    });
+  });
+
+  observeTargets.forEach(id => {
+    const node = document.getElementById(id);
+    if (node) observer.observe(node, { attributes: true, attributeFilter: ['class', 'aria-hidden', 'style'] });
+  });
+
+  // Periodically log whether modal or backdrop are visible
+  const poll = setInterval(() => {
+    const modal = document.getElementById('exportModal');
+    const nav = document.getElementById('mobile-navigation-main');
+    const backdrop = document.getElementById('mobile-nav-backdrop');
+    const modalActive = modal && modal.classList.contains('active');
+    const navOpen = nav && nav.classList.contains('open');
+    const backdropActive = backdrop && backdrop.classList.contains('active');
+    log(`state: modalActive=${modalActive} navOpen=${navOpen} backdropActive=${backdropActive} body.nav-open=${document.body.classList.contains('nav-open')}`);
+  }, 3500);
+
+  // Make debug togglable with localStorage key
+  const toggleBtn = document.createElement('button');
+  toggleBtn.textContent = 'Stop Debug';
+  toggleBtn.style.display = 'block';
+  toggleBtn.style.marginTop = '8px';
+  toggleBtn.addEventListener('click', () => {
+    clearInterval(poll);
+    observer.disconnect();
+    panel.remove();
+    localStorage.removeItem('debugNav');
+    log('Nav debug stopped');
+  });
+  panel.appendChild(toggleBtn);
+}
   document.addEventListener('click', (event) => {
     if (!dropdown.contains(event.target)) {
       updateDropdownState(false);
@@ -1106,43 +1306,14 @@ function initializeWeatherWidget() {
  */
 function getEventsForMonth(year, month) {
   return astronomyEvents.filter(event => {
-    const eventDate = new Date(event.date);
+    const eventDate = parseYMD(event.date);
     return eventDate.getFullYear() === year && eventDate.getMonth() === month;
   });
-}
-
-// ============================================
-// INITIALIZATION
-// ============================================
-
-// Initialize everything when DOM is ready
-function initializeApp() {
-  // Initialize mobile menu functionality
-  initializeMobileMenu();
-  
-  // Initialize weather and dark sky features
-  initializeWeatherWidget();
-  
-  // Fetch and display space launches
-  fetchSpaceLaunches();
-  
-  // Setup image download watermarks
-  setupImageDownloadWatermarks();
-  
-  // Protect images from right-click context menu
-  protectImages();
-}
-
-// Run initialization when DOM is loaded
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initializeApp);
-} else {
-  initializeApp();
 }
 
 // Export functions for potential use in other scripts or console
 if (typeof window !== 'undefined') {
   window.refreshLaunches = refreshLaunches;
   window.astronomyEvents = astronomyEvents;
-  window.addWatermarksToImages = addWatermarksToImages;
+  window.setupImageDownloadWatermarks = setupImageDownloadWatermarks;
 }

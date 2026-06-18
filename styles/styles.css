@@ -5,6 +5,7 @@
     --color-sun: #ffb627;
     --color-eclipse: #8b5cf6;
     --color-launch: #ff4757;
+  --color-light: rgba(18,24,35,0.85);
 
     --page-bg: #f4f1de;
     --page-text: #121823;
@@ -32,6 +33,7 @@
     --shadow: rgba(0, 0, 0, 0.5);
     --nav-link: #f4f4f4;
     --nav-link-hover-bg: rgba(74, 158, 255, 0.22);
+    --color-light: rgba(244,244,244,0.88);
   }
 }
 
@@ -238,15 +240,19 @@ button.nav-link:hover,
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
-  z-index: 1100;
+  z-index: 2000;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.25s ease;
+  pointer-events: none;
+  display: none;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 
 .mobile-nav-backdrop.active {
+  display: block;
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
 .nav-link {
@@ -257,6 +263,94 @@ button.nav-link:hover,
   cursor: pointer;
   padding: 0.25rem 0.5rem;
   border-radius: 0.35rem;
+  user-select: none;
+}
+
+.nav-link:hover {
+  cursor: pointer;
+}
+
+/* Ensure mobile nav links are interactive and show pointer cursor */
+.mobile-navigation,
+.mobile-nav-link {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+/* Override any inherited styles that might hide the cursor */
+.mobile-nav-link:hover,
+.mobile-nav-link:focus {
+  cursor: pointer !important;
+}
+
+/* On larger screens force-hide the mobile nav/backdrop to avoid layout bleed */
+@media (min-width: 601px) {
+  #mobile-navigation-main {
+    display: none !important;
+    transform: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  .mobile-nav-backdrop {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
+
+/* Explicitly show desktop navigation and hide mobile on desktop */
+@media (min-width: 769px) {
+  #navigation-main {
+    display: flex !important;
+  }
+  #mobile-menu-button {
+    display: none !important;
+  }
+  #mobile-navigation-main,
+  .mobile-nav-backdrop {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  /* Ensure body doesn't have nav-open class effects on desktop */
+  body.nav-open {
+    overflow: auto !important;
+  }
+}
+
+/* Debug helpers (toggle by visiting ?debug=nav) */
+.debug-outline {
+  outline: 3px dashed rgba(255, 99, 71, 0.95) !important;
+  box-shadow: 0 0 0 3px rgba(255, 99, 71, 0.06) !important;
+}
+
+.debug-log-panel {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  width: 320px;
+  max-height: 40vh;
+  overflow: auto;
+  background: rgba(6,10,29,0.96);
+  color: #fff;
+  font-size: 12px;
+  padding: 8px;
+  border-radius: 8px;
+  z-index: 99999;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+}
+
+.debug-log-panel h4 {
+  margin: 0 0 6px 0;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.debug-log-entry {
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
 }
 
 .nav-link:hover,
@@ -768,6 +862,15 @@ section {
   gap: 1rem;
   margin-bottom: 2rem;
   animation: fadeIn 1s ease 0.4s backwards;
+  /* Ensure each calendar row uses a fixed row height so boxes align */
+  grid-auto-rows: 180px;
+}
+
+/* Smaller row height on narrow screens */
+@media (max-width: 600px) {
+  .calendar-grid {
+    grid-auto-rows: 140px;
+  }
 }
 
 .day-header {
@@ -785,7 +888,8 @@ section {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 1rem;
-  min-height: 120px;
+  /* Fill the grid row height so all boxes in a row match */
+  height: 100%;
   cursor: pointer;
   transition: all 0.3s;
   position: relative;
@@ -834,6 +938,57 @@ section {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* Wrapper to cap visible events so day box doesn't expand */
+.event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  /* Allow the list to scroll inside the fixed-height cell when there are many events */
+  max-height: calc(100% - 3.2rem);
+  overflow-y: auto;
+}
+
+/* Fallback: hide any .event-indicator beyond the first 3 to guarantee cap */
+.event-list .event-indicator:nth-of-type(n+4) {
+  display: none !important;
+}
+
+.more-indicator {
+  color: white;
+  background: rgba(255,255,255,0.04);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+/* Tooltip with full event list */
+/* Removed tooltip UI - keep hidden by default */
+.calendar-tooltip {
+  display: none !important;
+}
+
+.calendar-tooltip-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.tooltip-event-item {
+  color: white;
+  font-size: 0.95rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.02);
+  cursor: pointer;
+}
+
+/* Tooltip removed - no hover behavior */
 
 .event-indicator.eclipse {
   background: rgba(139, 92, 246, 0.3);
@@ -920,7 +1075,7 @@ section {
 
 .event-description {
   font-size: 0.9rem;
-  color: var(--color-light);
+  color: #ffffff;
   line-height: 1.5;
 }
 
@@ -1055,13 +1210,13 @@ section {
 
   .event-details-card .event-description {
     font-size: 0.95rem;
-    color: var(--color-light);
+    color: #ffffff;
     line-height: 1.6;
   }
 
   .event-details-card .event-location {
     font-size: 0.9rem;
-    color: var(--color-light);
+    color: rgba(255,255,255,0.85);
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -1301,13 +1456,42 @@ footer {
   #header-main {
     padding: 1rem 1.5rem;
     flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
   }
   
   #navigation-main {
-    gap: 1.5rem;
+    gap: 1rem;
     font-size: 0.9rem;
+    justify-content: center;
+    flex-wrap: wrap;
   }
   
+  section {
+    min-height: auto;
+    padding: 2.5rem 1rem;
+    align-items: flex-start;
+    justify-content: flex-start;
+    display: block;
+  }
+
+  .content-wrapper,
+  .cta-container,
+  .weather-panel,
+  .weather-card,
+  .darksky-results,
+  .image-container,
+  .project-section,
+  .calendar-grid,
+  .export-options {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .cta-container {
+    padding: 0;
+  }
+
   .cta-container h1 {
     font-size: 2.2rem;
   }
@@ -1317,7 +1501,8 @@ footer {
   }
   
   .cta-img {
-    width: 70%;
+    width: 100%;
+    max-width: 360px;
   }
   
   .section-heading, .heading {
@@ -1329,29 +1514,60 @@ footer {
   }
   
   .image-container {
-    width: 48%;
+    width: 100%;
   }
   
-  section {
-    padding: 2.5rem 1.5rem;
-    scroll-margin-top: 70px;
+  .image-group {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .weather-panel,
+  .weather-card {
+    grid-template-columns: 1fr;
+  }
+
+  .weather-action-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .location-search {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .location-search input {
+    width: 100%;
+  }
+
+  .darksky-results {
+    padding: 1rem;
+  }
+
+  .calendar-grid-container {
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
   }
 
   .calendar-grid {
-    gap: 0.5rem;
+    gap: 0.75rem;
+    grid-template-columns: repeat(7, minmax(120px, 1fr));
+    min-width: 100%;
   }
 
   .calendar-day {
     min-height: 80px;
-    padding: 0.5rem;
+    padding: 0.6rem;
   }
 
   .day-number {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   .moon-phase {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
 
   .export-options {
@@ -1366,7 +1582,7 @@ footer {
   }
   
   .cta-img {
-    width: 80%;
+    width: 90%;
   }
   
   .section-heading, .heading {
@@ -1375,7 +1591,7 @@ footer {
   
   .image-container {
     width: 100%;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
   }
   
   .image-group {
@@ -1386,12 +1602,36 @@ footer {
   #section-about article hr {
     width: 70%;
   }
+  
+  .weather-panel,
+  .weather-card,
+  .darksky-results {
+    width: 100%;
+  }
 }
 
 /* Mobile devices (600px and below) */
 @media screen and (max-width: 600px) {
   #header-main {
     padding: 0.8rem 1rem;
+  }
+  .content-wrapper {
+    padding: 0 1rem;
+  }
+
+  /* Ensure content wrapper shrinks on small screens */
+  .content-wrapper {
+    max-width: 100%;
+  }
+
+  /* Prevent images from overflowing */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  #section-cta {
+    padding-top: 3.5rem;
   }
   
   .mobile-menu-toggle {
@@ -1425,7 +1665,7 @@ footer {
     pointer-events: none;
     transition: transform 0.3s ease, opacity 0.3s ease;
     box-shadow: -18px 0 56px rgba(0, 0, 0, 0.45);
-    z-index: 2000;
+    z-index: 2100;
     overflow-y: auto;
     display: flex;
   }
@@ -1456,7 +1696,7 @@ footer {
     border-radius: 0.4rem;
     cursor: pointer;
     position: relative;
-    z-index: 1300;
+    z-index: 2101;
   }
 
   .mobile-nav-link:hover {
@@ -1501,6 +1741,20 @@ footer {
     padding: 0.75rem 0;
   }
 
+  /* Make weather and dark sky panels stack on small screens */
+  .weather-panel {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  .weather-card {
+    grid-template-columns: 1fr;
+  }
+
+  .darksky-panel {
+    padding: 0.75rem 0;
+  }
+
   /* Ensure nav links are above decorative pseudo elements and accept pointer events */
   .nav-link {
     position: relative;
@@ -1511,6 +1765,10 @@ footer {
   .logo-container a {
     width: 52px;
     height: 52px;
+  }
+
+  .cta-img {
+    width: 70%;
   }
 
   .logo-img {
