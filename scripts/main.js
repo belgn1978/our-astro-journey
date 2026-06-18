@@ -659,6 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('✨ Astronomy Calendar initialized successfully!');
     console.log('🚀 Fetching latest space launch data...');
   }
+  initializeDropdownToggle();
 });
 
 // ============================================
@@ -686,6 +687,7 @@ function initializeMobileMenu() {
     backdrop.classList.remove('active');
     document.body.classList.remove('nav-open');
     mobileMenuButton.setAttribute('aria-expanded', 'false');
+    nav.setAttribute('aria-hidden', 'true');
   };
 
   const openMenu = () => {
@@ -693,6 +695,7 @@ function initializeMobileMenu() {
     backdrop.classList.add('active');
     document.body.classList.add('nav-open');
     mobileMenuButton.setAttribute('aria-expanded', 'true');
+    nav.setAttribute('aria-hidden', 'false');
   };
 
   mobileMenuButton.addEventListener('click', openMenu);
@@ -717,6 +720,43 @@ function initializeMobileMenu() {
     });
   });
 
+}
+
+function initializeDropdownToggle() {
+  const dropdownToggle = document.getElementById('projects-toggle');
+  const projectsSubmenu = document.getElementById('projects-submenu');
+  const dropdown = dropdownToggle?.closest('.dropdown');
+
+  if (!dropdownToggle || !projectsSubmenu || !dropdown) return;
+
+  const updateDropdownState = (isOpen) => {
+    dropdown.classList.toggle('open', isOpen);
+    dropdownToggle.setAttribute('aria-expanded', String(isOpen));
+    projectsSubmenu.setAttribute('aria-hidden', String(!isOpen));
+  };
+
+  const toggleDropdown = () => {
+    const isOpen = dropdownToggle.getAttribute('aria-expanded') === 'true';
+    updateDropdownState(!isOpen);
+  };
+
+  dropdownToggle.addEventListener('click', (event) => {
+    event.preventDefault();
+    toggleDropdown();
+  });
+
+  dropdownToggle.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggleDropdown();
+    }
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!dropdown.contains(event.target)) {
+      updateDropdownState(false);
+    }
+  });
 }
 
 /**
@@ -811,6 +851,256 @@ function protectImages() {
   });
 }
 
+const DARK_SKY_SITES = [
+  { name: 'Brecon Beacons Dark Sky Reserve', lat: 51.8806, lon: -3.4020, region: 'Wales, UK' },
+  { name: 'Exmoor Dark Sky Reserve', lat: 51.2365, lon: -3.8332, region: 'England, UK' },
+  { name: 'Galloway Forest Park', lat: 54.8333, lon: -4.5000, region: 'Scotland, UK' },
+  { name: 'Kerry International Dark Sky Reserve', lat: 52.0466, lon: -9.5314, region: 'Ireland' },
+  { name: 'Northumberland National Park', lat: 55.2179, lon: -2.2230, region: 'England, UK' },
+  { name: 'Aoraki Mackenzie Dark Sky Reserve', lat: -44.0070, lon: 170.1170, region: 'New Zealand' },
+  { name: 'Cherry Springs State Park', lat: 41.6634, lon: -77.8168, region: 'Pennsylvania, USA' },
+  { name: 'Mauna Kea Summit', lat: 19.8207, lon: -155.4681, region: 'Hawaii, USA' },
+  { name: 'NamibRand Nature Reserve', lat: -24.7700, lon: 15.9650, region: 'Namibia' },
+  { name: 'Pic du Midi Observatory', lat: 42.9361, lon: 0.1430, region: 'France' }
+];
+
+function calculateDistanceKm(lat1, lon1, lat2, lon2) {
+  const toRad = (value) => (value * Math.PI) / 180;
+  const R = 6371;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+    + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2))
+    * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+function getWeatherDescription(weatherCode) {
+  const codes = {
+    0: 'Clear sky',
+    1: 'Mainly clear',
+    2: 'Partly cloudy',
+    3: 'Overcast',
+    45: 'Fog',
+    48: 'Depositing rime fog',
+    51: 'Light drizzle',
+    53: 'Moderate drizzle',
+    55: 'Dense drizzle',
+    56: 'Freezing drizzle',
+    57: 'Freezing drizzle',
+    61: 'Light rain',
+    63: 'Moderate rain',
+    65: 'Heavy rain',
+    66: 'Freezing rain',
+    67: 'Freezing rain',
+    71: 'Light snow',
+    73: 'Moderate snow',
+    75: 'Heavy snow',
+    77: 'Snow grains',
+    80: 'Rain showers',
+    81: 'Moderate showers',
+    82: 'Violent showers',
+    85: 'Snow showers',
+    86: 'Heavy snow showers',
+    95: 'Thunderstorm',
+    96: 'Thunderstorm with hail',
+    99: 'Thunderstorm with heavy hail'
+  };
+  return codes[weatherCode] || 'Unknown conditions';
+}
+
+function calculateFeelsLike(temperature, windspeed) {
+  if (typeof temperature !== 'number' || typeof windspeed !== 'number') return '—';
+  if (temperature >= 10 || windspeed < 4.8) {
+    return `${Math.round(temperature)}°C`;
+  }
+
+  const windChill = 13.12 + 0.6215 * temperature - 11.37 * Math.pow(windspeed, 0.16) + 0.3965 * temperature * Math.pow(windspeed, 0.16);
+  return `${Math.round(windChill)}°C`;
+}
+
+function formatLocationName(place) {
+  if (!place) return 'Local area';
+  if (place.name && place.country) {
+    return `${place.name}, ${place.country}`;
+  }
+  return place.name || place.admin1 || place.country || 'Local area';
+}
+
+function setWeatherStatus(message, isError = false) {
+  const statusEl = document.getElementById('weather-status');
+  if (!statusEl) return;
+  statusEl.textContent = message;
+  statusEl.style.color = isError ? '#ffb3b3' : 'rgba(255, 255, 255, 0.85)';
+}
+
+function toggleWeatherCard(visible) {
+  const card = document.getElementById('weather-card');
+  if (!card) return;
+  card.classList.toggle('hidden', !visible);
+  card.setAttribute('aria-hidden', String(!visible));
+}
+
+function buildDarkSkyList(latitude, longitude) {
+  const list = document.getElementById('darksky-list');
+  if (!list) return;
+
+  const nearbySites = DARK_SKY_SITES
+    .map(site => ({
+      ...site,
+      distance: calculateDistanceKm(latitude, longitude, site.lat, site.lon)
+    }))
+    .sort((a, b) => a.distance - b.distance)
+    .slice(0, 5);
+
+  list.innerHTML = '';
+  if (!nearbySites.length) {
+    list.innerHTML = '<p class="darksky-empty">No nearby dark sky sites could be found.</p>';
+    return;
+  }
+
+  nearbySites.forEach(site => {
+    const item = document.createElement('div');
+    item.className = 'darksky-site';
+    item.innerHTML = `
+      <strong>${site.name}</strong>
+      <span>${site.region}</span>
+      <span>${site.distance.toFixed(1)} km away</span>
+      <a href="https://www.google.com/maps/search/${encodeURIComponent(site.name + ', ' + site.region)}" target="_blank" rel="noopener noreferrer">View on map</a>
+    `;
+    list.appendChild(item);
+  });
+}
+
+async function fetchWeatherData(latitude, longitude, label) {
+  setWeatherStatus('Getting weather data…');
+  toggleWeatherCard(false);
+
+  try {
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&hourly=relativehumidity_2m&timezone=auto`;
+    const response = await fetch(weatherUrl);
+    if (!response.ok) {
+      throw new Error('Weather service unavailable');
+    }
+    const data = await response.json();
+    const current = data.current_weather;
+    const humidityIndex = data.hourly?.time?.indexOf(current?.time);
+    const humidity = humidityIndex >= 0 ? data.hourly.relativehumidity_2m[humidityIndex] : null;
+
+    if (!current) {
+      throw new Error('Current weather unavailable');
+    }
+
+    const locationName = label || `Lat ${latitude.toFixed(2)}, Lon ${longitude.toFixed(2)}`;
+    document.getElementById('weather-temp').textContent = `${Math.round(current.temperature)}°C`;
+    document.getElementById('weather-desc').textContent = getWeatherDescription(current.weathercode);
+    document.getElementById('weather-location-name').textContent = locationName;
+    document.getElementById('weather-feels').textContent = calculateFeelsLike(current.temperature, current.windspeed);
+    document.getElementById('weather-wind').textContent = `${Math.round(current.windspeed)} km/h`;
+    document.getElementById('weather-humidity').textContent = humidity !== null ? `${Math.round(humidity)}%` : '—';
+    setWeatherStatus(`Weather for ${locationName}`);
+    toggleWeatherCard(true);
+    buildDarkSkyList(latitude, longitude);
+  } catch (error) {
+    setWeatherStatus('Unable to load weather data. Try again later.', true);
+    toggleWeatherCard(false);
+    const list = document.getElementById('darksky-list');
+    if (list) {
+      list.innerHTML = '<p class="darksky-empty">Nearby dark sky sites are unavailable right now.</p>';
+    }
+    console.error(error);
+  }
+}
+
+async function geocodePlace(query) {
+  const geocodeUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=en&format=json`;
+  const response = await fetch(geocodeUrl);
+  if (!response.ok) {
+    throw new Error('Geocoding failed');
+  }
+  const data = await response.json();
+  return data.results && data.results.length ? data.results[0] : null;
+}
+
+async function reverseGeocodeCoordinates(latitude, longitude) {
+  const reverseUrl = `https://geocoding-api.open-meteo.com/v1/reverse?latitude=${latitude}&longitude=${longitude}&count=1&language=en&format=json`;
+  const response = await fetch(reverseUrl);
+  if (!response.ok) {
+    throw new Error('Reverse geocoding failed');
+  }
+  const data = await response.json();
+  return data.results && data.results.length ? data.results[0] : null;
+}
+
+async function handleWeatherSearch() {
+  const input = document.getElementById('weather-location-input');
+  if (!input) return;
+  const query = input.value.trim();
+  if (!query) {
+    setWeatherStatus('Please enter a town, city, or postcode.', true);
+    return;
+  }
+
+  setWeatherStatus('Looking up location…');
+  const place = await geocodePlace(query);
+  if (!place) {
+    setWeatherStatus('Location not found. Try a different town, city, or postcode.', true);
+    return;
+  }
+
+  await fetchWeatherData(place.latitude, place.longitude, formatLocationName(place));
+}
+
+async function requestWeatherLocation() {
+  if (!navigator.geolocation) {
+    setWeatherStatus('Geolocation is not available in this browser.', true);
+    return;
+  }
+
+  setWeatherStatus('Requesting your location…');
+  navigator.geolocation.getCurrentPosition(async (position) => {
+    try {
+      const geoPlace = await reverseGeocodeCoordinates(position.coords.latitude, position.coords.longitude);
+      const label = formatLocationName(geoPlace);
+      await fetchWeatherData(position.coords.latitude, position.coords.longitude, label);
+    } catch (error) {
+      setWeatherStatus('Unable to determine your location. Try the manual search.', true);
+      console.error(error);
+    }
+  }, (error) => {
+    console.error(error);
+    setWeatherStatus('Location permission denied or unavailable. Use the manual search instead.', true);
+  }, {
+    enableHighAccuracy: false,
+    timeout: 15000,
+    maximumAge: 300000
+  });
+}
+
+function initializeWeatherWidget() {
+  const searchBtn = document.getElementById('weather-search-btn');
+  const locationBtn = document.getElementById('weather-location-btn');
+  const searchInput = document.getElementById('weather-location-input');
+
+  if (searchBtn) {
+    searchBtn.addEventListener('click', handleWeatherSearch);
+  }
+
+  if (locationBtn) {
+    locationBtn.addEventListener('click', requestWeatherLocation);
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        handleWeatherSearch();
+      }
+    });
+  }
+}
+
 /**
  * Get all events for a specific month
  */
@@ -829,6 +1119,9 @@ function getEventsForMonth(year, month) {
 function initializeApp() {
   // Initialize mobile menu functionality
   initializeMobileMenu();
+  
+  // Initialize weather and dark sky features
+  initializeWeatherWidget();
   
   // Fetch and display space launches
   fetchSpaceLaunches();
