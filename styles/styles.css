@@ -41,7 +41,15 @@
 
 html {
     scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
     overflow-x: hidden;
+}
+
+section[id],
+article[id],
+div[id],
+header[id] {
+    scroll-margin-top: 5rem;
 }
 
 body {

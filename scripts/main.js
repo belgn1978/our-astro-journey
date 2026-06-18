@@ -699,26 +699,20 @@ function initializeMobileMenu() {
   mobileMenuClose.addEventListener('click', closeMenu);
   backdrop.addEventListener('click', closeMenu);
 
-  // Close menu when clicking navigation links (both anchor and dropdown links)
-  // For in-page anchors, close the menu then smoothly scroll to the target
-  nav.querySelectorAll('a[href^="#"], .dropdown-content a').forEach(link => {
-    link.addEventListener('click', (e) => {
+  // Close menu when clicking in-page anchors inside the mobile navigation.
+  nav.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', () => {
+      closeMenu();
+
       const href = link.getAttribute('href');
-      // For in-page anchors, allow browser default navigation but close menu immediately
-      if (href && href.startsWith('#')) {
-        // Let the browser handle the jump; just close the menu so the content is visible
-        if (window.innerWidth <= 600) closeMenu();
-        // After the menu closes, ensure the target receives focus for accessibility
-        const target = document.querySelector(href);
-        if (target) {
-          setTimeout(() => {
-            try { target.setAttribute('tabindex', '-1'); target.focus({ preventScroll: true }); } catch (err) {}
-            try { history.replaceState(null, '', href); } catch (err) {}
-          }, 420);
-        }
-      } else {
-        // External links: just close menu on mobile and allow default navigation
-        if (window.innerWidth <= 600) closeMenu();
+      if (!href || !href.startsWith('#')) return;
+
+      const target = document.querySelector(href);
+      if (target) {
+        setTimeout(() => {
+          try { target.setAttribute('tabindex', '-1'); target.focus({ preventScroll: true }); } catch (err) {}
+          try { history.replaceState(null, '', href); } catch (err) {}
+        }, 420);
       }
     });
   });
