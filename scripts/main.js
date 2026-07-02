@@ -914,9 +914,11 @@ function initializeMobileMenu() {
         event.preventDefault();
         closeMenu();
 
-        // navigate after the drawer close animation finishes
-        setTimeout(() => {
-          // If the target exists, smoothly scroll to it; otherwise update hash
+        // Wait for the nav close transition to finish, then navigate.
+        let navigated = false;
+        const performNavigation = () => {
+          if (navigated) return;
+          navigated = true;
           const target = document.querySelector(href);
           if (target) {
             scrollToSection(href);
@@ -925,7 +927,25 @@ function initializeMobileMenu() {
           } else {
             try { location.hash = href; } catch (e) {}
           }
-        }, 360);
+        };
+
+        const onTransitionEnd = (e) => {
+          if (e.propertyName && e.propertyName.indexOf('transform') === -1) return;
+          // ensure nav is closed
+          if (nav && !nav.classList.contains('open')) {
+            performNavigation();
+            nav.removeEventListener('transitionend', onTransitionEnd);
+            clearTimeout(fallbackTimeout);
+          }
+        };
+
+        // Fallback in case transitionend doesn't fire on some browsers/devices
+        const fallbackTimeout = setTimeout(() => {
+          performNavigation();
+          if (nav) nav.removeEventListener('transitionend', onTransitionEnd);
+        }, 700);
+
+        if (nav) nav.addEventListener('transitionend', onTransitionEnd);
       });
     });
   };
