@@ -856,6 +856,96 @@ section {
 }
 
 /* Calendar Grid */
+.mobile-upcoming-list {
+  display: none;
+  margin-bottom: 1.25rem;
+  padding: 1rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-upcoming-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+}
+
+.mobile-upcoming-title {
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.mobile-upcoming-subtitle {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.9rem;
+}
+
+.mobile-upcoming-toggle {
+  padding: 0.5rem 0.8rem;
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: white;
+  font-size: 0.8rem;
+}
+
+.mobile-upcoming-days {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 0.2rem;
+}
+
+.mobile-upcoming-day {
+  padding: 0.8rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-upcoming-date {
+  color: white;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.mobile-upcoming-events {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.mobile-upcoming-event {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.76rem;
+}
+
+.mobile-upcoming-more {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(74, 158, 255, 0.16);
+  color: white;
+  font-size: 0.76rem;
+}
+
+.mobile-upcoming-empty {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.95rem;
+}
+
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -1898,6 +1988,14 @@ footer {
 
   .calendar-controls {
     padding: 1rem;
+  }
+
+  .mobile-upcoming-list {
+    display: block;
+  }
+
+  .calendar-grid-container {
+    display: none;
   }
 
   .month-navigation {

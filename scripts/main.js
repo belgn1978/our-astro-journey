@@ -137,6 +137,7 @@ let astronomyEvents = [...celestialEvents];
 let currentDate = new Date();
 let selectedEvent = null;
 let launchesLoaded = false;
+let mobileCalendarExpanded = false;
 
 // ============================================
 // API FETCHING - AUTO-UPDATE LAUNCHES
@@ -269,6 +270,94 @@ function parseYMD(ymd) {
   const parts = String(ymd).split('-').map(Number);
   if (parts.length < 3) return new Date(ymd);
   return new Date(parts[0], parts[1] - 1, parts[2]);
+}
+
+function isMobileCalendarView() {
+  return window.matchMedia('(max-width: 600px)').matches;
+}
+
+function scrollToSection(hash) {
+  const target = document.querySelector(hash);
+  if (!target) return false;
+
+  const offset = 88;
+  const top = target.getBoundingClientRect().top + window.scrollY - offset;
+  window.scrollTo({ top, behavior: 'smooth' });
+
+  try {
+    history.replaceState(null, '', hash);
+  } catch (err) {
+    console.warn('Hash update failed:', err);
+  }
+
+  return true;
+}
+
+function renderMobileUpcomingView() {
+  const container = document.getElementById('mobileUpcomingList');
+  if (!container) return;
+
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'];
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const visibleDays = mobileCalendarExpanded ? daysInMonth : Math.min(7, daysInMonth);
+
+  const dayCards = [];
+  for (let day = 1; day <= visibleDays; day++) {
+    const dayDate = new Date(year, month, day);
+    const dateStr = toYMDLocal(dayDate);
+    const eventsForDay = astronomyEvents.filter((event) => event.date === dateStr);
+    const labels = eventsForDay.slice(0, 2).map((event) => {
+      const icon = event.type === 'eclipse' ? '🌙' : event.type === 'meteor' ? '☄️' : event.type === 'launch' ? '🚀' : '⭐';
+      return `<span class="mobile-upcoming-event">${icon} ${event.title}</span>`;
+    }).join('');
+    const moreCount = eventsForDay.length > 2 ? `<span class="mobile-upcoming-more">+${eventsForDay.length - 2} more</span>` : '';
+    const dayLabel = dayDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+    dayCards.push(`
+      <div class="mobile-upcoming-day">
+        <div class="mobile-upcoming-date">${dayLabel}</div>
+        <div class="mobile-upcoming-events">
+          ${eventsForDay.length > 0 ? labels + moreCount : '<span class="mobile-upcoming-event">No events</span>'}
+        </div>
+      </div>
+    `);
+  }
+
+  const toggleLabel = daysInMonth > 7 ? (mobileCalendarExpanded ? 'Show less' : 'View more') : '';
+  const toggleMarkup = daysInMonth > 7 ? `<button class="mobile-upcoming-toggle" type="button">${toggleLabel}</button>` : '';
+
+  container.innerHTML = `
+    <div class="mobile-upcoming-header">
+      <div>
+        <div class="mobile-upcoming-title">Upcoming days</div>
+        <div class="mobile-upcoming-subtitle">${monthNames[month]} ${year}</div>
+      </div>
+      ${toggleMarkup}
+    </div>
+    <div class="mobile-upcoming-days">
+      ${dayCards.join('')}
+    </div>
+  `;
+
+  const toggleButton = container.querySelector('.mobile-upcoming-toggle');
+  if (toggleButton) {
+    toggleButton.addEventListener('click', () => {
+      mobileCalendarExpanded = !mobileCalendarExpanded;
+      renderMobileUpcomingView();
+    });
+  }
+}
+
+function renderCalendarView() {
+  if (isMobileCalendarView()) {
+    renderMobileUpcomingView();
+    return;
+  }
+
+  generateCalendar();
 }
 
 // ============================================
@@ -411,7 +500,7 @@ function updateMonth() {
   if (monthDisplay) {
     monthDisplay.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
   }
-  generateCalendar();
+  renderCalendarView();
 }
 
 // ============================================
@@ -688,6 +777,9 @@ function initializeEventListeners() {
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize the mobile navigation on every page where it exists.
   initializeMobileMenu();
+  window.addEventListener('resize', () => {
+    renderCalendarView();
+  });
 
   // Check if we're on a page with the calendar
   const calendarGrid = document.getElementById('calendarGrid');
@@ -783,56 +875,29 @@ function initializeMobileMenu() {
     closeMenu();
   });
 
-  nav.addEventListener('click', (e) => {
-    const closestLink = e.target.closest('a[href^="#"]');
-    console.log('👆 Nav click target:', e.target.tagName, 'closest link:', closestLink ? closestLink.getAttribute('href') : 'none');
-  }, true);
+  const bindAnchorNavigation = (container) => {
+    container.querySelectorAll('a[href^="#"]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        const href = link.getAttribute('href');
+        if (!href || !href.startsWith('#')) return;
 
-  // Close menu when clicking in-page anchors inside the mobile navigation.
-  const anchorLinks = nav.querySelectorAll('a[href^="#"]');
-  console.log('🔗 Found', anchorLinks.length, 'anchor links in mobile nav');
-  
-  anchorLinks.forEach((link, idx) => {
-    link.addEventListener('click', (e) => {
-      const href = link.getAttribute('href');
-      console.log('📍 Mobile nav link #' + idx + ' clicked:', href);
-      
-      if (!href || !href.startsWith('#')) {
-        console.warn('⚠️ Invalid href:', href);
-        return;
-      }
-      
-      e.preventDefault();
-      console.log('🚫 Default prevented');
-      closeMenu();
-      console.log('🔒 Menu closed');
+        event.preventDefault();
+        closeMenu();
 
-      // Wait until the menu close animation finishes before navigating
-      setTimeout(() => {
-        try {
+        setTimeout(() => {
+          scrollToSection(href);
           const target = document.querySelector(href);
-          console.log('🎯 Target found:', target ? target.tagName + '#' + target.id : 'NOT FOUND');
-          
           if (target) {
-            console.log('📜 Scrolling to', href);
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             target.setAttribute('tabindex', '-1');
             target.focus({ preventScroll: true });
           }
-          
-          // Also set hash for URL update
-          try {
-            location.hash = href;
-            console.log('🔗 Hash set:', location.hash);
-          } catch (err) {
-            console.warn('Hash error:', err);
-          }
-        } catch (err) {
-          console.error('❌ Scroll error:', err);
-        }
-      }, 380);
+        }, 320);
+      });
     });
-  });
+  };
+
+  bindAnchorNavigation(nav);
+  bindAnchorNavigation(document.getElementById('navigation-main'));
 
 }
 
