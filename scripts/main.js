@@ -138,6 +138,7 @@ let currentDate = new Date();
 let selectedEvent = null;
 let launchesLoaded = false;
 let mobileCalendarExpanded = false;
+let scrollPosition = 0;
 
 // ============================================
 // API FETCHING - AUTO-UPDATE LAUNCHES
@@ -828,6 +829,30 @@ function refreshLaunches() {
   fetchSpaceLaunches();
 }
 
+function setBodyScrollLock(lock) {
+  if (lock) {
+    scrollPosition = window.scrollY || window.pageYOffset || 0;
+    document.documentElement.classList.add('nav-open');
+    document.body.classList.add('nav-open');
+    // preserve scrollbar space to avoid layout shift
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    if (scrollbarWidth > 0) {
+      document.documentElement.style.paddingRight = `${scrollbarWidth}px`;
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.documentElement.classList.remove('nav-open');
+    document.body.classList.remove('nav-open');
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+    document.documentElement.style.paddingRight = '';
+    document.body.style.paddingRight = '';
+    window.scrollTo(0, scrollPosition);
+  }
+}
+
 function initializeMobileMenu() {
   const mobileMenuButton = document.getElementById('mobile-menu-button');
   const mobileMenuClose = document.getElementById('mobile-menu-close');
@@ -848,7 +873,7 @@ function initializeMobileMenu() {
   const closeMenu = () => {
     nav.classList.remove('open');
     backdrop.classList.remove('active');
-    document.body.classList.remove('nav-open');
+    setBodyScrollLock(false);
     mobileMenuButton.setAttribute('aria-expanded', 'false');
     nav.setAttribute('aria-hidden', 'true');
     backdrop.setAttribute('aria-hidden', 'true');
@@ -858,7 +883,7 @@ function initializeMobileMenu() {
   const openMenu = () => {
     nav.classList.add('open');
     backdrop.classList.add('active');
-    document.body.classList.add('nav-open');
+    setBodyScrollLock(true);
     mobileMenuButton.setAttribute('aria-expanded', 'true');
     nav.setAttribute('aria-hidden', 'false');
     backdrop.setAttribute('aria-hidden', 'false');
@@ -881,17 +906,26 @@ function initializeMobileMenu() {
         const href = link.getAttribute('href');
         if (!href || !href.startsWith('#')) return;
 
+        // give immediate visual feedback for touch
+        link.classList.add('nav-link-active');
+        setTimeout(() => link.classList.remove('nav-link-active'), 300);
+
+        // prevent default native jump so we can close the drawer first
         event.preventDefault();
         closeMenu();
 
+        // navigate after the drawer close animation finishes
         setTimeout(() => {
-          scrollToSection(href);
+          // If the target exists, smoothly scroll to it; otherwise update hash
           const target = document.querySelector(href);
           if (target) {
+            scrollToSection(href);
             target.setAttribute('tabindex', '-1');
             target.focus({ preventScroll: true });
+          } else {
+            try { location.hash = href; } catch (e) {}
           }
-        }, 320);
+        }, 360);
       });
     });
   };
@@ -1200,6 +1234,13 @@ function setWeatherStatus(message, isError = false) {
   statusEl.style.color = isError ? '#ffb3b3' : 'rgba(255, 255, 255, 0.85)';
 }
 
+function setDarkSkyStatus(message, isError = false) {
+  const statusEl = document.getElementById('darksky-status');
+  if (!statusEl) return;
+  statusEl.textContent = message;
+  statusEl.style.color = isError ? '#ffb3b3' : 'rgba(255, 255, 255, 0.85)';
+}
+
 function toggleWeatherCard(visible) {
   const card = document.getElementById('weather-card');
   if (!card) return;
@@ -1317,6 +1358,26 @@ async function handleWeatherSearch() {
   await fetchWeatherData(place.latitude, place.longitude, formatLocationName(place));
 }
 
+async function handleDarkSkySearch() {
+  const input = document.getElementById('darksky-location-input');
+  if (!input) return;
+  const query = input.value.trim();
+  if (!query) {
+    setDarkSkyStatus('Please enter a town, city, or postcode.', true);
+    return;
+  }
+
+  setDarkSkyStatus('Looking up location…');
+  const place = await geocodePlace(query);
+  if (!place) {
+    setDarkSkyStatus('Location not found. Try a different town, city, or postcode.', true);
+    return;
+  }
+
+  await fetchWeatherData(place.latitude, place.longitude, formatLocationName(place));
+  setDarkSkyStatus(`Showing dark sky sites near ${formatLocationName(place)}`);
+}
+
 async function requestWeatherLocation() {
   if (!navigator.geolocation) {
     setWeatherStatus('Geolocation is not available in this browser.', true);
@@ -1347,6 +1408,8 @@ function initializeWeatherWidget() {
   const searchBtn = document.getElementById('weather-search-btn');
   const locationBtn = document.getElementById('weather-location-btn');
   const searchInput = document.getElementById('weather-location-input');
+  const darkSkySearchBtn = document.getElementById('darksky-search-btn');
+  const darkSkyInput = document.getElementById('darksky-location-input');
 
   if (searchBtn) {
     searchBtn.addEventListener('click', handleWeatherSearch);
@@ -1361,6 +1424,19 @@ function initializeWeatherWidget() {
       if (event.key === 'Enter') {
         event.preventDefault();
         handleWeatherSearch();
+      }
+    });
+  }
+
+  if (darkSkySearchBtn) {
+    darkSkySearchBtn.addEventListener('click', handleDarkSkySearch);
+  }
+
+  if (darkSkyInput) {
+    darkSkyInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        handleDarkSkySearch();
       }
     });
   }

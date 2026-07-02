@@ -63,8 +63,14 @@ body {
   overflow-x: hidden;
 }
 
+html.nav-open,
 body.nav-open {
   overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body.nav-open {
+  width: 100%;
 }
 
 .skip-link {
@@ -236,11 +242,11 @@ button.nav-link:hover,
   cursor: pointer;
 }
 
-.mobile-nav-backdrop {
+  .mobile-nav-backdrop {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.45);
-  z-index: 2000;
+  z-index: 10000;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -1755,7 +1761,7 @@ footer {
     pointer-events: none;
     transition: transform 0.3s ease, opacity 0.3s ease;
     box-shadow: -18px 0 56px rgba(0, 0, 0, 0.45);
-    z-index: 2100;
+    z-index: 10001;
     overflow-y: auto;
     display: flex;
   }
@@ -1791,6 +1797,11 @@ footer {
 
   .mobile-nav-link:hover {
     background-color: rgba(74, 158, 255, 0.16);
+  }
+
+  .nav-link-active {
+    outline: 2px solid rgba(74,158,255,0.9);
+    transform: translateY(0);
   }
   
   #mobile-navigation-main::before {

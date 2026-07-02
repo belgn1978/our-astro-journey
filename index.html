@@ -201,6 +201,14 @@
             <h2 class="section-heading">Nearby Dark Sky Sites</h2>
             <h3 class="section-subheading">Find dark sky locations near a searched location</h3>
             <div class="darksky-panel">
+              <div class="darksky-controls">
+                <div class="location-search darksky-search">
+                  <label for="darksky-location-input" class="visually-hidden">Enter a place or postcode</label>
+                  <input id="darksky-location-input" type="search" placeholder="Enter a place or postcode" aria-label="Enter a place or postcode">
+                  <button id="darksky-search-btn" class="button" type="button">Search</button>
+                </div>
+                <p id="darksky-status" class="darksky-status">Search for a location to see nearby dark sky sites.</p>
+              </div>
               <div id="darksky-list" class="darksky-list">
                 <p class="darksky-empty">Search for a location to see nearby dark sky sites.</p>
               </div>
