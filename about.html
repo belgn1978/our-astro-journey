@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About | Our Astro Journey</title>
+    <meta name="description" content="Learn about Our Astro Journey and the beginner astrophotography story behind the site." />
+    <link rel="canonical" href="https://www.ourastrojourney.co.uk/about.html" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="./styles/reset.css" />
+    <link rel="stylesheet" href="./styles/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#page-main">Skip to main content</a>
+    <header id="header-main">
+      <div class="logo-container"><a href="./index.html" class="nav-link logo-link" id="logo"><img src="images/logo.png" alt="OurAstroJourney logo" class="logo-img"></a></div>
+      <button id="mobile-menu-button" class="mobile-menu-toggle" aria-label="Open navigation menu" aria-controls="mobile-navigation-main" aria-expanded="false">
+        <i class="fas fa-bars"></i>
+      </button>
+      <nav id="navigation-main" aria-label="Primary navigation">
+        <a href="./about.html" class="nav-link">About</a>
+        <a href="./weather.html" class="nav-link">Weather</a>
+        <a href="./dark-skies.html" class="nav-link">Dark Skies</a>
+        <a href="./gallery.html" class="nav-link">Gallery</a>
+        <a href="./moon-gallery.html" class="nav-link">Moon</a>
+        <a href="./hubble-gallery.html" class="nav-link">Hubble</a>
+        <a href="./news.html" class="nav-link">News</a>
+        <a href="./contact.html" class="nav-link">Contact</a>
+      </nav>
+      <nav id="mobile-navigation-main" class="mobile-navigation" aria-label="Mobile primary navigation" aria-hidden="true">
+        <button id="mobile-menu-close" class="mobile-menu-close" aria-label="Close navigation menu">
+          <i class="fas fa-times"></i>
+        </button>
+        <a href="./about.html" class="nav-link mobile-nav-link">About</a>
+        <a href="./weather.html" class="nav-link mobile-nav-link">Weather</a>
+        <a href="./dark-skies.html" class="nav-link mobile-nav-link">Dark Skies</a>
+        <a href="./gallery.html" class="nav-link mobile-nav-link">Gallery</a>
+        <a href="./moon-gallery.html" class="nav-link mobile-nav-link">Moon</a>
+        <a href="./hubble-gallery.html" class="nav-link mobile-nav-link">Hubble</a>
+        <a href="./news.html" class="nav-link mobile-nav-link">News</a>
+        <a href="./contact.html" class="nav-link mobile-nav-link">Contact</a>
+      </nav>
+    </header>
+    <div id="mobile-nav-backdrop" class="mobile-nav-backdrop" aria-hidden="true"></div>
+
+    <main id="page-main" role="main">
+      <section class="page-hero">
+        <div class="content-wrapper">
+          <h1 class="section-heading">About Our Astrophotography Journey</h1>
+          <p class="section-intro">We are learning by doing, sharing beginner-friendly guidance about moon photography, deep-sky practice, and the joy of exploring the night sky.</p>
+        </div>
+      </section>
+      <section>
+        <div class="content-wrapper">
+          <article class="page-copy-card">
+            <p>My name is Matt and my daughter’s name is Lacey, and this is the story of our journey into beginner astrophotography.</p>
+            <p>Neither of us had a background in astrophotography to begin with, but I have developed a growing fascination with the night sky and Lacey is already studying photography at school.</p>
+            <p>We are learning by starting with a mobile phone, keeping costs low, and practicing from a light-polluted back garden while exploring moon photography, nebula imaging, galaxy photography, and image processing techniques.</p>
+            <p>We also share weather forecasts, dark sky site suggestions, and hands-on learning as we improve our skills over time.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="social-container">
+          <p class="footer-heading">Connect With Us</p>
+          <div class="social-links">
+            <a href="https://x.com/ourastrojourney" target="_blank" rel="noopener noreferrer" aria-label="X Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="https://www.instagram.com/ourastrojourney" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.threads.net/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Threads"><i class="fa-brands fa-threads"></i></a>
+          </div>
+        </div>
+        <div class="copyright-container">
+          <p>&copy; 2025 Matt Brambley | OurAstroJourney</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="./scripts/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weather | Our Astro Journey</title>
+    <meta name="description" content="See local weather conditions and plan astrophotography sessions with Our Astro Journey." />
+    <link rel="canonical" href="https://www.ourastrojourney.co.uk/weather.html" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="./styles/reset.css" />
+    <link rel="stylesheet" href="./styles/styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#page-main">Skip to main content</a>
+    <header id="header-main">
+      <div class="logo-container"><a href="./index.html" class="nav-link logo-link" id="logo"><img src="images/logo.png" alt="OurAstroJourney logo" class="logo-img"></a></div>
+      <button id="mobile-menu-button" class="mobile-menu-toggle" aria-label="Open navigation menu" aria-controls="mobile-navigation-main" aria-expanded="false">
+        <i class="fas fa-bars"></i>
+      </button>
+      <nav id="navigation-main" aria-label="Primary navigation">
+        <a href="./about.html" class="nav-link">About</a>
+        <a href="./weather.html" class="nav-link">Weather</a>
+        <a href="./dark-skies.html" class="nav-link">Dark Skies</a>
+        <a href="./gallery.html" class="nav-link">Gallery</a>
+        <a href="./moon-gallery.html" class="nav-link">Moon</a>
+        <a href="./hubble-gallery.html" class="nav-link">Hubble</a>
+        <a href="./news.html" class="nav-link">News</a>
+        <a href="./contact.html" class="nav-link">Contact</a>
+      </nav>
+      <nav id="mobile-navigation-main" class="mobile-navigation" aria-label="Mobile primary navigation" aria-hidden="true">
+        <button id="mobile-menu-close" class="mobile-menu-close" aria-label="Close navigation menu">
+          <i class="fas fa-times"></i>
+        </button>
+        <a href="./about.html" class="nav-link mobile-nav-link">About</a>
+        <a href="./weather.html" class="nav-link mobile-nav-link">Weather</a>
+        <a href="./dark-skies.html" class="nav-link mobile-nav-link">Dark Skies</a>
+        <a href="./gallery.html" class="nav-link mobile-nav-link">Gallery</a>
+        <a href="./moon-gallery.html" class="nav-link mobile-nav-link">Moon</a>
+        <a href="./hubble-gallery.html" class="nav-link mobile-nav-link">Hubble</a>
+        <a href="./news.html" class="nav-link mobile-nav-link">News</a>
+        <a href="./contact.html" class="nav-link mobile-nav-link">Contact</a>
+      </nav>
+    </header>
+    <div id="mobile-nav-backdrop" class="mobile-nav-backdrop" aria-hidden="true"></div>
+
+    <main id="page-main" role="main">
+      <section class="page-hero">
+        <div class="content-wrapper">
+          <h1 class="section-heading">Weather</h1>
+          <p class="section-intro">Use the weather widget below to check local conditions before an observing session.</p>
+        </div>
+      </section>
+      <section>
+        <div class="content-wrapper">
+          <div class="weather-panel">
+            <div class="weather-controls">
+              <p>Allow location access, or enter a town, city, or postcode to see local weather and nearby dark sky sites.</p>
+              <div class="weather-action-row">
+                <button id="weather-location-btn" class="button button-secondary" type="button">Use My Location</button>
+                <div class="location-search">
+                  <label for="weather-location-input" class="visually-hidden">Enter a place or postcode</label>
+                  <input id="weather-location-input" type="search" placeholder="Enter a place or postcode" aria-label="Enter a place or postcode">
+                  <button id="weather-search-btn" class="button" type="button">Search</button>
+                </div>
+              </div>
+              <p class="weather-note">Weather data is provided by Open-Meteo and works without an API key.</p>
+            </div>
+            <div class="weather-output" id="weather-output">
+              <div id="weather-status" class="weather-status" role="status" aria-live="polite">Enter a location or use device location to get started.</div>
+              <div id="weather-card" class="weather-card hidden" aria-live="polite" aria-hidden="true">
+                <div class="weather-summary">
+                  <div>
+                    <p class="weather-temp" id="weather-temp">0°C</p>
+                    <p class="weather-desc" id="weather-desc">Clear sky</p>
+                  </div>
+                  <div class="weather-meta">
+                    <div><strong>Location</strong> <span id="weather-location-name">Unknown</span></div>
+                    <div><strong>Feels like</strong> <span id="weather-feels">—</span></div>
+                    <div><strong>Wind</strong> <span id="weather-wind">—</span></div>
+                    <div><strong>Humidity</strong> <span id="weather-humidity">—</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="social-container">
+          <p class="footer-heading">Connect With Us</p>
+          <div class="social-links">
+            <a href="https://x.com/ourastrojourney" target="_blank" rel="noopener noreferrer" aria-label="X Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="https://www.instagram.com/ourastrojourney" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.threads.net/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Threads"><i class="fa-brands fa-threads"></i></a>
+          </div>
+        </div>
+        <div class="copyright-container">
+          <p>&copy; 2025 Matt Brambley | OurAstroJourney</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="./scripts/main.js"></script>
+  </body>
+</html>

@@ -21,8 +21,8 @@
   <meta property="og:locale" content="en_GB">
   <meta property="og:title" content="Our Astro Journey | Beginner Astrophotography Blog for Moon, Deep Sky & Dark Skies">
   <meta property="og:description" content="Our Astro Journey is a beginner astrophotography blog sharing moon photography, deep-sky imaging tips, image processing practice, weather forecasts, and dark sky site guidance for UK skies.">
-  <meta property="og:image" content="https://www.ourastrojourney.co.uk/images/hero-img.png">
-  <meta property="og:image:secure_url" content="https://www.ourastrojourney.co.uk/images/hero-img.png">
+  <meta property="og:image" content="https://www.ourastrojourney.co.uk/images/hero-ing.jpg">
+  <meta property="og:image:secure_url" content="https://www.ourastrojourney.co.uk/images/hero-ing.jpg">
   <meta property="og:image:alt" content="Our Astro Journey astrophotography blog hero image showing a night sky scene">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -30,7 +30,7 @@
   <meta name="twitter:url" content="https://www.ourastrojourney.co.uk/">
   <meta name="twitter:title" content="Our Astro Journey | Beginner Astrophotography Blog for Moon, Deep Sky & Dark Skies">
   <meta name="twitter:description" content="Our Astro Journey is a beginner astrophotography blog sharing moon photography, deep-sky imaging tips, image processing practice, weather forecasts, and dark sky site guidance for UK skies.">
-  <meta name="twitter:image" content="https://www.ourastrojourney.co.uk/images/hero-img.png">
+  <meta name="twitter:image" content="https://www.ourastrojourney.co.uk/images/hero-ing.jpg">
   <meta name="twitter:creator" content="@ourastrojourney">
   <meta name="theme-color" content="#050812">
   <meta name="twitter:site" content="@ourastrojourney">
@@ -90,377 +90,123 @@
   <body>
     <a class="skip-link" href="#section-cta">Skip to main content</a>
     <header id="header-main">
-      <div class="logo-container"><a href="#section-cta" class="nav-link logo-link" id="logo"><img src="images/logo.png" alt="OurAstroJourney logo" class="logo-img"></a></div>
+      <div class="logo-container"><a href="./index.html" class="nav-link logo-link" id="logo"><img src="images/logo.png" alt="OurAstroJourney logo" class="logo-img"></a></div>
       <button id="mobile-menu-button" class="mobile-menu-toggle" aria-label="Open navigation menu" aria-controls="mobile-navigation-main" aria-expanded="false">
         <i class="fas fa-bars"></i>
       </button>
       <nav id="navigation-main" aria-label="Primary navigation">
-        <a href="#section-about" class="nav-link">About</a>
-        <a href="#section-weather" class="nav-link">Weather</a>
-        <a href="#section-darksky" class="nav-link">Dark Skies</a>
-        <div class="dropdown">
-          <button id="projects-toggle" type="button" class="nav-link dropdown-toggle" aria-haspopup="true" aria-controls="projects-submenu" aria-expanded="false">Projects</button>
-          <div class="dropdown-content" id="projects-submenu" role="menu" aria-labelledby="projects-toggle" aria-hidden="true">
-            <a href="#image-processing" role="menuitem">Image Processing Practice</a>
-            <div class="sub-links" role="group" aria-label="Project sections">
-              <a href="#jwst" role="menuitem">JWST Images</a>
-              <a href="#hubble" role="menuitem">Hubble Images</a>
-              <a href="#other" role="menuitem">Other Sources</a>
-              <div class="sub-sub-links" role="group" aria-label="Additional sources">
-                <a href="#astro" role="menuitem">AstroBackyard</a>
-                <a href="#galaxy" role="menuitem">Galactic Hunter</a>
-                <a href="#cosmic" role="menuitem">Cosmic Curiosity</a>
-              </div>
-            </div>
-            <a href="#equipment-testing" role="menuitem">Equipment Testing</a>
-          </div>
-        </div>
-        <a href="#section-gallery" class="nav-link">Gallery</a>
-        <a href="#section-news" class="nav-link">News</a>
-        <a href="#section-contact" class="nav-link">Contact</a>
+        <a href="./about.html" class="nav-link">About</a>
+        <a href="./weather.html" class="nav-link">Weather</a>
+        <a href="./dark-skies.html" class="nav-link">Dark Skies</a>
+        <a href="./gallery.html" class="nav-link">Gallery</a>
+        <a href="./moon-gallery.html" class="nav-link">Moon</a>
+        <a href="./hubble-gallery.html" class="nav-link">Hubble</a>
+        <a href="./news.html" class="nav-link">News</a>
+        <a href="./contact.html" class="nav-link">Contact</a>
       </nav>
       <nav id="mobile-navigation-main" class="mobile-navigation" aria-label="Mobile primary navigation" aria-hidden="true">
         <button id="mobile-menu-close" class="mobile-menu-close" aria-label="Close navigation menu">
           <i class="fas fa-times"></i>
         </button>
-        <a href="#section-about" class="nav-link mobile-nav-link">About</a>
-        <a href="#section-weather" class="nav-link mobile-nav-link">Weather</a>
-        <a href="#section-darksky" class="nav-link mobile-nav-link">Dark Skies</a>
-        <div class="mobile-submenu" aria-label="Projects">
-          <span class="mobile-submenu-title">Projects</span>
-          <a href="#image-processing" class="nav-link mobile-nav-link">Image Processing Practice</a>
-          <a href="#jwst" class="nav-link mobile-nav-link">JWST Images</a>
-          <a href="#hubble" class="nav-link mobile-nav-link">Hubble Images</a>
-          <a href="#other" class="nav-link mobile-nav-link">Other Sources</a>
-          <a href="#astro" class="nav-link mobile-nav-link">AstroBackyard</a>
-          <a href="#galaxy" class="nav-link mobile-nav-link">Galactic Hunter</a>
-          <a href="#cosmic" class="nav-link mobile-nav-link">Cosmic Curiosity</a>
-          <a href="#equipment-testing" class="nav-link mobile-nav-link">Equipment Testing</a>
-        </div>
-        <a href="#section-gallery" class="nav-link mobile-nav-link">Gallery</a>
-        <a href="#section-news" class="nav-link mobile-nav-link">News</a>
-        <a href="#section-contact" class="nav-link mobile-nav-link">Contact</a>
+        <a href="./about.html" class="nav-link mobile-nav-link">About</a>
+        <a href="./weather.html" class="nav-link mobile-nav-link">Weather</a>
+        <a href="./dark-skies.html" class="nav-link mobile-nav-link">Dark Skies</a>
+        <a href="./gallery.html" class="nav-link mobile-nav-link">Gallery</a>
+        <a href="./moon-gallery.html" class="nav-link mobile-nav-link">Moon</a>
+        <a href="./hubble-gallery.html" class="nav-link mobile-nav-link">Hubble</a>
+        <a href="./news.html" class="nav-link mobile-nav-link">News</a>
+        <a href="./contact.html" class="nav-link mobile-nav-link">Contact</a>
       </nav>
     </header>
     <div id="mobile-nav-backdrop" class="mobile-nav-backdrop" aria-hidden="true"></div>
     <main id="page-main" role="main">
       <section id="section-cta">
-      <div class="cta-container">
-        <img src="images/hero-img.png" alt="Night sky astrophotography scene from Our Astro Journey" class="cta-img">
-        <h1 id="cta-heading">Beginner Astrophotography in the UK</h1>
-        <h2 id="cta-subheading">Follow our astro journey as we learn moon photography, deep-sky imaging, weather planning, and dark sky exploration.</h2>
-      </div>
-    </section>
+        <div class="cta-container">
+          <img src="images/hero-ing.jpg" alt="Night sky starfield background" class="cta-img">
+          <h1 id="cta-heading">Beginner Astrophotography in the UK</h1>
+          <h2 id="cta-subheading">Follow our astro journey as we learn moon photography, deep-sky imaging, weather planning, and dark sky exploration.</h2>
+          <div class="hero-actions">
+            <a class="button" href="./gallery.html">Explore galleries</a>
+            <a class="button button-secondary" href="./about.html">About our journey</a>
+          </div>
+        </div>
+      </section>
 
     <section id="section-about">
       <div class="content-wrapper">
-        <h2 class="section-heading">What We Cover in Astrophotography</h2>
-        <p>We are building a beginner-friendly astrophotography resource around moon photography, deep-sky imaging, image processing practice, weather planning, and dark sky location scouting.</p>
-        <ul class="seo-highlights">
-          <li>Moon photography and lunar imaging tips</li>
-          <li>Beginner-friendly deep-sky imaging practice</li>
-          <li>Weather forecasting for observing sessions</li>
-          <li>Finding nearby dark sky sites and light-pollution awareness</li>
-        </ul>
-        <h2 class="section-heading">About Our Astrophotography Journey</h2>
-        <h3 class="section-subheading">From first moon shots to deep-sky practice</h3>
-        <article>
-          <p>My name is Matt and my daughter’s name is Lacey, and this is the story of our journey into beginner astrophotography.</p>
-          <hr>
-          <p>Neither of us had a background in astrophotography to begin with, but I have developed a growing fascination with the night sky and Lacey is already studying photography at school.</p>
-          <hr>
-          <p>We are learning by starting with a mobile phone, keeping costs low, and practicing from a light-polluted back garden while exploring moon photography, nebula imaging, galaxy photography, and image processing techniques.</p>
-          <hr>
-          <p>We also share weather forecasts, dark sky site suggestions, and hands-on learning as we improve our skills over time.</p>
-        </article>
-      </div>
-    </section>
-
-    <section id="section-weather">
-      <div class="content-wrapper">
-        <h2 class="section-heading">Weather & Nearby Dark Sky Sites</h2>
-        <h3 class="section-subheading">See local observing conditions and find dark sky locations near you</h3>
-
-        <div class="weather-panel">
-          <div class="weather-controls">
-            <p>Allow location access, or enter a town, city, or postcode to see local weather and nearby dark sky sites.</p>
-            <div class="weather-action-row">
-              <button id="weather-location-btn" class="button button-secondary" type="button">Use My Location</button>
-              <div class="location-search">
-                <label for="weather-location-input" class="visually-hidden">Enter a place or postcode</label>
-                <input id="weather-location-input" type="search" placeholder="Enter a place or postcode" aria-label="Enter a place or postcode">
-                <button id="weather-search-btn" class="button" type="button">Search</button>
-              </div>
-            </div>
-            <p class="weather-note">Weather data is provided by Open-Meteo and works without an API key.</p>
-          </div>
-
-          <div class="weather-output" id="weather-output">
-            <div id="weather-status" class="weather-status" role="status" aria-live="polite">Enter a location or use device location to get started.</div>
-            <div id="weather-card" class="weather-card hidden" aria-live="polite" aria-hidden="true">
-              <div class="weather-summary">
-                <div>
-                  <p class="weather-temp" id="weather-temp">0°C</p>
-                  <p class="weather-desc" id="weather-desc">Clear sky</p>
-                </div>
-                <div class="weather-meta">
-                  <div><strong>Location</strong> <span id="weather-location-name">Unknown</span></div>
-                  <div><strong>Feels like</strong> <span id="weather-feels">—</span></div>
-                  <div><strong>Wind</strong> <span id="weather-wind">—</span></div>
-                  <div><strong>Humidity</strong> <span id="weather-humidity">—</span></div>
-                </div>
-              </div>
-            </div>
-
-              <!-- Dark sky sites moved to their own section -->
-          </div>
-        </div>
-        </div>
-        </section>
-
-        <section id="section-darksky">
-          <div class="content-wrapper">
-            <h2 class="section-heading">Nearby Dark Sky Sites</h2>
-            <h3 class="section-subheading">Find dark sky locations near a searched location</h3>
-            <div class="darksky-panel">
-              <div class="darksky-controls">
-                <div class="location-search darksky-search">
-                  <label for="darksky-location-input" class="visually-hidden">Enter a place or postcode</label>
-                  <input id="darksky-location-input" type="search" placeholder="Enter a place or postcode" aria-label="Enter a place or postcode">
-                  <button id="darksky-search-btn" class="button" type="button">Search</button>
-                </div>
-                <p id="darksky-status" class="darksky-status">Search for a location to see nearby dark sky sites.</p>
-              </div>
-              <div id="darksky-list" class="darksky-list">
-                <p class="darksky-empty">Search for a location to see nearby dark sky sites.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-      <section id="section-projects">
-      <div class="content-wrapper">
-        <div id="image-processing" class="project-section">
-          <h2 class="heading">Image Processing Practice</h2>
-          <p>I will be downloading raw data sets from multiple places to practice processing images in <a href="https://siril.org/" target="_blank" rel="noopener noreferrer">Siril</a>.</p>
-          
-          <div id="jwst" class="project-subsection">
-            <h3 class="subheading">Images from JWST</h3>
-            <p>Content coming soon...</p>
-          </div>
-          
-          <div id="hubble" class="project-subsection">
-            <h3 class="subheading">Images from Hubble</h3>
-            <p>Content coming soon...</p>
-          </div>
-          
-          <div id="other" class="project-subsection">
-            <h3 class="subheading">Other Sources</h3>
-            
-            <div id="astro" class="project-subsection">
-              <h3 class="subheading">Images from <a href="https://astrobackyard.com/" target="_blank" rel="noopener noreferrer">AstroBackyard</a></h3>
-              <div class="image-group">
-                <div class="image-container">
-                  <a href="./images/astro/M45FINAL.jpg" class="img-link">
-                    <img src="./images/astro/M45FINAL.jpg" alt="M45 Pleiades" class="image" loading="lazy">
-                  </a>
-                  <p>This is M45 also known as Pleiades</p>
-                </div>
-              </div>
-            </div>
-            
-            <div id="galaxy" class="project-subsection">
-              <h3 class="subheading">Images from <a href="https://www.galactic-hunter.com/" target="_blank" rel="noopener noreferrer">Galactic Hunter</a></h3>
-              <div class="image-group">
-                <div class="image-container">
-                  <a href="./images/galactic-hunter/IC410Final.jpeg" target="_blank" rel="noopener noreferrer" class="img-link">
-                    <img class="image" src="./images/galactic-hunter/IC410Final.jpeg" alt="IC410 Fire and Tadpole nebula" loading="lazy">
-                  </a>
-                  <p>This is IC410 also known as the Fire and Tadpole nebula</p>
-                </div>
-                <div class="image-container">
-                  <a href="./images/galactic-hunter/IC342_Final_081236.jpeg" target="_blank" rel="noopener noreferrer" class="img-link">
-                    <img src="./images/galactic-hunter/IC342_Final_081236.jpeg" alt="IC342 Hidden Galaxy" class="image" loading="lazy">
-                  </a>
-                  <p>This is IC342 also known as the Hidden Galaxy</p>
-                </div>
-                <div class="image-container">
-                  <a href="./images/galactic-hunter/Soul_Final_100712.jpeg" target="_blank" rel="noopener noreferrer" class="img-link">
-                    <img src="./images/galactic-hunter/Soul_Final_100712.jpeg" alt="IC1848 Soul Nebula" class="image" loading="lazy">
-                  </a>
-                  <p>This is IC1848 also known as the Soul Nebula</p>
-                </div>
-                <div class="image-container">
-                  <a href="./images/galactic-hunter/NGC1333.png" target="_blank" rel="noopener noreferrer" class="img-link">
-                    <img src="./images/galactic-hunter/NGC1333.png" alt="NGC1333 The Embryo Nebula" class="image" loading="lazy">
-                  </a>
-                  <p>This is IC1848 also known as the Soul Nebula</p>
-                </div>
-              </div>
-            </div>
-            
-            <div id="cosmic" class="project-subsection">
-              <h3 class="subheading">Images from <a href="https://www.youtube.com/@cosmic_curiosity" target="_blank" rel="noopener noreferrer">Cosmic Curiosity</a></h3>
-              <div class="image-group">
-                <div class="image-container">
-                  <a href="./images/cosmic/IC1805_073006.jpeg" target="_blank" rel="noopener noreferrer" class="img-link">
-                    <img src="./images/cosmic/IC1805_073006.jpeg" alt="IC1805 Heart Nebula" class="image" loading="lazy">
-                  </a>
-                  <p>This is IC1805 also known as the Heart Nebula</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div id="equipment-testing" class="project-section">
-          <h2 class="heading">Equipment Testing</h2>
-          <p>Content coming soon...</p>
+        <h2 class="section-heading">Start Exploring the Site</h2>
+        <p class="section-intro">This site now uses dedicated pages for each topic so you can jump directly to the content you want without scrolling through a single long page.</p>
+        <div class="feature-card-grid">
+          <article class="feature-card">
+            <h3>About this journey</h3>
+            <p>Read the story behind Our Astro Journey and see how beginner astrophotography is evolving from phone shots to deeper projects.</p>
+            <a class="button" href="./about.html">Learn more</a>
+          </article>
+          <article class="feature-card">
+            <h3>Weather planning</h3>
+            <p>Check the weather page for forecasting tips, location planning, and the tools we use for observing nights.</p>
+            <a class="button button-secondary" href="./weather.html">Open weather page</a>
+          </article>
+          <article class="feature-card">
+            <h3>Dark sky guidance</h3>
+            <p>Find dark sky site information and learn where to look for the best observing conditions across the UK.</p>
+            <a class="button button-secondary" href="./dark-skies.html">Open dark skies</a>
+          </article>
         </div>
       </div>
     </section>
 
-    <section id="section-gallery">
+    <section id="section-galleries" class="feature-gallery-section">
       <div class="content-wrapper">
-        <h2 class="section-heading">Gallery</h2>
-        <div class="session-container">
-          <h3 class="section-subheading">The Moon - 05/01/2025</h3>
-          <p>These where all taken on my Google Pixel 10 Pro XL. I had just gone to check on how deep the snow was and spotted the moon. They where all taken from my front door so there was some street lights and no tripod.</p>
-          <p>The first set where taken in night sight mode while the second set where taken in normal photo mode but max zoom.</p>
-          <div class="image-group">
-            <div class="image-container">
-              <a href="./images/my-pictures/MoonNightModePixel1.jpg" target="_blank" rel="noopener noreferrer" class="img-link">
-                <img class="image" src="images/my-pictures/MoonNightModePixel1.jpg" alt="Moon photo taken in night sight mode" loading="lazy">
-              </a>
-            </div>
-            <div class="image-container">
-              <a href="./images/my-pictures/MoonNightModePixel1.jpg" target="_blank" rel="noopener noreferrer" class="img-link">
-                <img class="image" src="images/my-pictures/MoonNightModePixel1.jpg" alt="Moon photo taken in night sight mode" loading="lazy">
-              </a>
-            </div>
-            <div class="image-container">
-              <a href="./images/my-pictures/MoonNightModePixel3.jpg" target="_blank" rel="noopener noreferrer" class="img-link">
-                <img class="image" src="images/my-pictures/MoonNightModePixel3.jpg" alt="Moon photo taken in night sight mode" loading="lazy">
-              </a>
-            </div>
-          </div>
-          <div class="image-group">
-            <div class="image-container">
-              <a href="./images/my-pictures/MoonPixelMaxZoom1.jpg" target="_blank" rel="noopener noreferrer" class="img-link">
-                <img src="images/my-pictures/MoonPixelMaxZoom1.jpg" alt="Moon photo taken in normal mode with max zoom" class="image" loading="lazy">
-              </a>
-            </div>
-            <div class="image-container">
-              <a href="./images/my-pictures/MoonPixelMaxZoom2.jpg" target="_blank" rel="noopener noreferrer" class="img-link">
-                <img src="images/my-pictures/MoonPixelMaxZoom2.jpg" alt="Moon photo taken in normal mode with max zoom" class="image" loading="lazy">
-              </a>
-            </div>
-            <div class="image-container">
-              <a href="./images/my-pictures/MoonPixelMaxZoom3.jpg" target="_blank" rel="noopener noreferrer" class="img-link">
-                <img src="images/my-pictures/MoonPixelMaxZoom3.jpg" alt="Moon photo taken in normal mode with max zoom" class="image" loading="lazy">
-              </a>
-            </div>
-          </div>
+        <h2 class="section-heading">Explore the Astrophotography Galleries</h2>
+        <p class="section-intro">Our archive is growing, so the best way to browse everything is through dedicated gallery pages for the full collection, moon images, and Hubble-inspired studies.</p>
+        <div class="feature-card-grid">
+          <article class="feature-card">
+            <h3>Full gallery</h3>
+            <p>Browse every image from our learning journey in one place, from moon shots to deep-sky practice.</p>
+            <a class="button" href="./gallery.html">View the full gallery</a>
+          </article>
+          <article class="feature-card">
+            <h3>Moon photos</h3>
+            <p>See the moon images taken from the front door and explore the progression from phone photography to more careful framing.</p>
+            <a class="button button-secondary" href="./moon-gallery.html">See moon images</a>
+          </article>
+          <article class="feature-card">
+            <h3>Hubble studies</h3>
+            <p>Open the Hubble collection to focus on the deep-sky targets and image-processing practice that are shaping our learning.</p>
+            <a class="button button-secondary" href="./hubble-gallery.html">Open Hubble gallery</a>
+          </article>
         </div>
       </div>
     </section>
 
-    <section id="section-news">
+    <section class="page-hero">
       <div class="content-wrapper">
-        <h2 class="section-heading">News & Upcoming Events</h2>
-        <h3 class="section-subheading">Stay updated with the latest astronomy news and celestial events</h3>
-        
-        <!-- Calendar Interface -->
-        <div class="calendar-wrapper">
-          <div class="calendar-controls">
-            <div class="month-navigation">
-              <button class="nav-btn" id="prevMonth"><i class="fas fa-chevron-left"></i></button>
-              <div class="current-month" id="currentMonth">January 2026</div>
-              <button class="nav-btn" id="nextMonth"><i class="fas fa-chevron-right"></i></button>
-            </div>
-            <div class="view-toggle">
-              <button class="view-btn active" data-view="month">Month</button>
-              <button class="view-btn" data-view="events">Events</button>
-            </div>
-          </div>
-
-          <div id="monthView">
-            <div id="mobileUpcomingList" class="mobile-upcoming-list" aria-live="polite"></div>
-            <div class="calendar-grid-container">
-              <div class="calendar-grid" id="calendarGrid">
-                <!-- Calendar will be generated by JavaScript -->
-              </div>
-            </div>
-          </div>
-
-          <div id="eventsView" style="display: none;">
-            <div class="events-sidebar">
-              <h2 class="events-heading"><i class="fas fa-star"></i> Upcoming Astronomical Events</h2>
-              <div id="eventsList">
-                <!-- Events will be generated by JavaScript -->
-              </div>
-            </div>
-          </div>
-
-          <div class="legend">
-            <div class="legend-item">
-              <div class="legend-color eclipse"></div>
-              <span>Eclipse</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color meteor"></div>
-              <span>Meteor Shower</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color supermoon"></div>
-              <span>Supermoon</span>
-            </div>
-            <div class="legend-item">
-              <div class="legend-color launch"></div>
-              <span>Space Launch</span>
-            </div>
-          </div>
+        <h2 class="section-heading">Welcome to Our Astro Journey</h2>
+        <p class="section-intro">This site is now organized into dedicated sections, so you can jump directly to the pages you want: About, Weather, Dark Skies, Gallery, News, and Contact.</p>
+        <div class="gallery-page-grid">
+          <article class="gallery-card">
+            <h2>Latest moon shots</h2>
+            <p>Fresh moon photography updates from camera phone sessions and early astrophotography practice.</p>
+            <a class="button button-secondary" href="./moon-gallery.html">Open Moon gallery</a>
+          </article>
+          <article class="gallery-card">
+            <h2>Hubble-inspired views</h2>
+            <p>Take a look at the curated Hubble collection and the deep-sky images that appear in the focused gallery.</p>
+            <a class="button button-secondary" href="./hubble-gallery.html">Open Hubble gallery</a>
+          </article>
+          <article class="gallery-card">
+            <h2>Visit the full archive</h2>
+            <p>See the full gallery of astrophotography images from our learning journey, with a growing collection of space and night sky images.</p>
+            <a class="button" href="./gallery.html">Open full gallery</a>
+          </article>
         </div>
       </div>
     </section>
 
-    <section id="section-contact">
-      <div class="content-wrapper">
-        <h2 class="section-heading">Contact Us</h2>
-        <h3 class="section-subheading">Get in touch with us</h3>
-        <form action="https://formspree.io/f/xnjlekvb" method="POST" class="contact-form">
-          <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" required>
-          </div>
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
-          </div>
-          <div class="form-group">
-            <label for="message">Message</label>
-            <textarea id="message" name="message" rows="5" required></textarea>
-          </div>
-          <button type="submit" class="submit-btn">Send Message</button>
-        </form>
-      </div>
-    </section>
+  </main>
 
-    <!-- Event Details Modal -->
-    <div class="modal" id="exportModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2 id="modalTitle">Event Details</h2>
-          <button class="close-modal" id="closeModal" aria-label="Close event details"><i class="fas fa-times"></i></button>
-        </div>
-        <div id="eventDetailsBody" class="event-details-body">
-          <!-- Event details will be injected here -->
-        </div>
-      </div>
-    </div>
-    </main>
-
-    <footer>
+  <footer>
       <div class="footer-content">
         <div class="social-container">
           <p class="footer-heading">Connect With Us</p>
