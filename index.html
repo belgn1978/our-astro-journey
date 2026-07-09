@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <!-- Primary Meta Tags -->
-  <title>Our Astro Journey | Beginner Astrophotography Blog, Weather & Dark Sky Guide</title>
-  <meta name="title" content="Our Astro Journey | Beginner Astrophotography Blog, Weather & Dark Sky Guide">
-  <meta name="description" content="Our Astro Journey is a beginner astrophotography blog sharing moon photos, nebula edits, galaxy imaging tips, weather forecasts, and nearby dark sky site guidance.">
-  <meta name="keywords" content="astrophotography, astronomy, beginner astrophotography, moon photography, nebula imaging, galaxy photography, dark sky sites, weather forecast, stargazing, telescope photography, backyard astronomy">
+  <title>Our Astro Journey | Beginner Astrophotography Blog for Moon, Deep Sky & Dark Skies</title>
+  <meta name="title" content="Our Astro Journey | Beginner Astrophotography Blog for Moon, Deep Sky & Dark Skies">
+  <meta name="description" content="Our Astro Journey is a beginner astrophotography blog sharing moon photography, deep-sky imaging tips, image processing practice, weather forecasts, and dark sky site guidance for UK skies.">
+  <meta name="keywords" content="astrophotography, beginner astrophotography, moon photography, deep sky imaging, nebula imaging, galaxy photography, dark sky sites, weather forecast, stargazing, telescope photography, backyard astronomy, UK astrophotography">
   <meta name="author" content="Matt Brambley">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://www.ourastrojourney.co.uk/" />
@@ -19,18 +19,18 @@
   <meta property="og:url" content="https://www.ourastrojourney.co.uk/">
   <meta property="og:site_name" content="Our Astro Journey">
   <meta property="og:locale" content="en_GB">
-  <meta property="og:title" content="Our Astro Journey | Beginner Astrophotography Blog, Weather & Dark Sky Guide">
-  <meta property="og:description" content="Our Astro Journey is a beginner astrophotography blog sharing moon photos, nebula edits, galaxy imaging tips, weather forecasts, and nearby dark sky site guidance.">
-  <meta property="og:image" content="https://www.ourastrojourney.co.uk/images/og-image.jpg">
-  <meta property="og:image:secure_url" content="https://www.ourastrojourney.co.uk/images/og-image.jpg">
-  <meta property="og:image:alt" content="Our Astro Journey astrophotography blog hero image">
+  <meta property="og:title" content="Our Astro Journey | Beginner Astrophotography Blog for Moon, Deep Sky & Dark Skies">
+  <meta property="og:description" content="Our Astro Journey is a beginner astrophotography blog sharing moon photography, deep-sky imaging tips, image processing practice, weather forecasts, and dark sky site guidance for UK skies.">
+  <meta property="og:image" content="https://www.ourastrojourney.co.uk/images/hero-img.png">
+  <meta property="og:image:secure_url" content="https://www.ourastrojourney.co.uk/images/hero-img.png">
+  <meta property="og:image:alt" content="Our Astro Journey astrophotography blog hero image showing a night sky scene">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://www.ourastrojourney.co.uk/">
-  <meta name="twitter:title" content="Our Astro Journey | Beginner Astrophotography Blog, Weather & Dark Sky Guide">
-  <meta name="twitter:description" content="Our Astro Journey is a beginner astrophotography blog sharing moon photos, nebula edits, galaxy imaging tips, weather forecasts, and nearby dark sky site guidance.">
-  <meta name="twitter:image" content="https://www.ourastrojourney.co.uk/images/twitter-image.jpg">
+  <meta name="twitter:title" content="Our Astro Journey | Beginner Astrophotography Blog for Moon, Deep Sky & Dark Skies">
+  <meta name="twitter:description" content="Our Astro Journey is a beginner astrophotography blog sharing moon photography, deep-sky imaging tips, image processing practice, weather forecasts, and dark sky site guidance for UK skies.">
+  <meta name="twitter:image" content="https://www.ourastrojourney.co.uk/images/hero-img.png">
   <meta name="twitter:creator" content="@ourastrojourney">
   <meta name="theme-color" content="#050812">
   <meta name="twitter:site" content="@ourastrojourney">
@@ -53,20 +53,34 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Blog",
-    "name": "OurAstroJourney",
-    "description": "A beginner's astrophotography journey",
-    "url": "https://www.ourastrojourney.co.uk/",
-    "author": {
-      "@type": "Person",
-      "name": "Matt Brambley"
-    },
-    "blogPost": [
+    "@graph": [
       {
-        "@type": "BlogPosting",
-        "headline": "The Moon - First Astrophotography Session",
-        "datePublished": "2025-01-05",
-        "image": "https://www.ourastrojourney.co.uk/images/my-pictures/PXL_20260105_204338603.NIGHT.jpg"
+        "@type": "WebSite",
+        "@id": "https://www.ourastrojourney.co.uk/#website",
+        "url": "https://www.ourastrojourney.co.uk/",
+        "name": "Our Astro Journey",
+        "description": "A beginner-friendly astrophotography blog for moon photography, deep-sky imaging, weather guidance, and dark sky site planning.",
+        "publisher": {
+          "@id": "https://www.ourastrojourney.co.uk/#person"
+        },
+        "inLanguage": "en-GB"
+      },
+      {
+        "@type": "Person",
+        "@id": "https://www.ourastrojourney.co.uk/#person",
+        "name": "Matt Brambley",
+        "url": "https://www.ourastrojourney.co.uk/"
+      },
+      {
+        "@type": "Blog",
+        "@id": "https://www.ourastrojourney.co.uk/#blog",
+        "name": "Our Astro Journey",
+        "description": "Beginner astrophotography content covering moon photography, nebula and galaxy imaging, weather planning, dark sky locations, and image processing practice.",
+        "url": "https://www.ourastrojourney.co.uk/",
+        "author": {
+          "@id": "https://www.ourastrojourney.co.uk/#person"
+        },
+        "inLanguage": "en-GB"
       }
     ]
   }
@@ -132,24 +146,32 @@
     <main id="page-main" role="main">
       <section id="section-cta">
       <div class="cta-container">
-        <img src="images/hero-img.png" alt="OurAstroJourney hero image" class="cta-img">
-        <h1 id="cta-heading">Our Astro Journey</h1>
-        <h2 id="cta-subheading">Follow Our Astro Journey as we learn and explore</h2>
+        <img src="images/hero-img.png" alt="Night sky astrophotography scene from Our Astro Journey" class="cta-img">
+        <h1 id="cta-heading">Beginner Astrophotography in the UK</h1>
+        <h2 id="cta-subheading">Follow our astro journey as we learn moon photography, deep-sky imaging, weather planning, and dark sky exploration.</h2>
       </div>
     </section>
 
     <section id="section-about">
       <div class="content-wrapper">
-        <h2 class="section-heading">About Us</h2>
-        <h3 class="section-subheading">This is our story</h3>
+        <h2 class="section-heading">What We Cover in Astrophotography</h2>
+        <p>We are building a beginner-friendly astrophotography resource around moon photography, deep-sky imaging, image processing practice, weather planning, and dark sky location scouting.</p>
+        <ul class="seo-highlights">
+          <li>Moon photography and lunar imaging tips</li>
+          <li>Beginner-friendly deep-sky imaging practice</li>
+          <li>Weather forecasting for observing sessions</li>
+          <li>Finding nearby dark sky sites and light-pollution awareness</li>
+        </ul>
+        <h2 class="section-heading">About Our Astrophotography Journey</h2>
+        <h3 class="section-subheading">From first moon shots to deep-sky practice</h3>
         <article>
-          <p>My name is Matt and my Daughters name is Lacey and this will be our story.</p>
+          <p>My name is Matt and my daughter’s name is Lacey, and this is the story of our journey into beginner astrophotography.</p>
           <hr>
-          <p>Neither of us have any background in Astrophotography but I do have an ever growing interest and Lacey is also studying photography at school.</p>
+          <p>Neither of us had a background in astrophotography to begin with, but I have developed a growing fascination with the night sky and Lacey is already studying photography at school.</p>
           <hr>
-          <p>We will be starting out using my mobile phone for the photography to start with to help keep costs as low as possible and we will be working in my back garden. I live in a Bortle 7 area so light pollution is an issue but with a bit of practice in post processing this should hopefully not ruin the images we get.</p>
+          <p>We are learning by starting with a mobile phone, keeping costs low, and practicing from a light-polluted back garden while exploring moon photography, nebula imaging, galaxy photography, and image processing techniques.</p>
           <hr>
-          <p>My plan is to get bigger and better equipment as and when funds are available to do so. So content will improve overtime.</p>
+          <p>We also share weather forecasts, dark sky site suggestions, and hands-on learning as we improve our skills over time.</p>
         </article>
       </div>
     </section>
@@ -444,8 +466,8 @@
           <p class="footer-heading">Connect With Us</p>
           <div class="social-links">
             <a href="https://x.com/ourastrojourney" target="_blank" rel="noopener noreferrer" aria-label="X Twitter"><i class="fa-brands fa-x-twitter"></i></a>
-            <a href="https://www.instagram.com/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://www.threads.net/@our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Threads"><i class="fa-brands fa-threads"></i></a>
+            <a href="https://www.instagram.com/ourastrojourney" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.threads.net/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Threads"><i class="fa-brands fa-threads"></i></a>
           </div>
         </div>
         <div class="copyright-container">

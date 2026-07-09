@@ -834,7 +834,6 @@ function setBodyScrollLock(lock) {
     scrollPosition = window.scrollY || window.pageYOffset || 0;
     document.documentElement.classList.add('nav-open');
     document.body.classList.add('nav-open');
-    // preserve scrollbar space to avoid layout shift
     const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
     if (scrollbarWidth > 0) {
       document.documentElement.style.paddingRight = `${scrollbarWidth}px`;
@@ -849,7 +848,6 @@ function setBodyScrollLock(lock) {
     document.body.style.overflow = '';
     document.documentElement.style.paddingRight = '';
     document.body.style.paddingRight = '';
-    window.scrollTo(0, scrollPosition);
   }
 }
 
@@ -859,16 +857,12 @@ function initializeMobileMenu() {
   const nav = document.getElementById('mobile-navigation-main');
   const backdrop = document.getElementById('mobile-nav-backdrop');
 
-  console.log('🔧 initializeMobileMenu called');
-  console.log('  button:', mobileMenuButton ? '✓' : '✗');
-  console.log('  close:', mobileMenuClose ? '✓' : '✗');
-  console.log('  nav:', nav ? '✓' : '✗');
-  console.log('  backdrop:', backdrop ? '✓' : '✗');
-
   if (!mobileMenuButton || !mobileMenuClose || !nav || !backdrop) {
     console.error('❌ Mobile menu elements not found');
     return;
   }
+
+  const isSmallScreen = () => window.matchMedia('(max-width: 600px)').matches;
 
   const closeMenu = () => {
     nav.classList.remove('open');
@@ -877,27 +871,56 @@ function initializeMobileMenu() {
     mobileMenuButton.setAttribute('aria-expanded', 'false');
     nav.setAttribute('aria-hidden', 'true');
     backdrop.setAttribute('aria-hidden', 'true');
-    console.log('🔒 Menu closed');
   };
 
   const openMenu = () => {
+    if (!isSmallScreen()) return;
     nav.classList.add('open');
     backdrop.classList.add('active');
     setBodyScrollLock(true);
     mobileMenuButton.setAttribute('aria-expanded', 'true');
     nav.setAttribute('aria-hidden', 'false');
     backdrop.setAttribute('aria-hidden', 'false');
-    console.log('📂 Menu opened');
   };
 
-  mobileMenuButton.addEventListener('click', openMenu);
-  mobileMenuClose.addEventListener('click', closeMenu);
-  backdrop.addEventListener('click', closeMenu);
+  mobileMenuButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (nav.classList.contains('open')) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  });
 
-  document.addEventListener('click', (e) => {
-    if (!nav.classList.contains('open')) return;
-    if (nav.contains(e.target) || mobileMenuButton.contains(e.target)) return;
+  mobileMenuClose.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
     closeMenu();
+  });
+
+  backdrop.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    closeMenu();
+  });
+
+  document.addEventListener('click', (event) => {
+    if (!nav.classList.contains('open')) return;
+    if (nav.contains(event.target) || mobileMenuButton.contains(event.target)) return;
+    closeMenu();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && nav.classList.contains('open')) {
+      closeMenu();
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if (!isSmallScreen()) {
+      closeMenu();
+    }
   });
 
   const bindAnchorNavigation = (container) => {
@@ -906,46 +929,23 @@ function initializeMobileMenu() {
         const href = link.getAttribute('href');
         if (!href || !href.startsWith('#')) return;
 
-        // give immediate visual feedback for touch
         link.classList.add('nav-link-active');
         setTimeout(() => link.classList.remove('nav-link-active'), 300);
 
-        // prevent default native jump so we can close the drawer first
-        event.preventDefault();
         closeMenu();
 
-        // Wait for the nav close transition to finish, then navigate.
-        let navigated = false;
-        const performNavigation = () => {
-          if (navigated) return;
-          navigated = true;
-          const target = document.querySelector(href);
-          if (target) {
-            scrollToSection(href);
-            target.setAttribute('tabindex', '-1');
-            target.focus({ preventScroll: true });
-          } else {
-            try { location.hash = href; } catch (e) {}
-          }
-        };
-
-        const onTransitionEnd = (e) => {
-          if (e.propertyName && e.propertyName.indexOf('transform') === -1) return;
-          // ensure nav is closed
-          if (nav && !nav.classList.contains('open')) {
-            performNavigation();
-            nav.removeEventListener('transitionend', onTransitionEnd);
-            clearTimeout(fallbackTimeout);
-          }
-        };
-
-        // Fallback in case transitionend doesn't fire on some browsers/devices
-        const fallbackTimeout = setTimeout(() => {
-          performNavigation();
-          if (nav) nav.removeEventListener('transitionend', onTransitionEnd);
-        }, 700);
-
-        if (nav) nav.addEventListener('transitionend', onTransitionEnd);
+        if (window.innerWidth <= 600) {
+          requestAnimationFrame(() => {
+            const target = document.querySelector(href);
+            if (target) {
+              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              target.setAttribute('tabindex', '-1');
+              target.focus({ preventScroll: true });
+            } else {
+              try { location.hash = href; } catch (e) {}
+            }
+          });
+        }
       });
     });
   };
