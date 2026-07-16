@@ -699,6 +699,37 @@ section {
   margin-top: 2rem;
 }
 
+.reviews-disclaimer {
+  margin-bottom: 2rem;
+}
+
+.reviews-disclaimer p {
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.9;
+  margin-bottom: 0;
+}
+
+.review-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.review-card-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.reviews-empty-state {
+  grid-column: 1 / -1;
+}
+
 .session-container p {
   margin-bottom: 1rem;
   text-align: center;
@@ -1593,24 +1624,43 @@ section {
 .form-group label {
   margin-bottom: 0.5rem;
   font-weight: bold;
-  color: var(--color-light);
+  color: rgba(255, 255, 255, 0.96);
+  letter-spacing: 0.01em;
 }
 
 .form-group input,
 .form-group textarea {
   padding: 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 5px;
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--color-light);
+  background: rgba(255, 255, 255, 0.14);
+  color: white;
   font-size: 1rem;
+}
+
+.form-group textarea {
+  min-height: 10rem;
+  resize: vertical;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 2px rgba(100, 149, 237, 0.3);
+  box-shadow: 0 0 0 3px rgba(100, 149, 237, 0.38);
+}
+
+.form-group input:hover,
+.form-group textarea:hover {
+  border-color: rgba(255, 255, 255, 0.45);
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.form-group input:focus-visible,
+.form-group textarea:focus-visible,
+.submit-btn:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.9);
+  outline-offset: 2px;
 }
 
 .submit-btn {
@@ -1630,6 +1680,10 @@ section {
   background: linear-gradient(135deg, #4a88ff, #3269d8);
   transform: translateY(-2px);
   box-shadow: 0 22px 38px rgba(17, 45, 78, 0.22);
+}
+
+.submit-btn:focus-visible {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.28), 0 22px 38px rgba(17, 45, 78, 0.22);
 }
 
 /* Footer styling */
