@@ -829,11 +829,21 @@ section {
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.03);
-  color: var(--page-text);
+  color: rgba(255, 255, 255, 0.95);
+  caret-color: rgba(255, 255, 255, 0.95);
+}
+
+.location-search select {
+  min-width: 170px;
+  padding: 0.85rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .location-search input::placeholder {
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .weather-note {
@@ -846,6 +856,40 @@ section {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.clearoutside-result {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.clearoutside-result.hidden {
+  display: none;
+}
+
+.clearoutside-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.clearoutside-location {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.clearoutside-embed {
+  width: 100%;
+  min-height: 740px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  background: rgba(6, 10, 29, 0.95);
 }
 
 .weather-status {
@@ -933,6 +977,49 @@ section {
 .darksky-site span {
   color: rgba(255, 255, 255, 0.75);
   display: block;
+}
+
+.resources-page .resource-sections {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.resources-page .resource-card {
+  margin: 0;
+}
+
+.resources-page .resource-card:hover {
+  transform: none;
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 32px 70px rgba(0, 0, 0, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.resources-page .resource-card p {
+  margin-bottom: 0.6rem;
+}
+
+.resources-page .resource-list {
+  margin: 0.25rem 0 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.resources-page .resource-list li {
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.resources-page .resource-list a {
+  color: var(--section-text);
+  text-decoration: underline;
+}
+
+.resources-page .resource-list a:hover {
+  color: var(--section-text);
+  opacity: 0.9;
 }
 
 .darksky-empty {
@@ -1883,6 +1970,10 @@ footer {
     grid-template-columns: 1fr;
   }
 
+  .clearoutside-embed {
+    min-height: 680px;
+  }
+
   .weather-action-row {
     flex-direction: column;
     align-items: stretch;
@@ -1897,8 +1988,22 @@ footer {
     width: 100%;
   }
 
+  .location-search select {
+    width: 100%;
+  }
+
   .darksky-results {
     padding: 1rem;
+  }
+
+  .resources-page .resource-sections {
+    gap: 1.15rem;
+    margin-top: 1rem;
+  }
+
+  .resources-page .resource-card {
+    padding: 1.35rem;
+    border-radius: 20px;
   }
 
   .calendar-grid-container {
@@ -2138,8 +2243,16 @@ footer {
     grid-template-columns: 1fr;
   }
 
+  .clearoutside-embed {
+    min-height: 620px;
+  }
+
   .darksky-panel {
     padding: 0.75rem 0;
+  }
+
+  .resources-page .resource-sections {
+    gap: 1rem;
   }
 
   /* Ensure nav links are above decorative pseudo elements and accept pointer events */

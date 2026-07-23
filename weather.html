@@ -34,6 +34,7 @@
         <a href="./news.html" class="nav-link">News</a>
         <a href="./reviews.html" class="nav-link">Reviews</a>
         <a href="./affiliate-links.html" class="nav-link">Affiliate Links</a>
+        <a href="./useful-resources.html" class="nav-link">Resources</a>
         <a href="./contact.html" class="nav-link">Contact</a>
       </nav>
       <nav id="mobile-navigation-main" class="mobile-navigation" aria-label="Mobile primary navigation" aria-hidden="true">
@@ -49,6 +50,7 @@
         <a href="./news.html" class="nav-link mobile-nav-link">News</a>
         <a href="./reviews.html" class="nav-link mobile-nav-link">Reviews</a>
         <a href="./affiliate-links.html" class="nav-link mobile-nav-link">Affiliate Links</a>
+        <a href="./useful-resources.html" class="nav-link mobile-nav-link">Resources</a>
         <a href="./contact.html" class="nav-link mobile-nav-link">Contact</a>
       </nav>
     </header>
@@ -65,32 +67,47 @@
         <div class="content-wrapper">
           <div class="weather-panel">
             <div class="weather-controls">
-              <p>Allow location access, or enter a town, city, or postcode to see local weather and nearby dark sky sites.</p>
+              <p>Search a location to view the Clear Outside forecast panel with weather and cloud cover details.</p>
               <div class="weather-action-row">
                 <button id="weather-location-btn" class="button button-secondary" type="button">Use My Location</button>
                 <div class="location-search">
+                  <label for="weather-country-select" class="visually-hidden">Select a country</label>
+                  <select id="weather-country-select" name="weather-country" autocomplete="country" aria-label="Select country for search">
+                    <option value="">All countries</option>
+                    <option value="GB" selected>United Kingdom</option>
+                    <option value="US">United States</option>
+                    <option value="CA">Canada</option>
+                    <option value="AU">Australia</option>
+                    <option value="IE">Ireland</option>
+                    <option value="NZ">New Zealand</option>
+                    <option value="DE">Germany</option>
+                    <option value="FR">France</option>
+                    <option value="ES">Spain</option>
+                    <option value="IT">Italy</option>
+                  </select>
                   <label for="weather-location-input" class="visually-hidden">Enter a place or postcode</label>
-                  <input id="weather-location-input" type="search" placeholder="Enter a place or postcode" aria-label="Enter a place or postcode">
+                  <input id="weather-location-input" name="weather-location" type="search" autocomplete="on" placeholder="Enter a place, postcode, or zip code" aria-label="Enter a place, postcode, or zip code">
                   <button id="weather-search-btn" class="button" type="button">Search</button>
                 </div>
               </div>
-              <p class="weather-note">Weather data is provided by Open-Meteo and works without an API key.</p>
+              <p class="weather-note">Forecast data is provided by Clear Outside.</p>
             </div>
             <div class="weather-output" id="weather-output">
-              <div id="weather-status" class="weather-status" role="status" aria-live="polite">Enter a location or use device location to get started.</div>
-              <div id="weather-card" class="weather-card hidden" aria-live="polite" aria-hidden="true">
-                <div class="weather-summary">
-                  <div>
-                    <p class="weather-temp" id="weather-temp">0°C</p>
-                    <p class="weather-desc" id="weather-desc">Clear sky</p>
-                  </div>
-                  <div class="weather-meta">
-                    <div><strong>Location</strong> <span id="weather-location-name">Unknown</span></div>
-                    <div><strong>Feels like</strong> <span id="weather-feels">—</span></div>
-                    <div><strong>Wind</strong> <span id="weather-wind">—</span></div>
-                    <div><strong>Humidity</strong> <span id="weather-humidity">—</span></div>
-                  </div>
+              <div id="weather-status" class="weather-status" role="status" aria-live="polite">Enter a location or use device location to load the forecast.</div>
+              <a id="weather-fallback-link" class="button button-secondary" href="https://clearoutside.com" target="_blank" rel="noopener noreferrer" hidden>Search directly on Clear Outside</a>
+              <div id="clearoutside-result" class="clearoutside-result hidden" aria-live="polite" aria-hidden="true">
+                <div class="clearoutside-toolbar">
+                  <p class="clearoutside-location">Showing forecast for <strong id="weather-location-name">Unknown</strong></p>
+                  <a id="clearoutside-open-link" class="button" href="https://clearoutside.com" target="_blank" rel="noopener noreferrer">Open Full Clear Outside</a>
                 </div>
+                <iframe
+                  id="clearoutside-embed"
+                  class="clearoutside-embed"
+                  title="Clear Outside weather and cloud cover forecast"
+                  loading="lazy"
+                  src="about:blank"
+                  referrerpolicy="strict-origin-when-cross-origin"
+                ></iframe>
               </div>
             </div>
           </div>

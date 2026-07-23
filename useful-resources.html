@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Useful Resources | Our Astro Journey</title>
+    <meta
+      name="description"
+      content="Useful astrophotography resources including trusted YouTube channels, free datasets for image processing practice, and free software tools."
+    />
+    <link rel="canonical" href="https://www.ourastrojourney.co.uk/useful-resources.html" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="./styles/reset.css" />
+    <link rel="stylesheet" href="./styles/styles.css" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NC85BT9H"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-J4NC85BT9H');
+    </script>
+  </head>
+  <body class="resources-page">
+    <a class="skip-link" href="#page-main">Skip to main content</a>
+    <header id="header-main">
+      <div class="logo-container"><a href="./index.html" class="nav-link logo-link" id="logo"><img src="images/logo.png" alt="OurAstroJourney logo" class="logo-img"></a></div>
+      <button id="mobile-menu-button" class="mobile-menu-toggle" aria-label="Open navigation menu" aria-controls="mobile-navigation-main" aria-expanded="false">
+        <i class="fas fa-bars"></i>
+      </button>
+      <nav id="navigation-main" aria-label="Primary navigation">
+        <a href="./about.html" class="nav-link">About</a>
+        <a href="./weather.html" class="nav-link">Weather</a>
+        <a href="./dark-skies.html" class="nav-link">Dark Skies</a>
+        <a href="./gallery.html" class="nav-link">Gallery</a>
+        <a href="./moon-gallery.html" class="nav-link">Moon</a>
+        <a href="./hubble-gallery.html" class="nav-link">Hubble</a>
+        <a href="./news.html" class="nav-link">News</a>
+        <a href="./reviews.html" class="nav-link">Reviews</a>
+        <a href="./affiliate-links.html" class="nav-link">Affiliate Links</a>
+        <a href="./useful-resources.html" class="nav-link">Resources</a>
+        <a href="./contact.html" class="nav-link">Contact</a>
+      </nav>
+      <nav id="mobile-navigation-main" class="mobile-navigation" aria-label="Mobile primary navigation" aria-hidden="true">
+        <button id="mobile-menu-close" class="mobile-menu-close" aria-label="Close navigation menu">
+          <i class="fas fa-times"></i>
+        </button>
+        <a href="./about.html" class="nav-link mobile-nav-link">About</a>
+        <a href="./weather.html" class="nav-link mobile-nav-link">Weather</a>
+        <a href="./dark-skies.html" class="nav-link mobile-nav-link">Dark Skies</a>
+        <a href="./gallery.html" class="nav-link mobile-nav-link">Gallery</a>
+        <a href="./moon-gallery.html" class="nav-link mobile-nav-link">Moon</a>
+        <a href="./hubble-gallery.html" class="nav-link mobile-nav-link">Hubble</a>
+        <a href="./news.html" class="nav-link mobile-nav-link">News</a>
+        <a href="./reviews.html" class="nav-link mobile-nav-link">Reviews</a>
+        <a href="./affiliate-links.html" class="nav-link mobile-nav-link">Affiliate Links</a>
+        <a href="./useful-resources.html" class="nav-link mobile-nav-link">Resources</a>
+        <a href="./contact.html" class="nav-link mobile-nav-link">Contact</a>
+      </nav>
+    </header>
+    <div id="mobile-nav-backdrop" class="mobile-nav-backdrop" aria-hidden="true"></div>
+
+    <main id="page-main" role="main">
+      <section class="page-hero">
+        <div class="content-wrapper">
+          <h1 class="section-heading">Useful Resources</h1>
+          <p class="section-intro">Helpful learning links, free data sources, and free software for astrophotography practice.</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="content-wrapper resource-sections">
+          <article class="feature-card resource-card">
+            <h3>YouTube channels worth following</h3>
+            <p>These creators are beginner-friendly and cover imaging, equipment choices, and processing workflows.</p>
+            <ul class="resource-list">
+              <li><a href="https://www.youtube.com/@AstroBiscuit" target="_blank" rel="noopener noreferrer">AstroBiscuit</a> - Practical, entertaining astrophotography and astronomy content with clear explanations.</li>
+              <li><a href="https://www.youtube.com/@AstroBackyard" target="_blank" rel="noopener noreferrer">AstroBackyard</a> - Beginner-to-intermediate imaging tutorials, gear setups, and processing walkthroughs.</li>
+              <li><a href="https://www.youtube.com/@NebulaPhotos" target="_blank" rel="noopener noreferrer">Nebula Photos</a> - Step-by-step guides with strong focus on real beginner workflows.</li>
+              <li><a href="https://www.youtube.com/@CuivTheLazyGeek" target="_blank" rel="noopener noreferrer">Cuiv, The Lazy Geek</a> - Deep-dive videos on gear, acquisition, and advanced processing concepts.</li>
+            </ul>
+          </article>
+
+          <article class="feature-card resource-card">
+            <h3>Free data for processing practice</h3>
+            <p>These archives provide free astronomy datasets, often in FITS format, so you can practice stacking and processing.</p>
+            <ul class="resource-list">
+              <li><a href="https://mast.stsci.edu/" target="_blank" rel="noopener noreferrer">MAST (Mikulski Archive for Space Telescopes)</a> - Free public data from Hubble, JWST, TESS, and more.</li>
+              <li><a href="https://sky.esa.int/" target="_blank" rel="noopener noreferrer">ESA Sky</a> - Explore and download survey and mission data from ESA archives.</li>
+              <li><a href="https://archive.eso.org/" target="_blank" rel="noopener noreferrer">ESO Science Archive</a> - Public raw and processed data from ESO observatories.</li>
+              <li><a href="https://astroarchive.noirlab.edu/" target="_blank" rel="noopener noreferrer">NOIRLab Astro Data Archive</a> - Open access astronomical observations and survey products.</li>
+              <li><a href="https://www.sdss.org/dr18/" target="_blank" rel="noopener noreferrer">Sloan Digital Sky Survey (SDSS)</a> - Free calibrated imaging and spectroscopy datasets.</li>
+            </ul>
+          </article>
+
+          <article class="feature-card resource-card">
+            <h3>Free software tools</h3>
+            <p>Solid free tools for calibration, stacking, image cleanup, and editing.</p>
+            <ul class="resource-list">
+              <li><a href="https://siril.org/" target="_blank" rel="noopener noreferrer">Siril</a> - Free astrophotography pre-processing and processing software for calibration, stacking, and enhancement.</li>
+              <li><a href="https://www.gimp.org/" target="_blank" rel="noopener noreferrer">GIMP</a> - Free image editor for finishing touches, layer work, and final presentation edits.</li>
+              <li><a href="https://www.deepskystacker.free.fr/english/index.html" target="_blank" rel="noopener noreferrer">DeepSkyStacker</a> - Free stacking software (Windows) for combining light, dark, flat, and bias frames.</li>
+              <li><a href="https://www.graxpert.com/" target="_blank" rel="noopener noreferrer">GraXpert</a> - Free gradient removal tool to reduce light pollution and uneven background glow.</li>
+              <li><a href="https://stellarium.org/" target="_blank" rel="noopener noreferrer">Stellarium</a> - Free planetarium software for planning sessions and framing targets.</li>
+            </ul>
+          </article>
+
+          <article class="feature-card resource-card">
+            <h3>Note</h3>
+            <p>Some archive portals are broad scientific repositories, so finding beginner-friendly targets can take a little time at first. This page will keep improving as we test more resources.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="social-container">
+          <p class="footer-heading">Connect With Us</p>
+          <div class="social-links">
+            <a href="https://x.com/ourastrojourney" target="_blank" rel="noopener noreferrer" aria-label="X Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="https://www.instagram.com/ourastrojourney" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.threads.net/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Threads"><i class="fa-brands fa-threads"></i></a>
+          </div>
+        </div>
+        <div class="copyright-container">
+          <p>&copy; 2026 Matt Brambley | OurAstroJourney</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="./scripts/main.js"></script>
+  </body>
+</html>

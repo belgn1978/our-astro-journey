@@ -34,6 +34,7 @@
         <a href="./news.html" class="nav-link">News</a>
         <a href="./reviews.html" class="nav-link">Reviews</a>
         <a href="./affiliate-links.html" class="nav-link">Affiliate Links</a>
+        <a href="./useful-resources.html" class="nav-link">Resources</a>
         <a href="./contact.html" class="nav-link">Contact</a>
       </nav>
       <nav id="mobile-navigation-main" class="mobile-navigation" aria-label="Mobile primary navigation" aria-hidden="true">
@@ -49,6 +50,7 @@
         <a href="./news.html" class="nav-link mobile-nav-link">News</a>
         <a href="./reviews.html" class="nav-link mobile-nav-link">Reviews</a>
         <a href="./affiliate-links.html" class="nav-link mobile-nav-link">Affiliate Links</a>
+        <a href="./useful-resources.html" class="nav-link mobile-nav-link">Resources</a>
         <a href="./contact.html" class="nav-link mobile-nav-link">Contact</a>
       </nav>
     </header>
@@ -66,15 +68,27 @@
           <div class="darksky-panel">
             <div class="darksky-controls">
               <div class="location-search darksky-search">
+                <label for="darksky-country-select" class="visually-hidden">Select a country</label>
+                <select id="darksky-country-select" name="darksky-country" autocomplete="country" aria-label="Select country for search">
+                  <option value="">All countries</option>
+                  <option value="GB" selected>United Kingdom</option>
+                  <option value="US">United States</option>
+                  <option value="CA">Canada</option>
+                  <option value="AU">Australia</option>
+                  <option value="IE">Ireland</option>
+                  <option value="NZ">New Zealand</option>
+                  <option value="DE">Germany</option>
+                  <option value="FR">France</option>
+                  <option value="ES">Spain</option>
+                  <option value="IT">Italy</option>
+                </select>
                 <label for="darksky-location-input" class="visually-hidden">Enter a place or postcode</label>
-                <input id="darksky-location-input" type="search" placeholder="Enter a place or postcode" aria-label="Enter a place or postcode">
+                <input id="darksky-location-input" name="darksky-location" type="search" autocomplete="on" placeholder="Enter a place, postcode, or zip code" aria-label="Enter a place, postcode, or zip code">
                 <button id="darksky-search-btn" class="button" type="button">Search</button>
               </div>
               <p id="darksky-status" class="darksky-status">Search for a location to see nearby dark sky sites.</p>
             </div>
-            <div id="darksky-list" class="darksky-list">
-              <p class="darksky-empty">Search for a location to see nearby dark sky sites.</p>
-            </div>
+            <div id="darksky-list" class="darksky-list"></div>
           </div>
         </div>
       </section>

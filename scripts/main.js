@@ -1195,50 +1195,6 @@ function calculateDistanceKm(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
-function getWeatherDescription(weatherCode) {
-  const codes = {
-    0: 'Clear sky',
-    1: 'Mainly clear',
-    2: 'Partly cloudy',
-    3: 'Overcast',
-    45: 'Fog',
-    48: 'Depositing rime fog',
-    51: 'Light drizzle',
-    53: 'Moderate drizzle',
-    55: 'Dense drizzle',
-    56: 'Freezing drizzle',
-    57: 'Freezing drizzle',
-    61: 'Light rain',
-    63: 'Moderate rain',
-    65: 'Heavy rain',
-    66: 'Freezing rain',
-    67: 'Freezing rain',
-    71: 'Light snow',
-    73: 'Moderate snow',
-    75: 'Heavy snow',
-    77: 'Snow grains',
-    80: 'Rain showers',
-    81: 'Moderate showers',
-    82: 'Violent showers',
-    85: 'Snow showers',
-    86: 'Heavy snow showers',
-    95: 'Thunderstorm',
-    96: 'Thunderstorm with hail',
-    99: 'Thunderstorm with heavy hail'
-  };
-  return codes[weatherCode] || 'Unknown conditions';
-}
-
-function calculateFeelsLike(temperature, windspeed) {
-  if (typeof temperature !== 'number' || typeof windspeed !== 'number') return '—';
-  if (temperature >= 10 || windspeed < 4.8) {
-    return `${Math.round(temperature)}°C`;
-  }
-
-  const windChill = 13.12 + 0.6215 * temperature - 11.37 * Math.pow(windspeed, 0.16) + 0.3965 * temperature * Math.pow(windspeed, 0.16);
-  return `${Math.round(windChill)}°C`;
-}
-
 function formatLocationName(place) {
   if (!place) return 'Local area';
   if (place.name && place.country) {
@@ -1261,11 +1217,132 @@ function setDarkSkyStatus(message, isError = false) {
   statusEl.style.color = isError ? '#ffb3b3' : 'rgba(255, 255, 255, 0.85)';
 }
 
-function toggleWeatherCard(visible) {
-  const card = document.getElementById('weather-card');
+const COUNTRY_LABELS = {
+  GB: 'United Kingdom',
+  US: 'United States',
+  CA: 'Canada',
+  AU: 'Australia',
+  IE: 'Ireland',
+  NZ: 'New Zealand',
+  DE: 'Germany',
+  FR: 'France',
+  ES: 'Spain',
+  IT: 'Italy'
+};
+
+const COUNTRY_PREFERENCE_STORAGE_KEY = 'oaj_selected_country';
+const WEATHER_LOCATION_STORAGE_KEY = 'oaj_weather_location_query';
+const DARKSKY_LOCATION_STORAGE_KEY = 'oaj_darksky_location_query';
+
+function getCountryLabel(countryCode) {
+  return COUNTRY_LABELS[countryCode] || '';
+}
+
+function initializeCountrySelectors() {
+  const weatherCountrySelect = document.getElementById('weather-country-select');
+  const darkSkyCountrySelect = document.getElementById('darksky-country-select');
+  const selectors = [weatherCountrySelect, darkSkyCountrySelect].filter(Boolean);
+  if (!selectors.length) return;
+
+  const hasOption = (selectEl, value) => Array.from(selectEl.options).some((option) => option.value === value);
+
+  const applyCountry = (value) => {
+    selectors.forEach((selectEl) => {
+      if (hasOption(selectEl, value)) {
+        selectEl.value = value;
+      }
+    });
+
+    try {
+      localStorage.setItem(COUNTRY_PREFERENCE_STORAGE_KEY, value);
+    } catch (error) {
+      console.warn('Unable to persist country preference.', error);
+    }
+  };
+
+  let savedCountry = '';
+  try {
+    savedCountry = localStorage.getItem(COUNTRY_PREFERENCE_STORAGE_KEY) || '';
+  } catch (error) {
+    savedCountry = '';
+  }
+
+  if (savedCountry) {
+    applyCountry(savedCountry);
+  }
+
+  selectors.forEach((selectEl) => {
+    selectEl.addEventListener('change', () => {
+      applyCountry(selectEl.value);
+    });
+  });
+}
+
+function initializeLocationInputMemory(inputId, storageKey) {
+  const inputEl = document.getElementById(inputId);
+  if (!inputEl) return;
+
+  try {
+    const savedValue = localStorage.getItem(storageKey);
+    if (savedValue) {
+      inputEl.value = savedValue;
+    }
+  } catch (error) {
+    // Ignore storage read failures and continue normally.
+  }
+
+  inputEl.addEventListener('input', () => {
+    try {
+      const value = inputEl.value.trim();
+      if (value) {
+        localStorage.setItem(storageKey, value);
+      } else {
+        localStorage.removeItem(storageKey);
+      }
+    } catch (error) {
+      // Ignore storage write failures and continue normally.
+    }
+  });
+}
+
+function toggleClearOutsideResult(visible) {
+  const card = document.getElementById('clearoutside-result');
   if (!card) return;
   card.classList.toggle('hidden', !visible);
   card.setAttribute('aria-hidden', String(!visible));
+}
+
+function buildClearOutsideUrl(latitude, longitude) {
+  const lat = Number(latitude).toFixed(4);
+  const lon = Number(longitude).toFixed(4);
+  return `https://clearoutside.com/forecast/${lat}/${lon}`;
+}
+
+function renderClearOutsideForecast(latitude, longitude, label) {
+  const iframe = document.getElementById('clearoutside-embed');
+  const openLink = document.getElementById('clearoutside-open-link');
+  const locationName = document.getElementById('weather-location-name');
+  if (!iframe || !openLink || !locationName) return;
+
+  const url = buildClearOutsideUrl(latitude, longitude);
+  const displayName = label || `Lat ${Number(latitude).toFixed(2)}, Lon ${Number(longitude).toFixed(2)}`;
+
+  iframe.src = url;
+  openLink.href = url;
+  locationName.textContent = displayName;
+  setWeatherStatus(`Showing Clear Outside forecast for ${displayName}`);
+  toggleClearOutsideResult(true);
+}
+
+function setWeatherFallbackLink(query = '', visible = false) {
+  const fallbackLink = document.getElementById('weather-fallback-link');
+  if (!fallbackLink) return;
+
+  fallbackLink.href = 'https://clearoutside.com';
+  fallbackLink.textContent = query
+    ? `Could not auto-locate "${query}". Search directly on Clear Outside`
+    : 'Search directly on Clear Outside';
+  fallbackLink.hidden = !visible;
 }
 
 function buildDarkSkyList(latitude, longitude) {
@@ -1299,54 +1376,156 @@ function buildDarkSkyList(latitude, longitude) {
   });
 }
 
-async function fetchWeatherData(latitude, longitude, label) {
-  setWeatherStatus('Getting weather data…');
-  toggleWeatherCard(false);
+const UK_POSTCODE_PATTERN = /^([A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2})$/i;
 
-  try {
-    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&hourly=relativehumidity_2m&timezone=auto`;
-    const response = await fetch(weatherUrl);
-    if (!response.ok) {
-      throw new Error('Weather service unavailable');
-    }
-    const data = await response.json();
-    const current = data.current_weather;
-    const humidityIndex = data.hourly?.time?.indexOf(current?.time);
-    const humidity = humidityIndex >= 0 ? data.hourly.relativehumidity_2m[humidityIndex] : null;
-
-    if (!current) {
-      throw new Error('Current weather unavailable');
-    }
-
-    const locationName = label || `Lat ${latitude.toFixed(2)}, Lon ${longitude.toFixed(2)}`;
-    document.getElementById('weather-temp').textContent = `${Math.round(current.temperature)}°C`;
-    document.getElementById('weather-desc').textContent = getWeatherDescription(current.weathercode);
-    document.getElementById('weather-location-name').textContent = locationName;
-    document.getElementById('weather-feels').textContent = calculateFeelsLike(current.temperature, current.windspeed);
-    document.getElementById('weather-wind').textContent = `${Math.round(current.windspeed)} km/h`;
-    document.getElementById('weather-humidity').textContent = humidity !== null ? `${Math.round(humidity)}%` : '—';
-    setWeatherStatus(`Weather for ${locationName}`);
-    toggleWeatherCard(true);
-    buildDarkSkyList(latitude, longitude);
-  } catch (error) {
-    setWeatherStatus('Unable to load weather data. Try again later.', true);
-    toggleWeatherCard(false);
-    const list = document.getElementById('darksky-list');
-    if (list) {
-      list.innerHTML = '<p class="darksky-empty">Nearby dark sky sites are unavailable right now.</p>';
-    }
-    console.error(error);
-  }
+function looksLikeUkPostcode(query, countryCode = '') {
+  if (countryCode && countryCode !== 'GB') return false;
+  return UK_POSTCODE_PATTERN.test(String(query).trim());
 }
 
-async function geocodePlace(query) {
-  const geocodeUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=5&language=en&format=json`;
+async function geocodeUkPostcode(query) {
+  const normalized = String(query).trim().toUpperCase();
+  if (!normalized) return null;
+
+  // First try an exact postcode lookup.
+  const exactUrl = `https://api.postcodes.io/postcodes/${encodeURIComponent(normalized)}`;
+  const exactResponse = await fetch(exactUrl);
+  if (exactResponse.ok) {
+    const exactData = await exactResponse.json();
+    if (exactData.status === 200 && exactData.result) {
+      return {
+        name: exactData.result.postcode || normalized,
+        admin1: exactData.result.region || exactData.result.admin_district || 'United Kingdom',
+        country: 'United Kingdom',
+        latitude: exactData.result.latitude,
+        longitude: exactData.result.longitude
+      };
+    }
+  }
+
+  // Then try search in case the input is partial or formatted differently.
+  const searchUrl = `https://api.postcodes.io/postcodes?q=${encodeURIComponent(normalized)}`;
+  const searchResponse = await fetch(searchUrl);
+  if (!searchResponse.ok) {
+    return null;
+  }
+
+  const searchData = await searchResponse.json();
+  const match = Array.isArray(searchData.result) && searchData.result.length ? searchData.result[0] : null;
+  if (!match) return null;
+
+  return {
+    name: match.postcode || normalized,
+    admin1: match.region || match.admin_district || 'United Kingdom',
+    country: 'United Kingdom',
+    latitude: match.latitude,
+    longitude: match.longitude
+  };
+}
+
+async function geocodePostalByCountry(query, countryCode) {
+  if (!countryCode) return null;
+
+  const sanitizedPostal = String(query).trim();
+  if (!sanitizedPostal) return null;
+
+  const zipUrl = `https://api.zippopotam.us/${encodeURIComponent(countryCode)}/${encodeURIComponent(sanitizedPostal)}`;
+  const response = await fetch(zipUrl);
+  if (!response.ok) return null;
+
+  const data = await response.json();
+  const place = Array.isArray(data.places) && data.places.length ? data.places[0] : null;
+  if (!place) return null;
+
+  return {
+    name: place['place name'] || data['post code'] || sanitizedPostal,
+    admin1: place.state || place['state abbreviation'] || getCountryLabel(countryCode),
+    country: data.country || getCountryLabel(countryCode),
+    latitude: Number(place.latitude),
+    longitude: Number(place.longitude)
+  };
+}
+
+async function geocodeOpenMeteo(query, countryCode = '') {
+  const params = new URLSearchParams({
+    name: query,
+    count: '5',
+    language: 'en',
+    format: 'json'
+  });
+
+  if (countryCode) {
+    params.set('countryCode', countryCode);
+  }
+
+  const geocodeUrl = `https://geocoding-api.open-meteo.com/v1/search?${params.toString()}`;
   const response = await fetch(geocodeUrl);
   if (!response.ok) {
     throw new Error('Geocoding failed');
   }
   const data = await response.json();
   return data.results && data.results.length ? data.results[0] : null;
+}
+
+async function geocodeNominatim(query, countryCode = '') {
+  const params = new URLSearchParams({
+    format: 'jsonv2',
+    limit: '1',
+    q: query
+  });
+
+  if (countryCode) {
+    params.set('countrycodes', countryCode.toLowerCase());
+  }
+
+  const nominatimUrl = `https://nominatim.openstreetmap.org/search?${params.toString()}`;
+  const response = await fetch(nominatimUrl);
+  if (!response.ok) {
+    return null;
+  }
+
+  const results = await response.json();
+  if (!Array.isArray(results) || !results.length) return null;
+
+  const match = results[0];
+  return {
+    name: match.display_name || query,
+    country: '',
+    latitude: Number(match.lat),
+    longitude: Number(match.lon)
+  };
+}
+
+async function geocodePlace(query) {
+  const normalizedQuery = String(query).trim();
+
+  return geocodePlaceByCountry(normalizedQuery, '');
+}
+
+async function geocodePlaceByCountry(query, countryCode = '') {
+  const normalizedQuery = String(query).trim();
+  const normalizedCountry = String(countryCode || '').toUpperCase();
+
+  // Prefer postcode-specific lookup for UK postcodes because generic geocoders can miss them.
+  if (looksLikeUkPostcode(normalizedQuery, normalizedCountry)) {
+    const postcodeMatch = await geocodeUkPostcode(normalizedQuery);
+    if (postcodeMatch) return postcodeMatch;
+  }
+
+  const postalMatch = await geocodePostalByCountry(normalizedQuery, normalizedCountry);
+  if (postalMatch) return postalMatch;
+
+  try {
+    const countryQuery = normalizedCountry && getCountryLabel(normalizedCountry)
+      ? `${normalizedQuery}, ${getCountryLabel(normalizedCountry)}`
+      : normalizedQuery;
+    const openMeteoMatch = await geocodeOpenMeteo(countryQuery, normalizedCountry);
+    if (openMeteoMatch) return openMeteoMatch;
+  } catch (error) {
+    console.warn('Open-Meteo geocoding failed, trying fallback service.', error);
+  }
+
+  return geocodeNominatim(normalizedQuery, normalizedCountry);
 }
 
 async function reverseGeocodeCoordinates(latitude, longitude) {
@@ -1361,41 +1540,60 @@ async function reverseGeocodeCoordinates(latitude, longitude) {
 
 async function handleWeatherSearch() {
   const input = document.getElementById('weather-location-input');
+  const countrySelect = document.getElementById('weather-country-select');
   if (!input) return;
   const query = input.value.trim();
+  const countryCode = countrySelect ? countrySelect.value : '';
   if (!query) {
     setWeatherStatus('Please enter a town, city, or postcode.', true);
     return;
   }
 
   setWeatherStatus('Looking up location…');
-  const place = await geocodePlace(query);
-  if (!place) {
-    setWeatherStatus('Location not found. Try a different town, city, or postcode.', true);
-    return;
-  }
+  toggleClearOutsideResult(false);
+  setWeatherFallbackLink('', false);
+  try {
+    const place = await geocodePlaceByCountry(query, countryCode);
+    if (!place) {
+      setWeatherStatus('Location not found. Try a different place, postcode, zip code, or country.', true);
+      setWeatherFallbackLink(query, true);
+      return;
+    }
 
-  await fetchWeatherData(place.latitude, place.longitude, formatLocationName(place));
+    renderClearOutsideForecast(place.latitude, place.longitude, formatLocationName(place));
+    setWeatherFallbackLink('', false);
+  } catch (error) {
+    console.error(error);
+    setWeatherStatus('Unable to look up that location right now. Please try again.', true);
+    setWeatherFallbackLink(query, true);
+  }
 }
 
 async function handleDarkSkySearch() {
   const input = document.getElementById('darksky-location-input');
+  const countrySelect = document.getElementById('darksky-country-select');
   if (!input) return;
   const query = input.value.trim();
+  const countryCode = countrySelect ? countrySelect.value : '';
   if (!query) {
     setDarkSkyStatus('Please enter a town, city, or postcode.', true);
     return;
   }
 
   setDarkSkyStatus('Looking up location…');
-  const place = await geocodePlace(query);
-  if (!place) {
-    setDarkSkyStatus('Location not found. Try a different town, city, or postcode.', true);
-    return;
-  }
+  try {
+    const place = await geocodePlaceByCountry(query, countryCode);
+    if (!place) {
+      setDarkSkyStatus('Location not found. Try a different place, postcode, zip code, or country.', true);
+      return;
+    }
 
-  await fetchWeatherData(place.latitude, place.longitude, formatLocationName(place));
-  setDarkSkyStatus(`Showing dark sky sites near ${formatLocationName(place)}`);
+    buildDarkSkyList(place.latitude, place.longitude);
+    setDarkSkyStatus(`Showing dark sky sites near ${formatLocationName(place)}`);
+  } catch (error) {
+    console.error(error);
+    setDarkSkyStatus('Unable to look up that location right now. Please try again.', true);
+  }
 }
 
 async function requestWeatherLocation() {
@@ -1405,18 +1603,23 @@ async function requestWeatherLocation() {
   }
 
   setWeatherStatus('Requesting your location…');
+  toggleClearOutsideResult(false);
+  setWeatherFallbackLink('', false);
   navigator.geolocation.getCurrentPosition(async (position) => {
     try {
       const geoPlace = await reverseGeocodeCoordinates(position.coords.latitude, position.coords.longitude);
       const label = formatLocationName(geoPlace);
-      await fetchWeatherData(position.coords.latitude, position.coords.longitude, label);
+      renderClearOutsideForecast(position.coords.latitude, position.coords.longitude, label);
+      setWeatherFallbackLink('', false);
     } catch (error) {
       setWeatherStatus('Unable to determine your location. Try the manual search.', true);
+      setWeatherFallbackLink('', true);
       console.error(error);
     }
   }, (error) => {
     console.error(error);
     setWeatherStatus('Location permission denied or unavailable. Use the manual search instead.', true);
+    setWeatherFallbackLink('', true);
   }, {
     enableHighAccuracy: false,
     timeout: 15000,
@@ -1430,6 +1633,10 @@ function initializeWeatherWidget() {
   const searchInput = document.getElementById('weather-location-input');
   const darkSkySearchBtn = document.getElementById('darksky-search-btn');
   const darkSkyInput = document.getElementById('darksky-location-input');
+
+  initializeCountrySelectors();
+  initializeLocationInputMemory('weather-location-input', WEATHER_LOCATION_STORAGE_KEY);
+  initializeLocationInputMemory('darksky-location-input', DARKSKY_LOCATION_STORAGE_KEY);
 
   if (searchBtn) {
     searchBtn.addEventListener('click', handleWeatherSearch);
