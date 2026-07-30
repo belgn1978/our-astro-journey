@@ -11,6 +11,16 @@ const topMargin = 64;
 const bottomMargin = 54;
 const contentWidth = pageWidth - marginLeft - marginRight;
 
+const palette = {
+  page: [0.98, 0.98, 0.97],
+  panel: [1.0, 1.0, 1.0],
+  heading: [0.10, 0.17, 0.30],
+  accent: [0.83, 0.54, 0.11],
+  rule: [0.74, 0.79, 0.87],
+  body: [0.10, 0.12, 0.16],
+  softPanel: [0.95, 0.96, 0.99]
+};
+
 const sections = [
   {
     title: 'The Upcoming Eclipse',
@@ -171,7 +181,12 @@ function wrapText(text, fontSize, maxWidth) {
 
 function createPage() {
   return {
-    commands: [],
+    commands: [
+      `${palette.page[0]} ${palette.page[1]} ${palette.page[2]} rg 0 0 ${pageWidth} ${pageHeight} re f`,
+      `${palette.panel[0]} ${palette.panel[1]} ${palette.panel[2]} rg 28 30 ${pageWidth - 56} ${pageHeight - 60} re f`,
+      `${palette.rule[0]} ${palette.rule[1]} ${palette.rule[2]} RG 1.2 w 56 ${pageHeight - 86} m ${pageWidth - 56} ${pageHeight - 86} l S`,
+      `${palette.body[0]} ${palette.body[1]} ${palette.body[2]} rg`
+    ],
     y: pageHeight - topMargin
   };
 }
@@ -192,6 +207,139 @@ function ensureSpace(height) {
 
 function addTextLine(text, x, y, fontKey, fontSize) {
   currentPage.commands.push(`BT /${fontKey} ${fontSize} Tf 1 0 0 1 ${x.toFixed(2)} ${y.toFixed(2)} Tm (${escapePdfText(text)}) Tj ET`);
+}
+
+function addWrappedTextAt(text, options = {}) {
+  const fontKey = options.fontKey || 'F1';
+  const fontSize = options.fontSize || 10;
+  const x = options.x || marginLeft;
+  const y = options.y || currentPage.y;
+  const maxWidth = options.maxWidth || contentWidth;
+  const lineHeight = options.lineHeight || Math.round(fontSize * 1.45);
+  const spacingAfter = options.spacingAfter || 0;
+  const lines = wrapText(text, fontSize, maxWidth);
+  let cursorY = y;
+
+  for (const line of lines) {
+    addTextLine(line, x, cursorY, fontKey, fontSize);
+    cursorY -= lineHeight;
+  }
+
+  return cursorY - spacingAfter;
+}
+
+function drawFilledRect(x, y, width, height, color) {
+  currentPage.commands.push(`${color[0]} ${color[1]} ${color[2]} rg ${x.toFixed(2)} ${y.toFixed(2)} ${width.toFixed(2)} ${height.toFixed(2)} re f`);
+}
+
+function drawStrokedRect(x, y, width, height, color, lineWidth = 1) {
+  currentPage.commands.push(`${color[0]} ${color[1]} ${color[2]} RG ${lineWidth.toFixed(2)} w ${x.toFixed(2)} ${y.toFixed(2)} ${width.toFixed(2)} ${height.toFixed(2)} re S`);
+}
+
+function drawLine(x1, y1, x2, y2, color, lineWidth = 1) {
+  currentPage.commands.push(`${color[0]} ${color[1]} ${color[2]} RG ${lineWidth.toFixed(2)} w ${x1.toFixed(2)} ${y1.toFixed(2)} m ${x2.toFixed(2)} ${y2.toFixed(2)} l S`);
+}
+
+function drawCircle(centerX, centerY, radius, options = {}) {
+  const k = 0.552284749831;
+  const c = radius * k;
+  const fillColor = options.fillColor;
+  const strokeColor = options.strokeColor;
+  const lineWidth = options.lineWidth || 1;
+  const op = fillColor && strokeColor ? 'B' : fillColor ? 'f' : 'S';
+  const path = `${(centerX + radius).toFixed(2)} ${centerY.toFixed(2)} m ${(centerX + radius).toFixed(2)} ${(centerY + c).toFixed(2)} ${(centerX + c).toFixed(2)} ${(centerY + radius).toFixed(2)} ${centerX.toFixed(2)} ${(centerY + radius).toFixed(2)} c ${(centerX - c).toFixed(2)} ${(centerY + radius).toFixed(2)} ${(centerX - radius).toFixed(2)} ${(centerY + c).toFixed(2)} ${(centerX - radius).toFixed(2)} ${centerY.toFixed(2)} c ${(centerX - radius).toFixed(2)} ${(centerY - c).toFixed(2)} ${(centerX - c).toFixed(2)} ${(centerY - radius).toFixed(2)} ${centerX.toFixed(2)} ${(centerY - radius).toFixed(2)} c ${(centerX + c).toFixed(2)} ${(centerY - radius).toFixed(2)} ${(centerX + radius).toFixed(2)} ${(centerY - c).toFixed(2)} ${(centerX + radius).toFixed(2)} ${centerY.toFixed(2)} c`;
+
+  if (fillColor) {
+    currentPage.commands.push(`${fillColor[0]} ${fillColor[1]} ${fillColor[2]} rg`);
+  }
+  if (strokeColor) {
+    currentPage.commands.push(`${strokeColor[0]} ${strokeColor[1]} ${strokeColor[2]} RG ${lineWidth.toFixed(2)} w`);
+  }
+  currentPage.commands.push(`${path} ${op}`);
+}
+
+function drawExperimentIllustration(type, x, y, width, height) {
+  const sun = [0.99, 0.78, 0.28];
+  const ink = [0.16, 0.21, 0.30];
+  const soft = [0.90, 0.93, 0.98];
+
+  drawFilledRect(x, y, width, height, [0.98, 0.99, 1.0]);
+  drawStrokedRect(x, y, width, height, [0.80, 0.84, 0.92], 0.8);
+
+  if (type === 'colander') {
+    drawCircle(x + 42, y + height - 38, 16, { fillColor: sun, strokeColor: [0.75, 0.56, 0.10], lineWidth: 1 });
+    drawFilledRect(x + 90, y + height - 62, 62, 26, soft);
+    drawStrokedRect(x + 90, y + height - 62, 62, 26, ink, 1);
+    for (let row = 0; row < 3; row += 1) {
+      for (let col = 0; col < 5; col += 1) {
+        drawCircle(x + 98 + col * 11, y + height - 56 + row * 7, 1.8, { fillColor: ink });
+      }
+    }
+    drawLine(x + 55, y + height - 42, x + 95, y + height - 50, [0.95, 0.67, 0.20], 1.2);
+    for (let i = 0; i < 6; i += 1) {
+      drawCircle(x + 30 + i * 20, y + 22, 5, { fillColor: [0.98, 0.92, 0.66], strokeColor: [0.80, 0.70, 0.40], lineWidth: 0.7 });
+      drawCircle(x + 33 + i * 20, y + 22, 5, { fillColor: [0.98, 0.99, 1.0] });
+    }
+  }
+
+  if (type === 'pinhole') {
+    drawCircle(x + 42, y + height - 36, 14, { fillColor: sun, strokeColor: [0.75, 0.56, 0.10], lineWidth: 1 });
+    drawFilledRect(x + 84, y + 26, 92, 70, [0.95, 0.82, 0.54]);
+    drawStrokedRect(x + 84, y + 26, 92, 70, ink, 1);
+    drawFilledRect(x + 84, y + 26, 34, 70, [0.92, 0.74, 0.44]);
+    drawFilledRect(x + 171, y + 54, 5, 12, [0.28, 0.33, 0.42]);
+    drawLine(x + 57, y + height - 38, x + 172, y + 60, [0.96, 0.70, 0.24], 1.2);
+    drawFilledRect(x + 90, y + 36, 24, 48, [0.99, 0.99, 0.99]);
+    drawCircle(x + 102, y + 58, 5, { fillColor: [0.98, 0.92, 0.66], strokeColor: [0.80, 0.70, 0.40], lineWidth: 0.7 });
+    drawCircle(x + 104.5, y + 58, 5, { fillColor: [0.99, 0.99, 0.99] });
+  }
+
+  if (type === 'leaf') {
+    drawCircle(x + 36, y + height - 34, 13, { fillColor: sun, strokeColor: [0.75, 0.56, 0.10], lineWidth: 1 });
+    drawFilledRect(x + 22, y + 20, 5, 35, [0.47, 0.30, 0.17]);
+    drawCircle(x + 24, y + 64, 14, { fillColor: [0.42, 0.63, 0.33], strokeColor: [0.30, 0.48, 0.23], lineWidth: 0.6 });
+    drawCircle(x + 36, y + 70, 13, { fillColor: [0.42, 0.63, 0.33], strokeColor: [0.30, 0.48, 0.23], lineWidth: 0.6 });
+    drawCircle(x + 48, y + 64, 14, { fillColor: [0.42, 0.63, 0.33], strokeColor: [0.30, 0.48, 0.23], lineWidth: 0.6 });
+    for (let i = 0; i < 7; i += 1) {
+      const cx = x + 85 + i * 16;
+      drawCircle(cx, y + 24 + (i % 2 === 0 ? 0 : 7), 5, { fillColor: [0.98, 0.92, 0.66], strokeColor: [0.80, 0.70, 0.40], lineWidth: 0.7 });
+      drawCircle(cx + 2.4, y + 24 + (i % 2 === 0 ? 0 : 7), 5, { fillColor: [0.98, 0.99, 1.0] });
+    }
+    drawLine(x + 48, y + 62, x + 104, y + 34, [0.96, 0.70, 0.24], 1.0);
+  }
+
+  if (type === 'log') {
+    drawCircle(x + 36, y + height - 34, 12, { fillColor: sun, strokeColor: [0.75, 0.56, 0.10], lineWidth: 1 });
+    drawFilledRect(x + 74, y + 24, 62, 70, [0.99, 0.99, 0.99]);
+    drawStrokedRect(x + 74, y + 24, 62, 70, ink, 1);
+    for (let row = 0; row < 5; row += 1) {
+      drawLine(x + 80, y + 82 - row * 12, x + 130, y + 82 - row * 12, [0.72, 0.78, 0.90], 0.8);
+    }
+    drawFilledRect(x + 147, y + 34, 10, 50, [0.89, 0.94, 1.0]);
+    drawStrokedRect(x + 147, y + 34, 10, 50, ink, 1);
+    drawFilledRect(x + 149, y + 34, 6, 24, [0.46, 0.72, 0.95]);
+    drawCircle(x + 177, y + 44, 17, { strokeColor: ink, lineWidth: 1.1 });
+    drawLine(x + 177, y + 44, x + 177, y + 54, ink, 1);
+    drawLine(x + 177, y + 44, x + 185, y + 44, ink, 1);
+  }
+
+  if (type === 'shadow') {
+    drawCircle(x + 42, y + height - 36, 13, { fillColor: sun, strokeColor: [0.75, 0.56, 0.10], lineWidth: 1 });
+    drawFilledRect(x + 84, y + 24, 118, 70, [0.99, 0.99, 0.99]);
+    drawStrokedRect(x + 84, y + 24, 118, 70, [0.82, 0.86, 0.93], 0.8);
+    drawCircle(x + 108, y + 72, 8, { fillColor: [0.82, 0.84, 0.88], strokeColor: ink, lineWidth: 0.8 });
+    drawCircle(x + 134, y + 74, 11, { fillColor: [0.82, 0.84, 0.88], strokeColor: ink, lineWidth: 0.8 });
+    drawFilledRect(x + 157, y + 63, 20, 20, [0.82, 0.84, 0.88]);
+    drawStrokedRect(x + 157, y + 63, 20, 20, ink, 0.8);
+    drawLine(x + 52, y + height - 38, x + 112, y + 54, [0.95, 0.67, 0.20], 1);
+    drawLine(x + 52, y + height - 38, x + 138, y + 56, [0.95, 0.67, 0.20], 1);
+    drawLine(x + 52, y + height - 38, x + 167, y + 52, [0.95, 0.67, 0.20], 1);
+    drawFilledRect(x + 113, y + 38, 13, 5, [0.65, 0.70, 0.77]);
+    drawFilledRect(x + 142, y + 37, 17, 6, [0.65, 0.70, 0.77]);
+    drawFilledRect(x + 171, y + 34, 23, 8, [0.65, 0.70, 0.77]);
+  }
+
+  currentPage.commands.push(`${palette.body[0]} ${palette.body[1]} ${palette.body[2]} rg`);
 }
 
 function addWrappedText(text, options = {}) {
@@ -235,28 +383,188 @@ function addBullet(text) {
   currentPage.y -= 4;
 }
 
+function addBulletInCard(text, x, y, width) {
+  addTextLine('-', x, y, 'F1', 9);
+  return addWrappedTextAt(text, {
+    fontKey: 'F1',
+    fontSize: 9,
+    x: x + 10,
+    y,
+    maxWidth: width - 14,
+    lineHeight: 12,
+    spacingAfter: 3
+  });
+}
+
 function addSectionTitle(title) {
   ensureSpace(28);
+  currentPage.commands.push(`${palette.heading[0]} ${palette.heading[1]} ${palette.heading[2]} rg`);
   addTextLine(title, marginLeft, currentPage.y, 'F2', 16);
+  drawLine(marginLeft, currentPage.y - 6, pageWidth - marginRight, currentPage.y - 6, palette.rule, 0.8);
+  currentPage.commands.push(`${palette.body[0]} ${palette.body[1]} ${palette.body[2]} rg`);
   currentPage.y -= 22;
 }
 
+function addExperimentCard(experiment, x, topY, width, height) {
+  const bottomY = topY - height;
+  drawFilledRect(x, bottomY, width, height, [1.0, 1.0, 1.0]);
+  drawStrokedRect(x, bottomY, width, height, [0.76, 0.81, 0.90], 1.1);
+
+  currentPage.commands.push(`${palette.heading[0]} ${palette.heading[1]} ${palette.heading[2]} rg`);
+  addTextLine(experiment.title, x + 14, topY - 22, 'F2', 12);
+
+  const illustrationY = topY - 150;
+  drawExperimentIllustration(experiment.diagram, x + 14, illustrationY, 200, 100);
+
+  currentPage.commands.push(`${palette.body[0]} ${palette.body[1]} ${palette.body[2]} rg`);
+  addTextLine('How to do it', x + 224, topY - 34, 'F2', 9);
+
+  let textY = topY - 50;
+  textY = addWrappedTextAt(`Materials: ${experiment.materials}`, {
+    fontKey: 'F1',
+    fontSize: 9,
+    x: x + 224,
+    y: textY,
+    maxWidth: width - 238,
+    lineHeight: 12,
+    spacingAfter: 5
+  });
+
+  for (const step of experiment.steps) {
+    textY = addBulletInCard(step, x + 224, textY, width - 238);
+  }
+
+  currentPage.commands.push(`${palette.body[0]} ${palette.body[1]} ${palette.body[2]} rg`);
+}
+
+function addFindingsArea(x, y, width, height) {
+  drawFilledRect(x, y, width, height, [0.99, 0.99, 1.0]);
+  drawStrokedRect(x, y, width, height, [0.78, 0.83, 0.91], 1);
+
+  currentPage.commands.push(`${palette.heading[0]} ${palette.heading[1]} ${palette.heading[2]} rg`);
+  addTextLine('Your Findings', x + 14, y + height - 22, 'F2', 12);
+  currentPage.commands.push(`${palette.body[0]} ${palette.body[1]} ${palette.body[2]} rg`);
+
+  addTextLine('Date:', x + 14, y + height - 40, 'F1', 9);
+  drawLine(x + 44, y + height - 43, x + 190, y + height - 43, [0.76, 0.80, 0.88], 0.8);
+  addTextLine('Location:', x + 214, y + height - 40, 'F1', 9);
+  drawLine(x + 264, y + height - 43, x + width - 14, y + height - 43, [0.76, 0.80, 0.88], 0.8);
+
+  const checks = ['Cloud cover', 'Wind shift', 'Bird/insect activity', 'Temperature drop'];
+  const checkStartY = y + height - 56;
+  const checkSpacingX = 118;
+  for (const [index, label] of checks.entries()) {
+    const boxX = x + 14 + index * checkSpacingX;
+    drawStrokedRect(boxX, checkStartY, 8, 8, [0.63, 0.70, 0.82], 0.9);
+    addTextLine(label, boxX + 12, checkStartY + 1, 'F1', 8);
+  }
+
+  const lines = 6;
+  const topLineY = y + height - 78;
+  const spacing = 16;
+  for (let i = 0; i < lines; i += 1) {
+    const lineY = topLineY - i * spacing;
+    drawLine(x + 14, lineY, x + width - 14, lineY, [0.80, 0.84, 0.91], 0.7);
+  }
+}
+
+function addExperimentBooklet() {
+  const experiments = [
+    {
+      title: '1. Colander Projection',
+      diagram: 'colander',
+      materials: 'Colander or slotted spoon, white card or paving slab.',
+      steps: [
+        'Let sunlight pass through the holes onto a flat surface.',
+        'As the eclipse deepens, bright dots become tiny crescents.',
+        'Take photos of the pattern every 10 minutes.'
+      ]
+    },
+    {
+      title: '2. Cereal-Box Pinhole Viewer',
+      diagram: 'pinhole',
+      materials: 'Cereal box, foil, tape, white paper, pin.',
+      steps: [
+        'Tape white paper inside one end as the viewing screen.',
+        'Make one tiny pinhole in foil at the opposite end.',
+        'Stand with your back to the Sun and view the projection inside.'
+      ]
+    },
+    {
+      title: '3. Leaf-Shadow Test',
+      diagram: 'leaf',
+      materials: 'A sunny tree canopy and clear ground.',
+      steps: [
+        'Check the ground under leaves during partial phases.',
+        'Natural gaps project many small crescents at once.',
+        'Compare the crescent shape before and near maximum eclipse.'
+      ]
+    },
+    {
+      title: '4. Temperature And Light Log',
+      diagram: 'log',
+      materials: 'Notebook, timer, thermometer or weather app.',
+      steps: [
+        'Record temperature, brightness, and wind every 5 to 10 minutes.',
+        'Note changes in birds, insects, and ambient sound.',
+        'Plot your readings after the event to show the eclipse curve.'
+      ]
+    },
+    {
+      title: '5. Shadow-Shape Challenge',
+      diagram: 'shadow',
+      materials: 'Coins, jar lids, cups, white card, pencil.',
+      steps: [
+        'Place objects on white card and trace each shadow outline.',
+        'Repeat as the eclipse progresses and compare edge sharpness.',
+        'Use certified glasses only for brief checks of Sun shape.'
+      ]
+    }
+  ];
+
+  for (const [index, experiment] of experiments.entries()) {
+    if (currentPage.commands.length > 4 || currentPage.y < pageHeight - topMargin - 1) {
+      pushPage();
+    }
+
+    currentPage.commands.push(`${palette.heading[0]} ${palette.heading[1]} ${palette.heading[2]} rg`);
+    addTextLine(`Illustrated Experiment Booklet (${index + 1} of ${experiments.length})`, marginLeft, pageHeight - 106, 'F2', 18);
+    currentPage.commands.push(`${palette.body[0]} ${palette.body[1]} ${palette.body[2]} rg`);
+    addWrappedTextAt('Use this page in the field: follow the setup, then record what changed as the eclipse progressed.', {
+      fontKey: 'F1',
+      fontSize: 10,
+      x: marginLeft,
+      y: pageHeight - 126,
+      maxWidth: contentWidth,
+      lineHeight: 14,
+      spacingAfter: 0
+    });
+
+    addExperimentCard(experiment, marginLeft, 620, contentWidth, 320);
+    addFindingsArea(marginLeft, 84, contentWidth, 166);
+    currentPage.y = bottomMargin;
+  }
+}
+
 function addFooter(page, pageNumber, pageCount) {
-  page.commands.push(`0.35 0.44 0.62 rg 56 26 500 0.7 re f`);
+  page.commands.push(`${palette.rule[0]} ${palette.rule[1]} ${palette.rule[2]} rg 56 26 500 0.7 re f`);
   page.commands.push(`BT /F1 9 Tf 1 0 0 1 56 16 Tm (Our Astro Journey) Tj ET`);
-  page.commands.push(`BT /F1 9 Tf 1 0 0 1 475 16 Tm (Page ${pageNumber} of ${pageCount}) Tj ET`);
+  page.commands.push(`BT /F1 9 Tf 1 0 0 1 467 16 Tm (Page ${pageNumber} of ${pageCount}) Tj ET`);
 }
 
 function buildContent() {
-  currentPage.commands.push('0.05 0.10 0.23 rg 0 0 612 792 re f');
-  currentPage.commands.push('0.95 0.96 0.99 rg 0 642 612 150 re f');
-  currentPage.commands.push('0.98 0.71 0.15 rg 56 676 90 10 re f');
-  currentPage.commands.push('0.29 0.62 1.00 rg 56 658 170 6 re f');
-  currentPage.commands.push('0.00 0.00 0.00 rg');
+  drawFilledRect(40, 556, 532, 194, [0.97, 0.98, 1.0]);
+  drawStrokedRect(40, 556, 532, 194, [0.77, 0.82, 0.91], 1.2);
+  drawFilledRect(56, 708, 190, 14, [0.88, 0.91, 0.97]);
+  drawFilledRect(56, 686, 132, 6, [0.96, 0.79, 0.37]);
+  drawCircle(511, 691, 34, { fillColor: [0.12, 0.16, 0.24], strokeColor: [0.08, 0.11, 0.18], lineWidth: 1 });
+  drawCircle(519, 691, 34, { fillColor: [0.97, 0.98, 1.0] });
+  currentPage.commands.push(`${palette.heading[0]} ${palette.heading[1]} ${palette.heading[2]} rg`);
 
-  addTextLine('Solar Eclipse Safety And Imaging Guide', 56, 720, 'F2', 24);
-  addTextLine('For the 12 August 2026 eclipse and future solar observing sessions', 56, 690, 'F1', 12);
-  currentPage.y = 628;
+  addTextLine('Solar Eclipse Safety And Imaging Guide', 56, 724, 'F2', 24);
+  addTextLine('Professional field booklet for safe viewing, imaging, and family experiments', 56, 697, 'F1', 11);
+  currentPage.commands.push(`${palette.body[0]} ${palette.body[1]} ${palette.body[2]} rg`);
+  currentPage.y = 620;
 
   addWrappedText('This guide focuses on one rule above all others: for every partial phase, use proper solar protection for your eyes and for every optical system pointed at the Sun.', {
     fontKey: 'F1',
@@ -302,6 +610,8 @@ function buildContent() {
 
     currentPage.y -= 8;
   }
+
+  addExperimentBooklet();
 
   pages.push(currentPage);
 }

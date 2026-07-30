@@ -1069,6 +1069,7 @@ section {
 
 .guide-page .guide-card-grid {
   margin-top: 1.5rem;
+  align-items: start;
 }
 
 .guide-page .guide-list {
@@ -1089,6 +1090,27 @@ section {
 
 .guide-page .guide-experiment-card {
   background: linear-gradient(135deg, rgba(255, 182, 39, 0.12), rgba(74, 158, 255, 0.12)), rgba(255, 255, 255, 0.06);
+}
+
+.guide-page .guide-red-flags-card {
+  background: linear-gradient(145deg, rgba(196, 45, 45, 0.32), rgba(120, 10, 10, 0.24)), rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 110, 110, 0.38);
+}
+
+@media (min-width: 1080px) {
+  .guide-page .guide-card-grid {
+    grid-template-columns: repeat(3, minmax(280px, 1fr));
+  }
+
+  .guide-page .guide-experiment-card {
+    grid-column: 1 / -1;
+    order: 98;
+  }
+
+  .guide-page .guide-red-flags-card {
+    grid-column: 2 / 3;
+    order: 99;
+  }
 }
 
 .resources-page .resource-list {
