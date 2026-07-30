@@ -20,6 +20,10 @@ story = []
 story.append(Paragraph('Solar Eclipse Safety And Imaging Guide', styles['Title']))
 story.append(Paragraph('Professional field booklet for safe viewing, imaging, and family experiments', styles['BodyText']))
 story.append(Spacer(1, 0.2 * inch))
+story.append(Paragraph('A practical guide for safe eclipse viewing, simple household experiments, and memorable family observations.', styles['BodyText']))
+story.append(Spacer(1, 0.25 * inch))
+story.append(Paragraph('Cover', styles['Heading1']))
+story.append(PageBreak())
 
 checklist = [
     'Certified eclipse glasses or handheld viewers for direct viewing.',
@@ -33,6 +37,8 @@ story.append(Paragraph('Fast Checklist', styles['Heading1']))
 for bullet in checklist:
     story.append(Paragraph(f'• {bullet}', styles['BodyText']))
 story.append(Spacer(1, 0.12 * inch))
+story.append(Paragraph('Use this page as a quick reference before you head outside.', styles['BodyText']))
+story.append(PageBreak())
 
 experiments = [
     {
