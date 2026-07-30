@@ -7,8 +7,8 @@
   <!-- Primary Meta Tags -->
   <title>Our Astro Journey | Beginner Astrophotography Blog for Moon, Deep Sky & Dark Skies</title>
   <meta name="title" content="Our Astro Journey | Beginner Astrophotography Blog for Moon, Deep Sky & Dark Skies">
-  <meta name="description" content="Our Astro Journey is a beginner astrophotography blog sharing moon photography, deep-sky imaging tips, image processing practice, weather forecasts, and dark sky site guidance for UK skies.">
-  <meta name="keywords" content="astrophotography, beginner astrophotography, moon photography, deep sky imaging, nebula imaging, galaxy photography, dark sky sites, weather forecast, stargazing, telescope photography, backyard astronomy, UK astrophotography">
+  <meta name="description" content="Our Astro Journey is a beginner astrophotography site sharing moon photography, deep-sky imaging tips, UK weather planning, dark sky guidance, astronomy resources, and a solar eclipse safety guide.">
+  <meta name="keywords" content="astrophotography, beginner astrophotography, moon photography, deep sky imaging, solar eclipse guide, eclipse safety, astronomy resources, dark sky sites, weather forecast, stargazing, telescope photography, UK astrophotography">
   <meta name="author" content="Matt Brambley">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://www.ourastrojourney.co.uk/" />
@@ -20,7 +20,7 @@
   <meta property="og:site_name" content="Our Astro Journey">
   <meta property="og:locale" content="en_GB">
   <meta property="og:title" content="Our Astro Journey | Beginner Astrophotography Blog for Moon, Deep Sky & Dark Skies">
-  <meta property="og:description" content="Our Astro Journey is a beginner astrophotography blog sharing moon photography, deep-sky imaging tips, image processing practice, weather forecasts, and dark sky site guidance for UK skies.">
+  <meta property="og:description" content="Beginner astrophotography, astronomy resources, UK sky planning, and the latest solar eclipse safety guide from Our Astro Journey.">
   <meta property="og:image" content="https://www.ourastrojourney.co.uk/images/hero-ing.jpg">
   <meta property="og:image:secure_url" content="https://www.ourastrojourney.co.uk/images/hero-ing.jpg">
   <meta property="og:image:alt" content="Our Astro Journey astrophotography blog hero image showing a night sky scene">
@@ -29,7 +29,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://www.ourastrojourney.co.uk/">
   <meta name="twitter:title" content="Our Astro Journey | Beginner Astrophotography Blog for Moon, Deep Sky & Dark Skies">
-  <meta name="twitter:description" content="Our Astro Journey is a beginner astrophotography blog sharing moon photography, deep-sky imaging tips, image processing practice, weather forecasts, and dark sky site guidance for UK skies.">
+  <meta name="twitter:description" content="Beginner astrophotography, astronomy resources, UK sky planning, and the latest solar eclipse safety guide from Our Astro Journey.">
   <meta name="twitter:image" content="https://www.ourastrojourney.co.uk/images/hero-ing.jpg">
   <meta name="twitter:creator" content="@ourastrojourney">
   <meta name="theme-color" content="#050812">
@@ -68,7 +68,7 @@
         "@id": "https://www.ourastrojourney.co.uk/#website",
         "url": "https://www.ourastrojourney.co.uk/",
         "name": "Our Astro Journey",
-        "description": "A beginner-friendly astrophotography blog for moon photography, deep-sky imaging, weather guidance, and dark sky site planning.",
+        "description": "A beginner-friendly astrophotography site for moon photography, deep-sky imaging, weather guidance, dark sky planning, and solar eclipse resources.",
         "publisher": {
           "@id": "https://www.ourastrojourney.co.uk/#person"
         },
@@ -84,12 +84,39 @@
         "@type": "Blog",
         "@id": "https://www.ourastrojourney.co.uk/#blog",
         "name": "Our Astro Journey",
-        "description": "Beginner astrophotography content covering moon photography, nebula and galaxy imaging, weather planning, dark sky locations, and image processing practice.",
+        "description": "Beginner astrophotography content covering moon photography, nebula and galaxy imaging, weather planning, dark sky locations, astronomy resources, and solar eclipse safety.",
         "url": "https://www.ourastrojourney.co.uk/",
         "author": {
           "@id": "https://www.ourastrojourney.co.uk/#person"
         },
         "inLanguage": "en-GB"
+      },
+      {
+        "@type": "ItemList",
+        "@id": "https://www.ourastrojourney.co.uk/#latest-updates",
+        "name": "Latest site updates",
+        "itemListOrder": "https://schema.org/ItemListOrderDescending",
+        "numberOfItems": 3,
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "url": "https://www.ourastrojourney.co.uk/solar-eclipse-guide.html",
+            "name": "Solar eclipse safety and imaging guide"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "url": "https://www.ourastrojourney.co.uk/useful-resources.html",
+            "name": "Useful resources"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "url": "https://www.ourastrojourney.co.uk/news.html",
+            "name": "News and upcoming events"
+          }
+        ]
       }
     ]
   }
@@ -146,6 +173,17 @@
           </div>
         </div>
       </section>
+
+    <section id="section-whats-new" class="feature-gallery-section">
+      <div class="content-wrapper">
+        <h2 class="section-heading">What's New</h2>
+        <p class="section-intro">This is the place to check when new pages, guides, or tools go live. Each card gives a quick outline of what has been added and links straight to it.</p>
+        <div class="feature-card-grid home-update-grid" id="home-updates-list" aria-live="polite"></div>
+        <noscript>
+          <p class="section-intro">Enable JavaScript to load the latest updates automatically.</p>
+        </noscript>
+      </div>
+    </section>
 
     <section id="section-about">
       <div class="content-wrapper">
@@ -238,6 +276,7 @@
     </footer>
 
     <!-- JavaScript -->
+    <script src="./scripts/site-updates.js"></script>
     <script src="./scripts/main.js"></script>
   </body>
 </html>

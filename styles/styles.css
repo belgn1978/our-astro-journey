@@ -624,6 +624,27 @@ section {
   min-height: auto;
 }
 
+.home-update-grid {
+  align-items: stretch;
+}
+
+.home-update-card {
+  min-height: 100%;
+}
+
+.home-update-card-featured {
+  background: linear-gradient(135deg, rgba(255, 182, 39, 0.12), rgba(74, 158, 255, 0.12)), rgba(255, 255, 255, 0.06);
+}
+
+.home-update-meta {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .feature-card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -998,6 +1019,76 @@ section {
 
 .resources-page .resource-card p {
   margin-bottom: 0.6rem;
+}
+
+.resources-page .resource-download-card {
+  background: linear-gradient(135deg, rgba(255, 182, 39, 0.12), rgba(74, 158, 255, 0.12)), rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.resources-page .resource-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 0.9rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 182, 39, 0.15);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.resources-page .resource-download-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.resources-page .resource-download-button {
+  min-width: 12rem;
+}
+
+.resources-page .resource-download-note {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.guide-page .page-hero {
+  min-height: 46vh;
+}
+
+.guide-page .guide-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-top: 1.5rem;
+}
+
+.guide-page .guide-card-grid {
+  margin-top: 1.5rem;
+}
+
+.guide-page .guide-list {
+  margin: 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 0.7rem;
+  color: rgba(255, 255, 255, 0.86);
+}
+
+.guide-page .guide-numbered-list {
+  padding-left: 1.3rem;
+}
+
+.guide-page .guide-list li {
+  line-height: 1.7;
+}
+
+.guide-page .guide-experiment-card {
+  background: linear-gradient(135deg, rgba(255, 182, 39, 0.12), rgba(74, 158, 255, 0.12)), rgba(255, 255, 255, 0.06);
 }
 
 .resources-page .resource-list {
@@ -2004,6 +2095,22 @@ footer {
   .resources-page .resource-card {
     padding: 1.35rem;
     border-radius: 20px;
+  }
+
+  .resources-page .resource-download-actions {
+    align-items: stretch;
+  }
+
+  .resources-page .resource-download-button {
+    width: 100%;
+  }
+
+  .guide-page .guide-action-row {
+    align-items: stretch;
+  }
+
+  .guide-page .guide-action-row .button {
+    width: 100%;
   }
 
   .calendar-grid-container {

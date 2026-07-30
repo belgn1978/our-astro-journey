@@ -294,6 +294,55 @@ function scrollToSection(hash) {
   return true;
 }
 
+function escapeHTML(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatUpdateDateLabel(value) {
+  const date = parseYMD(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  return date.toLocaleDateString('en-GB', {
+    month: 'long',
+    year: 'numeric'
+  });
+}
+
+function renderHomeUpdates() {
+  const container = document.getElementById('home-updates-list');
+  const updates = Array.isArray(window.siteUpdates) ? [...window.siteUpdates] : [];
+  if (!container || !updates.length) return;
+
+  updates.sort((a, b) => {
+    if (a.date === b.date) {
+      return Number(Boolean(b.featured)) - Number(Boolean(a.featured));
+    }
+    return b.date.localeCompare(a.date);
+  });
+
+  const visibleUpdates = updates.slice(0, 3);
+
+  container.innerHTML = visibleUpdates.map((update) => {
+    const featuredClass = update.featured ? ' home-update-card-featured' : '';
+    const buttonClass = update.featured ? 'button' : 'button button-secondary';
+    const meta = `${escapeHTML(update.badge)} · ${escapeHTML(formatUpdateDateLabel(update.date))}`;
+
+    return `
+      <article class="feature-card home-update-card${featuredClass}">
+        <p class="home-update-meta">${meta}</p>
+        <h3>${escapeHTML(update.title)}</h3>
+        <p>${escapeHTML(update.summary)}</p>
+        <a class="${buttonClass}" href="${escapeHTML(update.url)}">${escapeHTML(update.cta)}</a>
+      </article>
+    `;
+  }).join('');
+}
+
 function renderMobileUpcomingView() {
   const container = document.getElementById('mobileUpcomingList');
   if (!container) return;
@@ -778,6 +827,7 @@ function initializeEventListeners() {
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize the mobile navigation on every page where it exists.
   initializeMobileMenu();
+  renderHomeUpdates();
   window.addEventListener('resize', () => {
     renderCalendarView();
   });
