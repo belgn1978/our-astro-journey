@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const zlib = require('zlib');
 
 const outputPath = path.join(__dirname, '..', 'downloads', 'solar-eclipse-safety-guide.pdf');
 
@@ -179,6 +180,144 @@ function wrapText(text, fontSize, maxWidth) {
   return lines;
 }
 
+function parsePngImage(filePath) {
+  const buffer = fs.readFileSync(filePath);
+  if (buffer.slice(0, 8).toString('hex') !== '89504e470d0a1a0a') {
+    throw new Error(`Unsupported PNG file: ${filePath}`);
+  }
+
+  let offset = 8;
+  let width = 0;
+  let height = 0;
+  let bitDepth = 0;
+  let colorType = 0;
+  let compressedData = Buffer.alloc(0);
+
+  while (offset < buffer.length) {
+    const length = buffer.readUInt32BE(offset);
+    offset += 4;
+    const type = buffer.toString('ascii', offset, offset + 4);
+    offset += 4;
+    const chunkData = buffer.slice(offset, offset + length);
+    offset += length;
+    offset += 4;
+
+    if (type === 'IHDR') {
+      width = chunkData.readUInt32BE(0);
+      height = chunkData.readUInt32BE(4);
+      bitDepth = chunkData[8];
+      colorType = chunkData[9];
+    } else if (type === 'IDAT') {
+      compressedData = Buffer.concat([compressedData, chunkData]);
+    }
+  }
+
+  if (!width || !height || bitDepth !== 8 || (colorType !== 2 && colorType !== 6)) {
+    throw new Error(`Unsupported PNG color mode in ${filePath}`);
+  }
+
+  const raw = zlib.inflateSync(compressedData);
+  const bytesPerPixel = colorType === 2 ? 3 : 4;
+  const rowBytes = width * bytesPerPixel;
+  const pixels = Buffer.alloc(height * rowBytes);
+  let outputOffset = 0;
+
+  for (let row = 0; row < height; row += 1) {
+    const filterType = raw[row * (rowBytes + 1)];
+    const scanline = raw.slice(row * (rowBytes + 1) + 1, (row + 1) * (rowBytes + 1));
+    const previousRow = row > 0 ? pixels.slice((row - 1) * rowBytes, row * rowBytes) : Buffer.alloc(rowBytes);
+    let unfiltered;
+
+    switch (filterType) {
+      case 0:
+        unfiltered = Buffer.from(scanline);
+        break;
+      case 1: {
+        unfiltered = Buffer.alloc(rowBytes);
+        for (let index = 0; index < rowBytes; index += 1) {
+          const left = index < bytesPerPixel ? 0 : unfiltered[index - bytesPerPixel];
+          unfiltered[index] = (scanline[index] + left) & 0xff;
+        }
+        break;
+      }
+      case 2: {
+        unfiltered = Buffer.alloc(rowBytes);
+        for (let index = 0; index < rowBytes; index += 1) {
+          const up = previousRow[index];
+          unfiltered[index] = (scanline[index] + up) & 0xff;
+        }
+        break;
+      }
+      case 3: {
+        unfiltered = Buffer.alloc(rowBytes);
+        for (let index = 0; index < rowBytes; index += 1) {
+          const left = index < bytesPerPixel ? 0 : unfiltered[index - bytesPerPixel];
+          const up = previousRow[index];
+          unfiltered[index] = (scanline[index] + ((left + up) >> 1)) & 0xff;
+        }
+        break;
+      }
+      case 4: {
+        unfiltered = Buffer.alloc(rowBytes);
+        for (let index = 0; index < rowBytes; index += 1) {
+          const left = index < bytesPerPixel ? 0 : unfiltered[index - bytesPerPixel];
+          const up = previousRow[index];
+          const upLeft = index < bytesPerPixel ? 0 : previousRow[index - bytesPerPixel];
+          const paeth = (left + up + upLeft) - Math.min(left, up, upLeft);
+          let predictor = left;
+          if (Math.abs(paeth - left) <= Math.abs(paeth - up) && Math.abs(paeth - left) <= Math.abs(paeth - upLeft)) {
+            predictor = left;
+          } else if (Math.abs(paeth - up) <= Math.abs(paeth - upLeft)) {
+            predictor = up;
+          } else {
+            predictor = upLeft;
+          }
+          unfiltered[index] = (scanline[index] + predictor) & 0xff;
+        }
+        break;
+      }
+      default:
+        throw new Error(`Unsupported PNG filter type ${filterType}`);
+    }
+
+    for (let index = 0; index < rowBytes; index += 1) {
+      pixels[outputOffset + index] = unfiltered[index];
+    }
+    outputOffset += rowBytes;
+  }
+
+  if (colorType === 6) {
+    const rgbPixels = Buffer.alloc(height * width * 3);
+    let rgbOffset = 0;
+    for (let index = 0; index < pixels.length; index += 4) {
+      rgbPixels[rgbOffset] = pixels[index];
+      rgbPixels[rgbOffset + 1] = pixels[index + 1];
+      rgbPixels[rgbOffset + 2] = pixels[index + 2];
+      rgbOffset += 3;
+    }
+    return { width, height, pixels: rgbPixels, colorSpace: 'DeviceRGB' };
+  }
+
+  return { width, height, pixels, colorSpace: 'DeviceRGB' };
+}
+
+function getExperimentImagePath(type) {
+  const imageFiles = {
+    colander: 'colander-projection.png',
+    pinhole: 'box-pinhole.png',
+    leaf: 'leaf-shadow-test.png',
+    log: 'temperature-light-log.png',
+    shadow: 'shadow-shape-challenge.png'
+  };
+
+  const filename = imageFiles[type];
+  if (!filename) {
+    return null;
+  }
+
+  return path.join(__dirname, '..', 'images', filename);
+}
+
 function createPage() {
   return {
     commands: [
@@ -187,8 +326,49 @@ function createPage() {
       `${palette.rule[0]} ${palette.rule[1]} ${palette.rule[2]} RG 1.2 w 56 ${pageHeight - 86} m ${pageWidth - 56} ${pageHeight - 86} l S`,
       `${palette.body[0]} ${palette.body[1]} ${palette.body[2]} rg`
     ],
+    images: [],
+    nextImageId: 1,
     y: pageHeight - topMargin
   };
+}
+
+function addImageIllustration(type, x, y, width, height) {
+  const imagePath = getExperimentImagePath(type);
+  if (!imagePath || !fs.existsSync(imagePath)) {
+    return false;
+  }
+
+  try {
+    const imageData = parsePngImage(imagePath);
+    const imageId = `Im${currentPage.nextImageId}`;
+    currentPage.nextImageId += 1;
+
+    currentPage.images.push({
+      name: imageId,
+      filePath: imagePath,
+      width: imageData.width,
+      height: imageData.height,
+      pixels: imageData.pixels,
+      colorSpace: imageData.colorSpace
+    });
+
+    const scaleX = width / imageData.width;
+    const scaleY = height / imageData.height;
+    const scale = Math.min(scaleX, scaleY);
+    const drawWidth = imageData.width * scale;
+    const drawHeight = imageData.height * scale;
+    const offsetX = x + (width - drawWidth) / 2;
+    const offsetY = y + (height - drawHeight) / 2;
+
+    currentPage.commands.push('q');
+    currentPage.commands.push(`${scale.toFixed(4)} 0 0 ${scale.toFixed(4)} ${offsetX.toFixed(2)} ${offsetY.toFixed(2)} cm`);
+    currentPage.commands.push(`/${imageId} Do`);
+    currentPage.commands.push('Q');
+    return true;
+  } catch (error) {
+    console.warn(`Unable to embed image for ${type}: ${error.message}`);
+    return false;
+  }
 }
 
 const pages = [];
@@ -265,6 +445,11 @@ function drawExperimentIllustration(type, x, y, width, height) {
 
   drawFilledRect(x, y, width, height, [0.98, 0.99, 1.0]);
   drawStrokedRect(x, y, width, height, [0.80, 0.84, 0.92], 0.8);
+
+  if (addImageIllustration(type, x, y, width, height)) {
+    currentPage.commands.push(`${palette.body[0]} ${palette.body[1]} ${palette.body[2]} rg`);
+    return;
+  }
 
   if (type === 'colander') {
     drawCircle(x + 42, y + height - 38, 16, { fillColor: sun, strokeColor: [0.75, 0.56, 0.10], lineWidth: 1 });
@@ -622,6 +807,23 @@ function buildPdf() {
   const pageCount = pages.length;
   pages.forEach((page, index) => addFooter(page, index + 1, pageCount));
 
+  const imageEntries = [];
+  pages.forEach((page) => {
+    page.images.forEach((image) => {
+      if (!imageEntries.some((entry) => entry.name === image.name)) {
+        imageEntries.push(image);
+      }
+    });
+  });
+
+  const imageObjectNumbers = new Map();
+  imageEntries.forEach((image, index) => {
+    imageObjectNumbers.set(image.name, 3 + 2 * pageCount + index);
+  });
+
+  const fontObjectNumber = 3 + 2 * pageCount + imageEntries.length;
+  const infoObjectNumber = fontObjectNumber + 2;
+
   const objects = [];
 
   objects.push('<< /Type /Catalog /Pages 2 0 R >>');
@@ -632,37 +834,56 @@ function buildPdf() {
   }
   objects.push(`<< /Type /Pages /Count ${pageCount} /Kids [${kids.join(' ')}] >>`);
 
-  pages.forEach((page) => {
+  pages.forEach((page, index) => {
     const content = page.commands.join('\n');
-    const contentObjectNumber = objects.length + 2;
-    objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /Font << /F1 ${contentObjectNumber + 1} 0 R /F2 ${contentObjectNumber + 2} 0 R >> >> /Contents ${contentObjectNumber} 0 R >>`);
+    const pageObjectNumber = 3 + index * 2;
+    const contentObjectNumber = pageObjectNumber + 1;
+    const xObjectEntries = page.images.map((image) => `/${image.name} ${imageObjectNumbers.get(image.name)} 0 R`).join(' ');
+    const resources = xObjectEntries
+      ? `<< /Font << /F1 ${fontObjectNumber} 0 R /F2 ${fontObjectNumber + 1} 0 R >> /XObject << ${xObjectEntries} >> >>`
+      : `<< /Font << /F1 ${fontObjectNumber} 0 R /F2 ${fontObjectNumber + 1} 0 R >> >>`;
+    objects.push(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources ${resources} /Contents ${contentObjectNumber} 0 R >>`);
     objects.push(`<< /Length ${Buffer.byteLength(content, 'utf8')} >>\nstream\n${content}\nendstream`);
+  });
+
+  imageEntries.forEach((image) => {
+    const data = zlib.deflateRawSync(image.pixels);
+    const objectBody = `<< /Type /XObject /Subtype /Image /Width ${image.width} /Height ${image.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /FlateDecode /Length ${data.length} >>\nstream\n`;
+    const streamBytes = Buffer.concat([Buffer.from(objectBody, 'utf8'), data, Buffer.from('\nendstream', 'utf8')]);
+    objects.push(streamBytes);
   });
 
   objects.push('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
   objects.push('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>');
   objects.push('<< /Producer (GitHub Copilot) /Title (Solar Eclipse Safety And Imaging Guide) /Author (Our Astro Journey) /Subject (Safe solar eclipse viewing and imaging) /CreationDate (D:20260730000000Z) >>');
 
-  let pdf = '%PDF-1.4\n';
+  const pdfChunks = [Buffer.from('%PDF-1.4\n', 'utf8')];
   const offsets = [0];
 
   objects.forEach((object, index) => {
-    offsets.push(Buffer.byteLength(pdf, 'utf8'));
-    pdf += `${index + 1} 0 obj\n${object}\nendobj\n`;
+    offsets.push(pdfChunks.reduce((total, chunk) => total + chunk.length, 0));
+    if (Buffer.isBuffer(object)) {
+      pdfChunks.push(Buffer.from(`${index + 1} 0 obj\n`, 'utf8'));
+      pdfChunks.push(object);
+      pdfChunks.push(Buffer.from('\nendobj\n', 'utf8'));
+    } else {
+      pdfChunks.push(Buffer.from(`${index + 1} 0 obj\n${object}\nendobj\n`, 'utf8'));
+    }
   });
 
-  const xrefOffset = Buffer.byteLength(pdf, 'utf8');
-  pdf += `xref\n0 ${objects.length + 1}\n`;
-  pdf += '0000000000 65535 f \n';
+  const xrefOffset = pdfChunks.reduce((total, chunk) => total + chunk.length, 0);
+  pdfChunks.push(Buffer.from(`xref\n0 ${objects.length + 1}\n`, 'utf8'));
+  pdfChunks.push(Buffer.from('0000000000 65535 f \n', 'utf8'));
   for (let index = 1; index < offsets.length; index += 1) {
-    pdf += `${String(offsets[index]).padStart(10, '0')} 00000 n \n`;
+    pdfChunks.push(Buffer.from(`${String(offsets[index]).padStart(10, '0')} 00000 n \n`, 'utf8'));
   }
 
-  const infoObjectNumber = objects.length;
-  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R /Info ${infoObjectNumber} 0 R >>\nstartxref\n${xrefOffset}\n%%EOF\n`;
+  pdfChunks.push(Buffer.from(`trailer\n<< /Size ${objects.length + 1} /Root 1 0 R /Info ${infoObjectNumber} 0 R >>\nstartxref\n${xrefOffset}\n%%EOF\n`, 'utf8'));
+
+  const pdf = Buffer.concat(pdfChunks);
 
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
-  fs.writeFileSync(outputPath, pdf, 'binary');
+  fs.writeFileSync(outputPath, pdf);
   console.log(`Wrote ${outputPath}`);
 }
 
