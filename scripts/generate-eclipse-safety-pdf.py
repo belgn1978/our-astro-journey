@@ -21,42 +21,84 @@ story.append(Paragraph('Solar Eclipse Safety And Imaging Guide', styles['Title']
 story.append(Paragraph('Professional field booklet for safe viewing, imaging, and family experiments', styles['BodyText']))
 story.append(Spacer(1, 0.2 * inch))
 
-sections = [
-    ('Fast Checklist', [
-        'Certified eclipse glasses or handheld viewers for direct viewing.',
-        'Front-mounted solar filters for cameras, binoculars, or telescopes.',
-        'A practiced plan for removing and replacing camera filters only during totality, if you will be inside the path.',
-        'A simple imaging plan that leaves time to actually watch the eclipse.',
-        'One or two safe household experiments for children or first-time observers.'
-    ]),
-    ('Five Simple Eclipse Experiments', [
-        'Colander projection: hold a kitchen colander or slotted spoon so sunlight falls onto paving or paper and watch each bright spot turn into a tiny crescent.',
-        'Cereal-box pinhole projector: use a cereal box, foil, white paper, and tape to make a simple projection viewer and compare the crescent every 10 to 15 minutes.',
-        'Leaf-shadow test: stand under a tree and watch the little gaps between leaves project many tiny eclipse crescents onto the ground.',
-        'Temperature and light log: use a notebook and household thermometer or phone weather readout to record changes in brightness, temperature, wind, and bird activity.',
-        'Shadow-shape challenge: put jar lids, cups, or coins on white card and trace how their shadows sharpen and change as the eclipse progresses.'
-    ])
+checklist = [
+    'Certified eclipse glasses or handheld viewers for direct viewing.',
+    'Front-mounted solar filters for cameras, binoculars, or telescopes.',
+    'A practiced plan for removing and replacing camera filters only during totality, if you will be inside the path.',
+    'A simple imaging plan that leaves time to actually watch the eclipse.',
+    'One or two safe household experiments for children or first-time observers.'
 ]
 
-for title, bullets in sections:
-    story.append(Paragraph(title, styles['Heading1']))
-    for bullet in bullets:
-        story.append(Paragraph(f'• {bullet}', styles['BodyText']))
-    story.append(Spacer(1, 0.12 * inch))
+story.append(Paragraph('Fast Checklist', styles['Heading1']))
+for bullet in checklist:
+    story.append(Paragraph(f'• {bullet}', styles['BodyText']))
+story.append(Spacer(1, 0.12 * inch))
 
-image_files = [
-    ('Colander Projection', 'images/colander-projection.png'),
-    ('Cereal-Box Pinhole Viewer', 'images/box-pinhole.png'),
-    ('Leaf-Shadow Test', 'images/leaf-shadow-test.png'),
-    ('Temperature And Light Log', 'images/temperature-light-log.png'),
-    ('Shadow-Shape Challenge', 'images/shadow-shape-challenge.png'),
+experiments = [
+    {
+        'title': 'Colander Projection',
+        'description': 'Hold a kitchen colander or slotted spoon so sunlight falls onto paper or paving, and watch each bright spot turn into a tiny crescent.',
+        'image': 'images/colander-projection.png',
+        'steps': [
+            'Place the colander or spoon between the Sun and a flat sheet of paper.',
+            'Watch the pattern change as the eclipse deepens.',
+            'Take photos every 10 to 15 minutes to compare the shapes.'
+        ]
+    },
+    {
+        'title': 'Cereal-Box Pinhole Viewer',
+        'description': 'Use a cereal box, foil, tape, and white paper to create a simple projection viewer for the Sun.',
+        'image': 'images/box-pinhole.png',
+        'steps': [
+            'Tape white paper inside one end of the box.',
+            'Make a tiny pinhole in the foil at the opposite end.',
+            'Stand with your back to the Sun and view the projection inside the box.'
+        ]
+    },
+    {
+        'title': 'Leaf-Shadow Test',
+        'description': 'Stand under a tree and look at the small gaps between leaves on the ground.',
+        'image': 'images/leaf-shadow-test.png',
+        'steps': [
+            'Observe the ground under the leaves during the partial phases.',
+            'Notice how each gap projects a tiny crescent.',
+            'Compare the pattern before and near maximum eclipse.'
+        ]
+    },
+    {
+        'title': 'Temperature And Light Log',
+        'description': 'Record how the environment changes as the eclipse proceeds.',
+        'image': 'images/temperature-light-log.png',
+        'steps': [
+            'Record temperature, brightness, and wind every 5 to 10 minutes.',
+            'Note any changes in birds, insects, or ambient sound.',
+            'Compare the readings after the eclipse to see the pattern.'
+        ]
+    },
+    {
+        'title': 'Shadow-Shape Challenge',
+        'description': 'Place round household objects on white card and trace how their shadows change.',
+        'image': 'images/shadow-shape-challenge.png',
+        'steps': [
+            'Lay coins, jar lids, or cups onto white card.',
+            'Trace the outlines of the shadows as the eclipse progresses.',
+            'Compare the shapes and sharpness at different times.'
+        ]
+    }
 ]
 
-for title, image_path in image_files:
-    story.append(Paragraph(title, styles['Heading1']))
-    img = Image(str(Path(__file__).resolve().parent.parent / image_path), width=2.8 * inch, height=1.8 * inch)
-    story.append(img)
+for index, experiment in enumerate(experiments):
+    if index > 0:
+        story.append(PageBreak())
+    story.append(Paragraph(experiment['title'], styles['Heading1']))
+    story.append(Paragraph(experiment['description'], styles['BodyText']))
     story.append(Spacer(1, 0.1 * inch))
+    image_path = Path(__file__).resolve().parent.parent / experiment['image']
+    story.append(Image(str(image_path), width=4.6 * inch, height=3.0 * inch))
+    story.append(Spacer(1, 0.12 * inch))
+    story.append(Paragraph('How to do it', styles['Heading1']))
+    for step in experiment['steps']:
+        story.append(Paragraph(f'• {step}', styles['BodyText']))
 
 output_path.parent.mkdir(parents=True, exist_ok=True)
 doc = SimpleDocTemplate(str(output_path), pagesize=letter, rightMargin=0.75 * inch, leftMargin=0.75 * inch, topMargin=0.75 * inch, bottomMargin=0.75 * inch)
