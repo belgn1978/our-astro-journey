@@ -1,6 +1,6 @@
 # Social Post Drafts
 
-These drafts were generated from `scripts/site-updates.js`.
+These drafts were generated from `assets/js/site-updates.js`.
 
 ## Posting Note
 

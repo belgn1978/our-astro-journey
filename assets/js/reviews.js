@@ -2,7 +2,7 @@
 // Required fields:
 // - title: Card heading displayed on the reviews index
 // - href: Link to the full review page (for example ./reviews/entries/my-review.html)
-// - imageSrc: Thumbnail/cover image path (for example ./images/reviews/my-review-cover.jpg)
+// - imageSrc: Thumbnail/cover image path (for example ./assets/images/reviews/my-review-cover.jpg)
 // Optional fields:
 // - imageAlt: Accessible alt text for the card image
 const reviewPages = [];
@@ -27,7 +27,7 @@ function renderReviewPages() {
     reviewsList.innerHTML = `
       <article class="feature-card reviews-empty-state">
         <h3>No reviews published yet</h3>
-        <p>Your first review card will appear here once you add a review page, image, and entry in scripts/reviews.js.</p>
+        <p>Your first review card will appear here once you add a review page, image, and entry in assets/js/reviews.js.</p>
       </article>
     `;
     return;

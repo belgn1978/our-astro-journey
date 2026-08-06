@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { siteUpdates } = require('./site-updates.js');
+const { siteUpdates } = require('../assets/js/site-updates.js');
 
 const SITE_URL = 'https://www.ourastrojourney.co.uk';
 const outputPath = path.join(__dirname, '..', 'social-posts.md');
@@ -42,7 +42,7 @@ function generateMarkdown() {
 
   return `# Social Post Drafts
 
-These drafts were generated from \`scripts/site-updates.js\`.
+These drafts were generated from \`assets/js/site-updates.js\`.
 
 ## Posting Note
 

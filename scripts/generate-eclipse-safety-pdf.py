@@ -66,7 +66,7 @@ experiments = [
     {
         'title': 'Colander Projection',
         'description': 'Hold a kitchen colander or slotted spoon so sunlight falls onto paper or paving, and watch each bright spot turn into a tiny crescent.',
-        'image': 'images/colander-projection.png',
+        'image': 'assets/images/eclipse/colander-projection.png',
         'steps': [
             'Place the colander or spoon between the Sun and a flat sheet of paper.',
             'Watch the pattern change as the eclipse deepens.',
@@ -76,7 +76,7 @@ experiments = [
     {
         'title': 'Cereal-Box Pinhole Viewer',
         'description': 'Use a cereal box, foil, tape, and white paper to create a simple projection viewer for the Sun.',
-        'image': 'images/box-pinhole.png',
+        'image': 'assets/images/eclipse/box-pinhole.png',
         'steps': [
             'Tape white paper inside one end of the box.',
             'Make a tiny pinhole in the foil at the opposite end.',
@@ -86,7 +86,7 @@ experiments = [
     {
         'title': 'Leaf-Shadow Test',
         'description': 'Stand under a tree and look at the small gaps between leaves on the ground.',
-        'image': 'images/leaf-shadow-test.png',
+        'image': 'assets/images/eclipse/leaf-shadow-test.png',
         'steps': [
             'Observe the ground under the leaves during the partial phases.',
             'Notice how each gap projects a tiny crescent.',
@@ -96,7 +96,7 @@ experiments = [
     {
         'title': 'Temperature And Light Log',
         'description': 'Record how the environment changes as the eclipse proceeds.',
-        'image': 'images/temperature-light-log.png',
+        'image': 'assets/images/eclipse/temperature-light-log.png',
         'steps': [
             'Record temperature, brightness, and wind every 5 to 10 minutes.',
             'Note any changes in birds, insects, or ambient sound.',
@@ -106,7 +106,7 @@ experiments = [
     {
         'title': 'Shadow-Shape Challenge',
         'description': 'Place round household objects on white card and trace how their shadows change.',
-        'image': 'images/shadow-shape-challenge.png',
+        'image': 'assets/images/eclipse/shadow-shape-challenge.png',
         'steps': [
             'Lay coins, jar lids, or cups onto white card.',
             'Trace the outlines of the shadows as the eclipse progresses.',

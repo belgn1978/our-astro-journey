@@ -21,16 +21,19 @@ The astronomy calendar is now **integrated into the News section** instead of be
 - Events marked as "Watch Live" have live coverage
 - Events marked as "View on YouTube" have recorded content
 
-## 📁 File Structure (Same as Before)
+## 📁 File Structure
 
 ```
 your-project/
 ├── index.html          (✨ UPDATED - Calendar now in News section)
-├── styles/
-│   ├── reset.css      (unchanged)
-│   └── styles.css     (✨ UPDATED - Added launch event styles)
+├── assets/
+│   ├── css/
+│   │   ├── reset.css  (unchanged)
+│   │   └── styles.css (✨ UPDATED - Added launch event styles)
+│   └── js/
+│       └── main.js    (✨ UPDATED - Added space events + YouTube links)
 └── scripts/
-    └── main.js        (✨ UPDATED - Added space events + YouTube links)
+  └── ...            (build and content tooling)
 ```
 
 ## 🎨 Event Types & Colors
@@ -48,7 +51,7 @@ The calendar is designed to be **easily updated** with new space events as they'
 
 ### Adding a New Space Launch
 
-Open `scripts/main.js` and add a new event to the `astronomyEvents` array:
+Open `assets/js/main.js` and add a new event to the `astronomyEvents` array:
 
 ```javascript
 {
@@ -126,7 +129,7 @@ For eclipses, meteor showers, etc. (events without YouTube links):
 ## 🎨 Customization
 
 ### Change Launch Event Color
-In `styles/styles.css`, find:
+In `assets/css/styles.css`, find:
 ```css
 :root {
   --color-launch: #ff4757;  /* Change this to your preferred color */
