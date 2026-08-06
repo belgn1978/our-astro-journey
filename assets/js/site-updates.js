@@ -1,5 +1,49 @@
 const siteUpdates = [
   {
+    date: '2026-08-06',
+    badge: 'New onboarding',
+    title: 'Start Here and beginner learning pages are live',
+    summary: 'New pages now guide beginners from first setup through smart telescope prep, first-night checklists, common mistakes, and a staged learning path for consistent progress.',
+    url: './start-here.html',
+    cta: 'Open Start Here',
+    featured: true,
+    socialTitle: 'New beginner onboarding pages are now live',
+    socialSummary: 'We launched Start Here, learning path, setup, and checklist pages to help beginners progress faster with less confusion.'
+  },
+  {
+    date: '2026-08-06',
+    badge: 'New learning path',
+    title: 'Beginner astronomy learning path is live',
+    summary: 'A staged learning path now breaks the beginner journey into first nights, better planning, consistent sessions, and simple processing habits.',
+    url: './beginner-learning-path.html',
+    cta: 'View learning path',
+    featured: true,
+    socialTitle: 'Beginner astronomy learning path is now live',
+    socialSummary: 'We have published a staged beginner learning path so new users can build confidence without guesswork.'
+  },
+  {
+    date: '2026-08-06',
+    badge: 'New checklist',
+    title: 'First-night checklist and setup guide are live',
+    summary: 'New practical pages cover the first session, smart telescope setup basics, and the most common mistakes that slow beginners down.',
+    url: './first-night-checklist.html',
+    cta: 'Open checklist',
+    featured: true,
+    socialTitle: 'First-night checklist and setup guidance published',
+    socialSummary: 'We published the first-night checklist plus setup guidance to help beginners get a reliable first result.'
+  },
+  {
+    date: '2026-08-06',
+    badge: 'Transparency update',
+    title: 'How we test astronomy gear',
+    summary: 'A methodology page explains our beginner-focused testing principles, observing conditions, disclosures, and review context.',
+    url: './how-we-test-gear.html',
+    cta: 'Read testing method',
+    featured: false,
+    socialTitle: 'How We Test Gear page published',
+    socialSummary: 'We published a transparent testing-method page so beginners can understand our review context and criteria.'
+  },
+  {
     date: '2026-07-30',
     badge: 'New guide',
     title: 'Solar eclipse safety and imaging guide',

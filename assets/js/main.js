@@ -313,6 +313,27 @@ function formatUpdateDateLabel(value) {
   });
 }
 
+function injectBeginnerNavigationLink() {
+  const addLink = (nav, className) => {
+    if (!nav || nav.querySelector('a[href="./start-here.html"]')) return;
+
+    const contactLink = nav.querySelector('a[href="./contact.html"]');
+    const link = document.createElement('a');
+    link.href = './start-here.html';
+    link.className = className;
+    link.textContent = 'Start Here';
+
+    if (contactLink) {
+      nav.insertBefore(link, contactLink);
+    } else {
+      nav.appendChild(link);
+    }
+  };
+
+  addLink(document.getElementById('navigation-main'), 'nav-link');
+  addLink(document.getElementById('mobile-navigation-main'), 'nav-link mobile-nav-link');
+}
+
 function renderHomeUpdates() {
   const container = document.getElementById('home-updates-list');
   const updates = Array.isArray(window.siteUpdates) ? [...window.siteUpdates] : [];
@@ -827,6 +848,7 @@ function initializeEventListeners() {
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize the mobile navigation on every page where it exists.
   initializeMobileMenu();
+  injectBeginnerNavigationLink();
   renderHomeUpdates();
   window.addEventListener('resize', () => {
     renderCalendarView();
