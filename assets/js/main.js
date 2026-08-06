@@ -849,6 +849,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize the mobile navigation on every page where it exists.
   initializeMobileMenu();
   injectBeginnerNavigationLink();
+  highlightActiveNavigationLink();
   renderHomeUpdates();
   window.addEventListener('resize', () => {
     renderCalendarView();
@@ -921,6 +922,31 @@ function setBodyScrollLock(lock) {
     document.documentElement.style.paddingRight = '';
     document.body.style.paddingRight = '';
   }
+}
+
+function highlightActiveNavigationLink() {
+  const navLinks = document.querySelectorAll('a.nav-link[href]');
+  if (!navLinks.length) return;
+
+  const normalizePage = (pathname) => {
+    const value = (pathname || '').split('/').pop() || 'index.html';
+    return value === '' ? 'index.html' : value;
+  };
+
+  const currentPage = normalizePage(window.location.pathname);
+
+  navLinks.forEach((link) => {
+    if (link.classList.contains('logo-link')) return;
+
+    const href = link.getAttribute('href');
+    if (!href || href.startsWith('#')) return;
+
+    const targetPage = normalizePage(new URL(href, window.location.origin).pathname);
+    if (targetPage === currentPage) {
+      link.classList.add('nav-link-active');
+      link.setAttribute('aria-current', 'page');
+    }
+  });
 }
 
 function initializeMobileMenu() {
@@ -1195,37 +1221,14 @@ function createWatermarkedImage(imgElement) {
 }
 
 /**
- * Intercept image link clicks to add watermark before download
+ * Keep image links behaving like normal links so gallery images can be opened.
+ * The underlying anchor already handles opening the image in a new tab.
  */
 function setupImageDownloadWatermarks() {
   const imageLinks = document.querySelectorAll('.img-link');
-  
+
   imageLinks.forEach(link => {
-    link.addEventListener('click', async (e) => {
-      e.preventDefault();
-      
-      const img = link.querySelector('img');
-      if (!img) return;
-      
-      // Create watermarked version
-      const watermarkedCanvas = await createWatermarkedImage(img);
-      
-      // Get filename from link href
-      const href = link.getAttribute('href');
-      const filename = href.split('/').pop() || 'image.jpg';
-      
-      // Convert canvas to blob and download
-      watermarkedCanvas.toBlob((blob) => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }, 'image/jpeg', 0.95);
-    });
+    link.setAttribute('data-image-link', 'true');
   });
 }
 

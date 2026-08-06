@@ -21,6 +21,11 @@
     --shadow: rgba(0, 0, 0, 0.18);
     --nav-link: #fff;
     --nav-link-hover-bg: rgba(74, 158, 255, 0.18);
+    --link-color: #1f5fd1;
+    --link-hover-color: #0d3d8b;
+    --link-on-dark: #7ec4ff;
+    --link-on-dark-hover: #cdeaff;
+    --image-caption-color: #e7e9ef;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -37,6 +42,11 @@
     --nav-link: #f4f4f4;
     --nav-link-hover-bg: rgba(74, 158, 255, 0.22);
     --color-light: rgba(244,244,244,0.88);
+    --link-color: #7ec4ff;
+    --link-hover-color: #cdeaff;
+    --link-on-dark: #7ec4ff;
+    --link-on-dark-hover: #d9eeff;
+    --image-caption-color: #f5f7ff;
   }
 }
 
@@ -66,6 +76,22 @@ body {
               var(--page-bg);
   color: var(--page-text);
   overflow-x: hidden;
+}
+
+a {
+  color: var(--link-color);
+  transition: color 0.25s ease;
+}
+
+a:hover,
+a:focus-visible {
+  color: var(--link-hover-color);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
 }
 
 html.nav-open,
@@ -492,6 +518,15 @@ section {
   scroll-margin-top: 80px;
 }
 
+section a:not(.button):not(.nav-link) {
+  color: var(--link-on-dark);
+}
+
+section a:not(.button):not(.nav-link):hover,
+section a:not(.button):not(.nav-link):focus-visible {
+  color: var(--link-on-dark-hover);
+}
+
 @media (max-width: 900px) {
   section {
     padding: 3rem 1.5rem;
@@ -665,6 +700,7 @@ section {
     box-shadow: 0 32px 70px rgba(0, 0, 0, 0.16);
     backdrop-filter: blur(18px);
     overflow: hidden;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
   }
 
   .feature-card::before,
@@ -697,7 +733,6 @@ section {
 
   .feature-card:hover,
   .gallery-card:hover {
-    transform: translateY(-10px);
     border-color: rgba(74, 158, 255, 0.28);
     box-shadow: 0 40px 90px rgba(0, 0, 0, 0.2);
     background: rgba(255, 255, 255, 0.1);
@@ -794,12 +829,13 @@ section {
 }
 
 .subheading a, p a {
-  color: inherit;
+  color: var(--link-on-dark);
   text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
 
 .subheading a:hover, p a:hover {
-  color: white;
+  color: var(--link-on-dark-hover);
 }
 
 .image-group {
@@ -818,22 +854,57 @@ section {
   text-align: center;
 }
 
+.image-container .img-link {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
 .image-container .image {
   width: 100%;
-  aspect-ratio: 1/1;
+  height: auto;
   object-fit: cover;
-  border-radius: 4px;
-  transition: transform 0.3s ease;
+  border-radius: 14px;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 
 .image-container .img-link:hover .image {
-  transform: scale(1.05);
+  transform: scale(1.03);
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.16);
 }
 
 .image-container p {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-  color: var(--color-light);
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--image-caption-color);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  line-height: 1.5;
+}
+
+.image-group-uniform .image-container .img-link {
+  aspect-ratio: 4 / 3;
+}
+
+.image-group-uniform .image-container .image {
+  width: 100%;
+  height: 100%;
+}
+
+.affiliate-page .content-wrapper > .feature-card + .feature-card {
+  margin-top: 1.75rem;
+}
+
+.reviews-page #reviews-list + .feature-card,
+.reviews-page .content-wrapper > .feature-card + .feature-card {
+  margin-top: 1.75rem;
+}
+
+.guide-page .guide-card-grid > .section-subheading {
+  grid-column: 1 / -1;
+  margin-bottom: 0.25rem;
 }
 
 /* Project sections styling */
@@ -860,6 +931,21 @@ section {
   margin-top: 1.5rem;
 }
 
+.weather-page #page-main > section:nth-of-type(2) .content-wrapper {
+  display: grid;
+  gap: 1.75rem;
+  align-items: start;
+}
+
+.about-page .page-copy-card + .feature-card {
+  margin-top: 2.75rem;
+}
+
+.weather-page .weather-panel {
+  grid-template-columns: 1fr;
+  gap: 1.15rem;
+}
+
 .weather-controls {
   display: flex;
   flex-direction: column;
@@ -869,21 +955,24 @@ section {
 .weather-action-row {
   display: flex;
   gap: 1rem;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-wrap: nowrap;
+  align-items: stretch;
 }
 
 .location-search {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(140px, 0.9fr) minmax(210px, 1.3fr) auto;
   gap: 0.75rem;
   flex: 1;
-  min-width: 220px;
+  min-width: 0;
+  align-items: stretch;
 }
 
 .location-search input {
   flex: 1;
-  min-width: 0;
+  min-width: 16rem;
   padding: 0.85rem 1rem;
+  min-height: 48px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.03);
@@ -892,16 +981,42 @@ section {
 }
 
 .location-search select {
-  min-width: 170px;
+  min-width: 0;
   padding: 0.85rem 1rem;
+  min-height: 48px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.03);
   color: rgba(255, 255, 255, 0.95);
 }
 
+.location-search #weather-search-btn,
+#weather-location-btn {
+  min-height: 48px;
+}
+
+#weather-location-btn {
+  flex-shrink: 0;
+}
+
+.location-search #weather-search-btn {
+  min-width: 5.8rem;
+  padding: 0.75rem 1rem;
+}
+
 .location-search input::placeholder {
   color: rgba(255, 255, 255, 0.7);
+  font-size: 0.92rem;
+}
+
+#weather-fallback-link {
+  align-self: flex-start;
+  font-size: 0.88rem;
+  padding: 0.65rem 1rem;
+}
+
+.weather-page .weather-output {
+  align-items: flex-start;
 }
 
 .weather-note {
@@ -1106,7 +1221,26 @@ section {
 
 .guide-page .guide-card-grid {
   margin-top: 1.5rem;
+  gap: 2rem;
+  grid-template-columns: repeat(2, minmax(320px, 1fr));
   align-items: start;
+}
+
+.guide-page .guide-card-grid > .feature-card {
+  height: 100%;
+  min-width: 0;
+}
+
+.guide-page .guide-card-grid > .feature-card h3 {
+  font-size: clamp(1.8rem, 2.2vw, 2.7rem);
+}
+
+.news-page .calendar-wrapper + .feature-card {
+  margin-top: 2rem;
+}
+
+.news-page .content-wrapper > .feature-card:first-of-type {
+  margin-bottom: 1.7rem;
 }
 
 .guide-page .guide-list {
@@ -1136,7 +1270,7 @@ section {
 
 @media (min-width: 1080px) {
   .guide-page .guide-card-grid {
-    grid-template-columns: repeat(3, minmax(280px, 1fr));
+    grid-template-columns: repeat(2, minmax(320px, 1fr));
   }
 
   .guide-page .guide-experiment-card {
@@ -1145,9 +1279,28 @@ section {
   }
 
   .guide-page .guide-red-flags-card {
-    grid-column: 2 / 3;
+    grid-column: 1 / -1;
     order: 99;
   }
+}
+
+.darkskies-page #page-main > section:nth-of-type(2) .content-wrapper {
+  display: grid;
+  gap: 2.25rem;
+}
+
+.darkskies-page .feature-card {
+  padding-top: 2.2rem;
+  padding-bottom: 2.2rem;
+}
+
+.darkskies-page .feature-card p,
+.darkskies-page .resource-list li {
+  line-height: 1.85;
+}
+
+.darkskies-page .darksky-panel {
+  margin: 0.25rem 0;
 }
 
 .resources-page .resource-list {
@@ -2014,6 +2167,11 @@ footer {
     width: 60%;
   }
   
+
+  .guide-page .guide-card-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.35rem;
+  }
   .image-container {
     width: 45%;
   }
@@ -2130,6 +2288,7 @@ footer {
   }
 
   .location-search {
+    display: flex;
     flex-direction: column;
     align-items: stretch;
   }
@@ -2224,6 +2383,30 @@ footer {
   .image-group {
     flex-direction: column;
     align-items: center;
+  }
+
+  .guide-page .guide-card-grid {
+    margin-top: 1rem;
+    grid-template-columns: 1fr !important;
+    gap: 1.15rem;
+  }
+
+  .guide-page .guide-card-grid > .feature-card {
+    padding: 1.45rem;
+    border-radius: 22px;
+  }
+
+  .guide-page .guide-card-grid > .feature-card h3 {
+    font-size: clamp(1.05rem, 7vw, 1.6rem);
+    line-height: 1.3;
+  }
+
+  .news-page .calendar-wrapper + .feature-card {
+    margin-top: 1.4rem;
+  }
+
+  .news-page .content-wrapper > .feature-card:first-of-type {
+    margin-bottom: 1.95rem;
   }
   
   #section-about article hr {
