@@ -1,11 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dark Skies | Our Astro Journey</title>
-    <meta name="description" content="Find dark sky locations near your chosen place and plan better observing sessions." />
+    <title>Dark Sky Finder | Night Sky Guide For Beginners</title>
+    <meta name="description" content="Find darker observing locations and plan beginner-friendly sessions with less light pollution. Use this dark sky finder with weather checks for better astrophotography results." />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Matt Brambley" />
     <link rel="canonical" href="https://www.ourastrojourney.co.uk/dark-skies.html" />
+    <link rel="alternate" hreflang="en-GB" href="https://www.ourastrojourney.co.uk/dark-skies.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.ourastrojourney.co.uk/dark-skies.html" />
+    <meta property="og:site_name" content="Our Astro Journey" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:title" content="Dark Sky Finder | Night Sky Guide For Beginners" />
+    <meta property="og:description" content="Find darker locations and pair them with weather checks to plan better beginner astronomy sessions." />
+    <meta property="og:image" content="https://www.ourastrojourney.co.uk/assets/images/branding/hero-ing.jpg" />
+    <meta property="og:image:alt" content="Night sky background from Our Astro Journey" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@ourastrojourney" />
+    <meta name="twitter:title" content="Dark Sky Finder | Night Sky Guide For Beginners" />
+    <meta name="twitter:description" content="Find darker locations and pair them with weather checks to plan better beginner astronomy sessions." />
+    <meta name="twitter:image" content="https://www.ourastrojourney.co.uk/assets/images/branding/hero-ing.jpg" />
+    <meta name="theme-color" content="#050812" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/branding/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/images/branding/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/images/branding/apple-touch-icon.png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="./assets/css/reset.css" />
     <link rel="stylesheet" href="./assets/css/styles.css" />
@@ -16,11 +36,42 @@
       gtag('js', new Date());
       gtag('config', 'G-J4NC85BT9H');
     </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebPage",
+          "name": "Dark Sky Finder",
+          "url": "https://www.ourastrojourney.co.uk/dark-skies.html",
+          "description": "A beginner-friendly page for finding darker observing locations.",
+          "inLanguage": "en-GB"
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://www.ourastrojourney.co.uk/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Dark Skies",
+              "item": "https://www.ourastrojourney.co.uk/dark-skies.html"
+            }
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#page-main">Skip to main content</a>
     <header id="header-main">
-      <div class="logo-container"><a href="./index.html" class="nav-link logo-link" id="logo"><img src="./assets/images/branding/logo.png" alt="OurAstroJourney logo" class="logo-img"></a></div>
+      <div class="logo-container"><a href="./index.html" class="nav-link logo-link" id="logo"><img src="./assets/images/branding/logo.png" alt="OurAstroJourney logo" class="logo-img" width="1408" height="768"></a></div>
       <button id="mobile-menu-button" class="mobile-menu-toggle" aria-label="Open navigation menu" aria-controls="mobile-navigation-main" aria-expanded="false">
         <i class="fas fa-bars"></i>
       </button>
@@ -65,6 +116,12 @@
       </section>
       <section>
         <div class="content-wrapper">
+          <article class="feature-card">
+            <h2>Why dark skies matter</h2>
+            <p>If you are new to astrophotography, moving to a darker location often improves results more than buying expensive equipment. Less sky glow means better contrast in deep-sky photography and easier target detection.</p>
+            <p>For moon photography and bright targets you can still practice from home, but this page helps you find alternatives when you want to push further.</p>
+          </article>
+
           <div class="darksky-panel">
             <div class="darksky-controls">
               <div class="location-search darksky-search">
@@ -90,6 +147,16 @@
             </div>
             <div id="darksky-list" class="darksky-list"></div>
           </div>
+
+          <article class="feature-card">
+            <h2>Build a simple planning routine</h2>
+            <ul class="resource-list">
+              <li>Pick two possible observing spots here, then compare their conditions on the <a href="./weather.html">weather page</a>.</li>
+              <li>Use the <a href="./news.html">news and sky events page</a> to match location planning with upcoming targets.</li>
+              <li>Use <a href="./useful-resources.html">useful resources</a> for software and maps that help with field planning.</li>
+            </ul>
+            <p>As your confidence grows, repeat this process for a few different sites. Over time you will build a short list of reliable locations for moon work, wide-field practice, and deep-sky sessions.</p>
+          </article>
         </div>
       </section>
     </main>

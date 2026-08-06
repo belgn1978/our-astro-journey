@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
   <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <!-- Primary Meta Tags -->
-  <title>Our Astro Journey | Beginner Astrophotography Blog for Moon, Deep Sky & Dark Skies</title>
-  <meta name="title" content="Our Astro Journey | Beginner Astrophotography Blog for Moon, Deep Sky & Dark Skies">
-  <meta name="description" content="Our Astro Journey is a beginner astrophotography site sharing moon photography, deep-sky imaging tips, UK weather planning, dark sky guidance, astronomy resources, and a solar eclipse safety guide.">
-  <meta name="keywords" content="astrophotography, beginner astrophotography, moon photography, deep sky imaging, solar eclipse guide, eclipse safety, astronomy resources, dark sky sites, weather forecast, stargazing, telescope photography, UK astrophotography">
+  <title>Our Astro Journey | Astronomy For Beginners And Smart Telescope Guides</title>
+  <meta name="description" content="Beginner astronomy and astrophotography in plain English, including smart telescope guides, honest reviews, moon photography, deep-sky practice, and solar eclipse safety advice.">
   <meta name="author" content="Matt Brambley">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://www.ourastrojourney.co.uk/" />
@@ -19,8 +17,8 @@
   <meta property="og:url" content="https://www.ourastrojourney.co.uk/">
   <meta property="og:site_name" content="Our Astro Journey">
   <meta property="og:locale" content="en_GB">
-  <meta property="og:title" content="Our Astro Journey | Beginner Astrophotography Blog for Moon, Deep Sky & Dark Skies">
-  <meta property="og:description" content="Beginner astrophotography, astronomy resources, UK sky planning, and the latest solar eclipse safety guide from Our Astro Journey.">
+  <meta property="og:title" content="Our Astro Journey | Astronomy For Beginners And Smart Telescope Guides">
+  <meta property="og:description" content="Beginner astronomy and astrophotography in plain English, including smart telescope guides, honest reviews, moon photography, deep-sky practice, and solar eclipse safety advice.">
   <meta property="og:image" content="https://www.ourastrojourney.co.uk/assets/images/branding/hero-ing.jpg">
   <meta property="og:image:secure_url" content="https://www.ourastrojourney.co.uk/assets/images/branding/hero-ing.jpg">
   <meta property="og:image:alt" content="Our Astro Journey astrophotography blog hero image showing a night sky scene">
@@ -28,8 +26,8 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://www.ourastrojourney.co.uk/">
-  <meta name="twitter:title" content="Our Astro Journey | Beginner Astrophotography Blog for Moon, Deep Sky & Dark Skies">
-  <meta name="twitter:description" content="Beginner astrophotography, astronomy resources, UK sky planning, and the latest solar eclipse safety guide from Our Astro Journey.">
+  <meta name="twitter:title" content="Our Astro Journey | Astronomy For Beginners And Smart Telescope Guides">
+  <meta name="twitter:description" content="Beginner astronomy and astrophotography in plain English, including smart telescope guides, honest reviews, moon photography, deep-sky practice, and solar eclipse safety advice.">
   <meta name="twitter:image" content="https://www.ourastrojourney.co.uk/assets/images/branding/hero-ing.jpg">
   <meta name="twitter:creator" content="@ourastrojourney">
   <meta name="theme-color" content="#050812">
@@ -64,12 +62,32 @@
     "@context": "https://schema.org",
     "@graph": [
       {
+        "@type": "Organization",
+        "@id": "https://www.ourastrojourney.co.uk/#organization",
+        "name": "Our Astro Journey",
+        "url": "https://www.ourastrojourney.co.uk/",
+        "logo": "https://www.ourastrojourney.co.uk/assets/images/branding/logo.png",
+        "sameAs": [
+          "https://x.com/ourastrojourney",
+          "https://www.instagram.com/ourastrojourney",
+          "https://www.threads.net/our.astro.journey"
+        ]
+      },
+      {
         "@type": "WebSite",
         "@id": "https://www.ourastrojourney.co.uk/#website",
         "url": "https://www.ourastrojourney.co.uk/",
         "name": "Our Astro Journey",
-        "description": "A beginner-friendly astrophotography site for moon photography, deep-sky imaging, weather guidance, dark sky planning, and solar eclipse resources.",
+        "description": "A beginner-friendly astronomy and astrophotography site with smart telescope guides, moon and deep-sky learning, weather planning, and solar eclipse resources.",
         "publisher": {
+          "@id": "https://www.ourastrojourney.co.uk/#organization"
+        },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://www.ourastrojourney.co.uk/?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        },
+        "creator": {
           "@id": "https://www.ourastrojourney.co.uk/#person"
         },
         "inLanguage": "en-GB"
@@ -126,7 +144,7 @@
   <body>
     <a class="skip-link" href="#section-cta">Skip to main content</a>
     <header id="header-main">
-      <div class="logo-container"><a href="./index.html" class="nav-link logo-link" id="logo"><img src="./assets/images/branding/logo.png" alt="OurAstroJourney logo" class="logo-img"></a></div>
+      <div class="logo-container"><a href="./index.html" class="nav-link logo-link" id="logo"><img src="./assets/images/branding/logo.png" alt="OurAstroJourney logo" class="logo-img" width="1408" height="768"></a></div>
       <button id="mobile-menu-button" class="mobile-menu-toggle" aria-label="Open navigation menu" aria-controls="mobile-navigation-main" aria-expanded="false">
         <i class="fas fa-bars"></i>
       </button>
@@ -164,7 +182,7 @@
     <main id="page-main" role="main">
       <section id="section-cta">
         <div class="cta-container">
-          <img src="./assets/images/branding/hero-ing.jpg" alt="Night sky starfield background" class="cta-img">
+          <img src="./assets/images/branding/hero-ing.jpg" alt="Night sky starfield background" class="cta-img" width="4528" height="2943">
           <h1 id="cta-heading">Beginner Astrophotography in the UK</h1>
           <h2 id="cta-subheading">Follow our astro journey as we learn moon photography, deep-sky imaging, weather planning, and dark sky exploration.</h2>
           <div class="hero-actions">
@@ -209,6 +227,16 @@
             <h3>Dark sky guidance</h3>
             <p>Find dark sky site information and learn where to look for the best observing conditions across the UK.</p>
             <a class="button button-secondary" href="./dark-skies.html">Open dark skies</a>
+          </article>
+          <article class="feature-card">
+            <h3>Honest beginner reviews</h3>
+            <p>Read transparent equipment reviews and follow upcoming smart telescope coverage focused on real beginner use.</p>
+            <a class="button button-secondary" href="./reviews.html">Read reviews</a>
+          </article>
+          <article class="feature-card">
+            <h3>Equipment and buying help</h3>
+            <p>Compare current offers and beginner resources before choosing your first telescope or astrophotography setup.</p>
+            <a class="button button-secondary" href="./affiliate-links.html">View discounts and links</a>
           </article>
         </div>
       </div>

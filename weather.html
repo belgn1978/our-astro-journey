@@ -1,11 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Weather | Our Astro Journey</title>
-    <meta name="description" content="See local weather conditions and plan astrophotography sessions with Our Astro Journey." />
+    <title>Astrophotography Weather Planner | Beginner Night Sky Forecasts</title>
+    <meta name="description" content="Plan beginner astronomy sessions with cloud, visibility, and location checks. Use this weather page with our dark sky guide to pick better nights for observing." />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Matt Brambley" />
     <link rel="canonical" href="https://www.ourastrojourney.co.uk/weather.html" />
+    <link rel="alternate" hreflang="en-GB" href="https://www.ourastrojourney.co.uk/weather.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.ourastrojourney.co.uk/weather.html" />
+    <meta property="og:site_name" content="Our Astro Journey" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:title" content="Astrophotography Weather Planner | Beginner Night Sky Forecasts" />
+    <meta property="og:description" content="Plan beginner astronomy sessions with cloud and location checks so you can make better use of clear nights." />
+    <meta property="og:image" content="https://www.ourastrojourney.co.uk/assets/images/branding/hero-ing.jpg" />
+    <meta property="og:image:alt" content="Night sky background from Our Astro Journey" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@ourastrojourney" />
+    <meta name="twitter:title" content="Astrophotography Weather Planner | Beginner Night Sky Forecasts" />
+    <meta name="twitter:description" content="Plan beginner astronomy sessions with cloud and location checks so you can make better use of clear nights." />
+    <meta name="twitter:image" content="https://www.ourastrojourney.co.uk/assets/images/branding/hero-ing.jpg" />
+    <meta name="theme-color" content="#050812" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/branding/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/images/branding/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/images/branding/apple-touch-icon.png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="./assets/css/reset.css" />
     <link rel="stylesheet" href="./assets/css/styles.css" />
@@ -16,11 +36,42 @@
       gtag('js', new Date());
       gtag('config', 'G-J4NC85BT9H');
     </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebPage",
+          "name": "Astrophotography Weather Planner",
+          "url": "https://www.ourastrojourney.co.uk/weather.html",
+          "description": "A beginner-focused weather planning page for astronomy and astrophotography sessions.",
+          "inLanguage": "en-GB"
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://www.ourastrojourney.co.uk/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Weather",
+              "item": "https://www.ourastrojourney.co.uk/weather.html"
+            }
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#page-main">Skip to main content</a>
     <header id="header-main">
-      <div class="logo-container"><a href="./index.html" class="nav-link logo-link" id="logo"><img src="./assets/images/branding/logo.png" alt="OurAstroJourney logo" class="logo-img"></a></div>
+      <div class="logo-container"><a href="./index.html" class="nav-link logo-link" id="logo"><img src="./assets/images/branding/logo.png" alt="OurAstroJourney logo" class="logo-img" width="1408" height="768"></a></div>
       <button id="mobile-menu-button" class="mobile-menu-toggle" aria-label="Open navigation menu" aria-controls="mobile-navigation-main" aria-expanded="false">
         <i class="fas fa-bars"></i>
       </button>
@@ -65,6 +116,12 @@
       </section>
       <section>
         <div class="content-wrapper">
+          <article class="feature-card">
+            <h2>How beginners can use this page</h2>
+            <p>When you are new to astronomy for beginners, weather can be the biggest challenge. A short planning routine helps: check cloud cover, compare two nearby locations, then decide whether moon photography or deep-sky photography is realistic for that night.</p>
+            <p>If cloud and transparency are poor, use the session for equipment setup practice instead of long capture attempts. That keeps progress moving even on difficult nights.</p>
+          </article>
+
           <div class="weather-panel">
             <div class="weather-controls">
               <p>Search a location to view the Clear Outside forecast panel with weather and cloud cover details.</p>
@@ -111,6 +168,15 @@
               </div>
             </div>
           </div>
+
+          <article class="feature-card">
+            <h2>Pair weather with these pages</h2>
+            <ul class="resource-list">
+              <li><a href="./dark-skies.html">Dark sky guide</a> to find better observing locations with less light pollution.</li>
+              <li><a href="./gallery.html">Gallery</a> and <a href="./moon-gallery.html">Moon gallery</a> to see what is realistic with beginner setups.</li>
+              <li><a href="./useful-resources.html">Useful resources</a> for planning tools and software.</li>
+            </ul>
+          </article>
         </div>
       </section>
     </main>
