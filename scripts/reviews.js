@@ -1,4 +1,20 @@
+// Add entries here when you publish a review.
+// Required fields:
+// - title: Card heading displayed on the reviews index
+// - href: Link to the full review page (for example ./reviews/entries/my-review.html)
+// - imageSrc: Thumbnail/cover image path (for example ./images/reviews/my-review-cover.jpg)
+// Optional fields:
+// - imageAlt: Accessible alt text for the card image
 const reviewPages = [];
+
+function escapeHTML(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 function renderReviewPages() {
   const reviewsList = document.getElementById('reviews-list');
@@ -11,29 +27,19 @@ function renderReviewPages() {
     reviewsList.innerHTML = `
       <article class="feature-card reviews-empty-state">
         <h3>No reviews published yet</h3>
-        <p>New reviews will appear here as they are added. Each entry will link to its own dedicated page.</p>
+        <p>Your first review card will appear here once you add a review page, image, and entry in scripts/reviews.js.</p>
       </article>
     `;
     return;
   }
 
   reviewsList.innerHTML = reviewPages.map((reviewPage) => {
-    const metaParts = [];
-
-    if (reviewPage.date) {
-      metaParts.push(`<span>${reviewPage.date}</span>`);
-    }
-
-    if (reviewPage.category) {
-      metaParts.push(`<span>${reviewPage.category}</span>`);
-    }
-
     return `
-      <article class="feature-card review-card">
-        ${metaParts.length > 0 ? `<p class="review-card-meta">${metaParts.join('')}</p>` : ''}
-        <h3>${reviewPage.title}</h3>
-        <p>${reviewPage.summary}</p>
-        <a class="button button-secondary" href="${reviewPage.href}">Read review</a>
+      <article class="feature-card review-link-card">
+        <a class="review-card-link" href="${escapeHTML(reviewPage.href)}" aria-label="Read ${escapeHTML(reviewPage.title)}">
+          <img class="review-card-image" src="${escapeHTML(reviewPage.imageSrc)}" alt="${escapeHTML(reviewPage.imageAlt || reviewPage.title)}" loading="lazy" />
+          <h3 class="review-card-title">${escapeHTML(reviewPage.title)}</h3>
+        </a>
       </article>
     `;
   }).join('');
