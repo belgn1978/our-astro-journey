@@ -303,6 +303,27 @@ function escapeHTML(value) {
     .replace(/'/g, '&#39;');
 }
 
+function sanitizeExternalUrl(value) {
+  try {
+    const parsed = new URL(String(value), window.location.href);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return parsed.href;
+    }
+  } catch (err) {}
+
+  return null;
+}
+
+function openExternalUrl(url) {
+  const safeUrl = sanitizeExternalUrl(url);
+  if (!safeUrl) return;
+
+  const popup = window.open(safeUrl, '_blank', 'noopener,noreferrer');
+  if (popup) {
+    popup.opener = null;
+  }
+}
+
 function formatUpdateDateLabel(value) {
   const date = parseYMD(value);
   if (Number.isNaN(date.getTime())) return value;
@@ -382,7 +403,7 @@ function renderMobileUpcomingView() {
     const eventsForDay = astronomyEvents.filter((event) => event.date === dateStr);
     const labels = eventsForDay.slice(0, 2).map((event) => {
       const icon = event.type === 'eclipse' ? '🌙' : event.type === 'meteor' ? '☄️' : event.type === 'launch' ? '🚀' : '⭐';
-      return `<span class="mobile-upcoming-event">${icon} ${event.title}</span>`;
+      return `<span class="mobile-upcoming-event">${icon} ${escapeHTML(event.title)}</span>`;
     }).join('');
     const moreCount = eventsForDay.length > 2 ? `<span class="mobile-upcoming-more">+${eventsForDay.length - 2} more</span>` : '';
     const dayLabel = dayDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
@@ -531,7 +552,13 @@ function createDayElement(date, otherMonth, isToday = false) {
       if (event.type === 'eclipse') iconClass = 'fa-moon';
       else if (event.type === 'meteor') iconClass = 'fa-meteor';
       else if (event.type === 'launch') iconClass = 'fa-rocket';
-      eventIndicator.innerHTML = `<i class="fas ${iconClass}"></i> ${displayTitle}`;
+
+      const icon = document.createElement('i');
+      icon.className = `fas ${iconClass}`;
+      icon.setAttribute('aria-hidden', 'true');
+      eventIndicator.appendChild(icon);
+      eventIndicator.appendChild(document.createTextNode(` ${displayTitle}`));
+
       eventIndicator.addEventListener('click', (e) => {
         e.stopPropagation();
         showEventDetails(date);
@@ -601,13 +628,15 @@ function generateEventsList() {
       day: 'numeric' 
     });
 
+    const safeYoutubeUrl = sanitizeExternalUrl(event.youtubeUrl);
+
     // Create button based on event type
     let buttonHTML = '';
-    if (event.youtubeUrl) {
+    if (safeYoutubeUrl) {
       const buttonIcon = event.liveStream ? 'fa-video' : 'fa-youtube';
       const buttonText = event.liveStream ? 'Watch Live' : 'View on YouTube';
       buttonHTML = `
-        <button class="export-btn watch-btn" data-url="${event.youtubeUrl}">
+        <button class="export-btn watch-btn" data-url="${escapeHTML(safeYoutubeUrl)}">
           <i class="fab ${buttonIcon}"></i> ${buttonText}
         </button>
       `;
@@ -620,21 +649,21 @@ function generateEventsList() {
     }
 
     // Add location for launch events
-    const locationHTML = event.location ? `<div class="event-location"><i class="fas fa-map-marker-alt"></i> ${event.location}</div>` : '';
+    const locationHTML = event.location ? `<div class="event-location"><i class="fas fa-map-marker-alt"></i> ${escapeHTML(event.location)}</div>` : '';
 
     eventCard.innerHTML = `
       <div class="event-date">${dateStr}</div>
-      <div class="event-title">${event.title}</div>
-      <div class="event-description">${event.description}</div>
+      <div class="event-title">${escapeHTML(event.title)}</div>
+      <div class="event-description">${escapeHTML(event.description)}</div>
       ${locationHTML}
       ${buttonHTML}
     `;
     
     // Add event listener to button
     const btn = eventCard.querySelector('.export-btn, .watch-btn');
-    if (event.youtubeUrl) {
+    if (safeYoutubeUrl) {
       btn.addEventListener('click', () => {
-        window.open(event.youtubeUrl, '_blank');
+        openExternalUrl(safeYoutubeUrl);
       });
     } else {
       btn.addEventListener('click', () => showEventDetails(event));
@@ -675,22 +704,23 @@ function showEventDetails(target) {
 
   title.textContent = `Events on ${dateStr}`;
   body.innerHTML = events.map(event => {
-    const detailsButton = event.youtubeUrl ?
-      `<button class="details-btn watch-btn" data-url="${event.youtubeUrl}"><i class="fas fa-video"></i> Watch Live</button>` :
+    const safeYoutubeUrl = sanitizeExternalUrl(event.youtubeUrl);
+    const detailsButton = safeYoutubeUrl ?
+      `<button class="details-btn watch-btn" data-url="${escapeHTML(safeYoutubeUrl)}"><i class="fas fa-video"></i> Watch Live</button>` :
       '';
 
-    const locationHTML = event.location ? `<div class="event-location"><i class="fas fa-map-marker-alt"></i> ${event.location}</div>` : '';
+    const locationHTML = event.location ? `<div class="event-location"><i class="fas fa-map-marker-alt"></i> ${escapeHTML(event.location)}</div>` : '';
 
     return `
       <div class="event-details-card ${event.type}">
         <div class="event-details-header">
           <div>
-            <div class="event-title">${event.title}</div>
-            <div class="event-date">${event.date}</div>
+            <div class="event-title">${escapeHTML(event.title)}</div>
+            <div class="event-date">${escapeHTML(event.date)}</div>
           </div>
           ${detailsButton}
         </div>
-        <div class="event-description">${event.description}</div>
+        <div class="event-description">${escapeHTML(event.description)}</div>
         ${locationHTML}
       </div>
     `;
@@ -700,7 +730,7 @@ function showEventDetails(target) {
 
   body.querySelectorAll('.details-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      window.open(btn.dataset.url, '_blank');
+      openExternalUrl(btn.dataset.url);
     });
   });
 }
@@ -736,7 +766,7 @@ function exportToCalendar(type, event) {
 
   if (type === 'google') {
     const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${formatDate(startDate)}/${formatDate(endDate)}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location || 'Sky')}`;
-    window.open(url, '_blank');
+    openExternalUrl(url);
   } else if (type === 'ical' || type === 'apple' || type === 'outlook') {
     const icsContent = `BEGIN:VCALENDAR
 VERSION:2.0
