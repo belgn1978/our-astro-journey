@@ -3026,14 +3026,25 @@ footer {
 
 .rev-content {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 2.5rem;
 }
 
-.rev-text,
-.rev-img {
+.rev-text {
   flex: 1 1 50%;
   min-width: 0;
+  align-self: center;
+  padding: 1.5rem 0 1.5rem 1.5rem;
+  border-left: 3px solid var(--color-accent);
+  background: linear-gradient(90deg, rgba(74, 158, 255, 0.1), transparent 72%);
+}
+
+.rev-img {
+  flex: 0 1 42%;
+  min-width: 0;
+  min-height: 28rem;
+  overflow: hidden;
+  position: relative;
 }
 
 .rev-text p {
@@ -3047,15 +3058,176 @@ footer {
 }
 
 .rev-img {
-  aspect-ratio: 4 / 3;
   border-radius: 24px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
+.rev-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.rec-img {
+  margin-top: 1.5rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.rec-img img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.sun-gallery {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30rem;
+  isolation: isolate;
+}
+
+.sun-gallery a {
+  position: absolute;
+  width: min(17rem, 72%);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 4px solid var(--section-bg);
+  border-radius: 1rem;
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.28);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, z-index 0s linear 0.25s;
+}
+
+.sun-gallery a:nth-child(1) {
+  transform: translateX(-34%);
+  z-index: 1;
+}
+
+.sun-gallery a:nth-child(2) {
+  transform: translateY(-12%);
+  z-index: 2;
+}
+
+.sun-gallery a:nth-child(3) {
+  transform: translateX(34%);
+  z-index: 1;
+}
+
+.sun-gallery a:hover,
+.sun-gallery a:focus-visible {
+  z-index: 5;
+  box-shadow: 0 1.25rem 2.5rem rgba(0, 0, 0, 0.42);
+  transition-delay: 0s;
+}
+
+.sun-gallery a:nth-child(1):hover,
+.sun-gallery a:nth-child(1):focus-visible {
+  transform: translateX(-34%) scale(1.08);
+}
+
+.sun-gallery a:nth-child(2):hover,
+.sun-gallery a:nth-child(2):focus-visible {
+  transform: translateY(-12%) scale(1.08);
+}
+
+.sun-gallery a:nth-child(3):hover,
+.sun-gallery a:nth-child(3):focus-visible {
+  transform: translateX(34%) scale(1.08);
+}
+
+.sun-gallery img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 /* add class "rev-block--reverse" on a .rev-block to flip which side rev-text/rev-img sit on */
 .rev-block--reverse .rev-content {
   flex-direction: row-reverse;
+}
+
+.rev-sessions .rev-content {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 3rem;
+}
+
+.rev-sessions .rev-subcontent {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  column-gap: 2.5rem;
+  row-gap: 1.75rem;
+  width: 100%;
+  flex: 0 0 100%;
+}
+
+.rev-sessions .rev-subcontent > h2,
+.rev-sessions .rev-subcontent > h3 {
+  grid-column: 1 / -1;
+}
+
+.rev-sessions .rev-subcontent > h2,
+.rev-sessions .rev-subcontent > h3 {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  line-height: 1.2;
+}
+
+.rev-sessions .rev-subcontent > h2 a,
+.rev-sessions .rev-subcontent > h3 a {
+  color: var(--section-text);
+  text-decoration: none;
+  border-bottom: 2px solid var(--color-accent);
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.rev-sessions .rev-subcontent > h2 a:hover,
+.rev-sessions .rev-subcontent > h2 a:focus-visible,
+.rev-sessions .rev-subcontent > h3 a:hover,
+.rev-sessions .rev-subcontent > h3 a:focus-visible {
+  color: var(--link-on-dark-hover);
+  border-color: var(--link-on-dark-hover);
+}
+
+.review-entry-page .warning {
+  display: inline-block;
+  padding: 0.08em 0.4em;
+  border: 1px solid rgba(255, 71, 87, 0.9);
+  border-radius: 0.25rem;
+  background: rgba(255, 71, 87, 0.16);
+  color: #ff6b78;
+  font-size: 1.1em;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 0 0 0 2px rgba(255, 71, 87, 0.08);
+}
+
+.rev-sessions .rev-subcontent > .rev-txt {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.rev-sessions .rev-subcontent > .rec-img,
+.rev-sessions .rev-subcontent > .rev-img {
+  grid-column: 2;
+  grid-row: 2;
+  width: 100%;
+}
+
+.rev-sessions .rev-subcontent:nth-child(even) > .rev-txt {
+  grid-column: 2;
+}
+
+.rev-sessions .rev-subcontent:nth-child(even) > .rec-img,
+.rev-sessions .rev-subcontent:nth-child(even) > .rev-img {
+  grid-column: 1;
 }
 
 .specs-grid {
@@ -3093,6 +3265,37 @@ footer {
 @media (max-width: 800px) {
   .rev-content {
     flex-direction: column !important;
+  }
+
+  .rev-text {
+    padding: 0 0 0 1rem;
+  }
+
+  .rev-img {
+    width: 100%;
+    min-height: 0;
+    aspect-ratio: 4 / 3;
+  }
+
+  .sun-gallery {
+    min-height: 22rem;
+  }
+
+  .sun-gallery a {
+    width: min(13rem, 62%);
+  }
+
+  .rev-sessions .rev-subcontent {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+  }
+
+  .rev-sessions .rev-subcontent > .rev-txt,
+  .rev-sessions .rev-subcontent > .rec-img,
+  .rev-sessions .rev-subcontent > .rev-img {
+    width: 100%;
   }
 
   /* mobile flip-card behaviour (front/back faces, click to reveal meaning) added later */
