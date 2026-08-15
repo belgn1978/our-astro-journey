@@ -1,8 +1,8 @@
 // Add entries here when you publish a review.
 // Required fields:
 // - title: Card heading displayed on the reviews index
-// - href: Link to the full review page (for example ./reviews/entries/my-review.html)
-// - imageSrc: Thumbnail/cover image path (for example ./assets/images/reviews/my-review-cover.jpg)
+// - href: Root-relative link to the full review page (for example /reviews/entries/my-review.html)
+// - imageSrc: Root-relative thumbnail/cover image path (for example /assets/images/reviews/my-review-cover.jpg)
 // Optional fields:
 // - imageAlt: Accessible alt text for the card image
 const reviewPages = [];
