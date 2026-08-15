@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
-    <title>Astronomy News And Night Sky Events | Beginner Guide</title>
-    <meta name="description" content="Track beginner-friendly astronomy news, eclipses, meteor showers, and night sky events with practical planning tips for observing and astrophotography." />
+    <title>Astronomy Events Calendar | Major Night Sky Events</title>
+    <meta name="description" content="Track major space launches, lunar and solar eclipses, meteor shower peaks, Milky Way and galaxy seasons, and beginner-friendly night-sky targets." />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Matt Brambley" />
     <link rel="canonical" href="https://www.ourastrojourney.co.uk/news.html" />
@@ -14,14 +14,14 @@
     <meta property="og:url" content="https://www.ourastrojourney.co.uk/news.html" />
     <meta property="og:site_name" content="Our Astro Journey" />
     <meta property="og:locale" content="en_GB" />
-    <meta property="og:title" content="Astronomy News And Night Sky Events | Beginner Guide" />
-    <meta property="og:description" content="Track beginner-friendly astronomy news, eclipses, meteor showers, and night sky events with practical planning tips." />
+    <meta property="og:title" content="Astronomy Events Calendar | Major Night Sky Events" />
+    <meta property="og:description" content="Track major space launches, lunar and solar eclipses, meteor shower peaks, Milky Way and galaxy seasons, and beginner-friendly night-sky targets." />
     <meta property="og:image" content="https://www.ourastrojourney.co.uk/assets/images/branding/hero-ing.jpg" />
     <meta property="og:image:alt" content="Night sky background from Our Astro Journey" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@ourastrojourney" />
-    <meta name="twitter:title" content="Astronomy News And Night Sky Events | Beginner Guide" />
-    <meta name="twitter:description" content="Track beginner-friendly astronomy news, eclipses, meteor showers, and night sky events with practical planning tips." />
+    <meta name="twitter:title" content="Astronomy Events Calendar | Major Night Sky Events" />
+    <meta name="twitter:description" content="Track major space launches, lunar and solar eclipses, meteor shower peaks, Milky Way and galaxy seasons, and beginner-friendly night-sky targets." />
     <meta name="twitter:image" content="https://www.ourastrojourney.co.uk/assets/images/branding/hero-ing.jpg" />
     <meta name="theme-color" content="#050812" />
     <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/branding/favicon-32x32.png" />
@@ -43,9 +43,26 @@
       "@graph": [
         {
           "@type": "CollectionPage",
-          "name": "Astronomy News And Night Sky Events",
+          "name": "Astronomy Events Calendar",
           "url": "https://www.ourastrojourney.co.uk/news.html",
-          "description": "A beginner-focused astronomy events and updates page.",
+          "description": "A beginner-focused astronomy events calendar covering eclipses, meteor showers, deep-sky seasons, and major space launches.",
+          "dateModified": "2026-08-15",
+          "keywords": [
+            "astronomy events calendar",
+            "night sky events",
+            "meteor shower calendar",
+            "lunar eclipse viewing",
+            "solar eclipse viewing",
+            "Milky Way season",
+            "galaxy season",
+            "deep-sky observing"
+          ],
+          "about": [
+            "Astronomy",
+            "Astrophotography",
+            "Night sky observing",
+            "Space launches"
+          ],
           "inLanguage": "en-GB"
         },
         {
@@ -111,17 +128,18 @@
     <main id="page-main" role="main">
       <section class="page-hero">
         <div class="content-wrapper">
-          <h1 class="section-heading">News & Upcoming Events</h1>
-          <p class="section-intro">Stay updated with the latest astronomy news and celestial events.</p>
+          <h1 class="section-heading">Major Space & Night Sky Events</h1>
+          <p class="section-intro">A focused calendar for major crewed missions and the astronomical events worth planning a night around.</p>
         </div>
       </section>
       <section>
         <div class="content-wrapper">
           <article class="feature-card">
             <h2>How to use this event calendar</h2>
-            <p>This page works best as a simple planning layer for astronomy for beginners. Use the calendar to shortlist events, then check cloud forecasts and light-pollution conditions before you commit to a session.</p>
+            <p>This calendar focuses on major crewed and flagship launches, eclipses, meteor showers, notable comet opportunities, and deep-sky observing seasons. Use it to shortlist events, then check cloud forecasts and light-pollution conditions before you commit to a session.</p>
             <p>For solar events, always review eye and equipment safety in our <a href="./solar-eclipse-guide.html">solar eclipse safety guide</a>.</p>
             <p>For meteor showers, prioritize dark locations and visual observing comfort. For lunar events, even short cloud breaks can still be useful for practice shots and focus drills.</p>
+            <p>Topics include lunar eclipse viewing, safe solar eclipse imaging, meteor shower peaks, Milky Way and galaxy season planning, deep-sky observing, and major crewed spaceflight events. Choose your hemisphere to see the targets most useful from your part of the world.</p>
             <p>Beginners often benefit from keeping a simple observation log with date, conditions, target, and outcome. Over a few months, this creates a practical guide tailored to your own location and equipment.</p>
           </article>
 
@@ -132,6 +150,17 @@
                 <div class="current-month" id="currentMonth">January 2026</div>
                 <button class="nav-btn" id="nextMonth"><i class="fas fa-chevron-right"></i></button>
               </div>
+              <fieldset class="hemisphere-picker">
+                <legend>Show events for</legend>
+                <div class="hemisphere-options" role="group" aria-label="Choose observing hemisphere">
+                  <button class="hemisphere-btn active" type="button" data-hemisphere="north" aria-pressed="true">
+                    <i class="fas fa-arrow-up" aria-hidden="true"></i> Northern Hemisphere
+                  </button>
+                  <button class="hemisphere-btn" type="button" data-hemisphere="south" aria-pressed="false">
+                    <i class="fas fa-arrow-down" aria-hidden="true"></i> Southern Hemisphere
+                  </button>
+                </div>
+              </fieldset>
               <div class="view-toggle">
                 <button class="view-btn active" data-view="month">Month</button>
                 <button class="view-btn" data-view="events">Events</button>
@@ -147,7 +176,7 @@
 
             <div id="eventsView" style="display: none;">
               <div class="events-sidebar">
-                <h2 class="events-heading"><i class="fas fa-star"></i> Upcoming Astronomical Events</h2>
+                <h2 class="events-heading"><i class="fas fa-star"></i> Major Space & Astronomical Events</h2>
                 <div id="eventsList"></div>
               </div>
             </div>
@@ -162,8 +191,8 @@
                 <span>Meteor Shower</span>
               </div>
               <div class="legend-item">
-                <div class="legend-color supermoon"></div>
-                <span>Supermoon</span>
+                <div class="legend-color deep-sky"></div>
+                <span>Deep-sky season</span>
               </div>
               <div class="legend-item">
                 <div class="legend-color launch"></div>

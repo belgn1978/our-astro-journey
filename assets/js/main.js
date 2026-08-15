@@ -35,98 +35,125 @@ const YOUTUBE_CHANNELS = {
   'Arianespace': 'https://www.youtube.com/@Arianespace'
 };
 
-// Static Celestial Events (these don't change, so we define them manually)
+const CREWED_LAUNCH_PATTERN = /\b(crewed|manned|astronaut|crew[-\s]?\d+|human spaceflight)\b/;
+const FLAGSHIP_LAUNCH_KEYWORDS = [
+  'artemis', 'starship', 'space station', 'international space station',
+  'iss', 'tiangong', 'gateway', 'new glenn', 'dream chaser'
+];
+
+// Static observable events. Visibility is filtered by the selected hemisphere.
 const celestialEvents = [
   {
-    date: '2026-02-17',
+    date: '2026-01-03',
+    title: 'Quadrantids Meteor Shower Peak',
+    type: 'meteor',
+    hemispheres: ['north', 'south'],
+    description: 'A short, sharp meteor shower that can produce bright meteors. Best after midnight from a dark location, with the radiant higher in northern skies.',
+    duration: 'Night'
+  },
+  {
+    date: '2026-02-01',
+    title: 'Southern Milky Way Season Begins',
+    type: 'deep-sky',
+    hemispheres: ['south'],
+    description: 'The Milky Way core becomes an early-morning target in southern skies. Look toward Sagittarius and Scorpius from a dark location before dawn.',
+    duration: 'Seasonal window'
+  },
+  {
+    date: '2026-03-01',
+    title: 'Galaxy Season Begins',
+    type: 'deep-sky',
+    hemispheres: ['north'],
+    description: 'The spring galaxy observing window begins in northern skies, with Virgo and Coma Berenices becoming strong evening targets.',
+    duration: 'Seasonal window'
+  },
+  {
+    date: '2026-03-03',
     title: 'Total Lunar Eclipse',
     type: 'eclipse',
-    description: 'Total lunar eclipse visible from North America, South America, Europe, and Africa. Maximum eclipse at 12:13 UTC.',
-    duration: '3h 36m'
+    hemispheres: ['north', 'south'],
+    description: 'The Moon passes through Earth\'s shadow. Visibility and timing depend on your location; no special equipment is needed.',
+    duration: 'Night'
   },
   {
-    date: '2026-03-20',
-    title: 'Spring Equinox',
-    type: 'supermoon',
-    description: 'First day of spring in the Northern Hemisphere. Day and night are nearly equal in length.',
-    duration: 'All day'
-  },
-  {
-    date: '2026-04-08',
+    date: '2026-04-22',
     title: 'Lyrids Meteor Shower Peak',
     type: 'meteor',
+    hemispheres: ['north', 'south'],
     description: 'The Lyrids produce about 20 meteors per hour at their peak. Best viewed from a dark location after midnight.',
     duration: 'Night'
   },
   {
-    date: '2026-05-07',
+    date: '2026-05-05',
     title: 'Eta Aquariids Peak',
     type: 'meteor',
-    description: 'Produced by dust particles from Comet Halley. Best viewing in the pre-dawn hours from the Southern Hemisphere.',
+    hemispheres: ['north', 'south'],
+    description: 'Produced by dust particles from Comet Halley. Best viewing is in the pre-dawn hours, especially from southern skies.',
     duration: 'Pre-dawn'
   },
   {
-    date: '2026-06-21',
-    title: 'Summer Solstice',
-    type: 'supermoon',
-    description: 'Longest day of the year in the Northern Hemisphere. The sun reaches its highest point in the sky.',
-    duration: 'All day'
-  },
-  {
-    date: '2026-07-28',
+    date: '2026-07-30',
     title: 'Delta Aquariids Peak',
     type: 'meteor',
-    description: 'A medium shower producing about 20 meteors per hour at its peak. Best viewing in the Southern Hemisphere.',
+    hemispheres: ['north', 'south'],
+    description: 'A medium shower producing about 20 meteors per hour at its peak. Best viewing is from a dark location, especially in southern skies.',
     duration: 'Night'
   },
   {
     date: '2026-08-12',
     title: 'Total Solar Eclipse',
     type: 'eclipse',
-    description: 'Total solar eclipse visible from Greenland, Iceland, and Spain. Partial eclipse visible from much of Europe and North America.',
+    hemispheres: ['north'],
+    description: 'Totality crosses Greenland, Iceland, and northern Spain. A partial eclipse is visible across parts of Europe and North America; use proper solar eye protection.',
     duration: '2m 18s totality'
   },
   {
     date: '2026-08-12',
     title: 'Perseids Meteor Shower Peak',
     type: 'meteor',
-    description: 'One of the best meteor showers producing up to 60 meteors per hour. Look for the radiant in the constellation Perseus.',
+    hemispheres: ['north'],
+    description: 'One of the best annual showers, producing up to 60 meteors per hour. The Perseus radiant is much higher in northern skies.',
     duration: 'Night'
   },
   {
-    date: '2026-09-22',
-    title: 'Autumn Equinox',
-    type: 'supermoon',
-    description: 'First day of fall in the Northern Hemisphere. Day and night are nearly equal in length.',
-    duration: 'All day'
+    date: '2026-09-01',
+    title: 'Southern Deep-sky Season Begins',
+    type: 'deep-sky',
+    hemispheres: ['south'],
+    description: 'Southern observers get an excellent evening window for the Magellanic Clouds, Omega Centauri, and rich Milky Way fields.',
+    duration: 'Seasonal window'
   },
   {
     date: '2026-10-21',
     title: 'Orionids Meteor Shower Peak',
     type: 'meteor',
-    description: 'Produced by dust grains from Comet Halley. The Orionids produce 20 meteors per hour at their peak.',
+    hemispheres: ['north', 'south'],
+    description: 'Produced by dust grains from Comet Halley. The Orionids produce about 20 meteors per hour at their peak.',
     duration: 'Night'
   },
   {
     date: '2026-11-17',
     title: 'Leonids Meteor Shower Peak',
     type: 'meteor',
-    description: 'Famous for producing meteor storms. In typical years produces 15 meteors per hour.',
+    hemispheres: ['north', 'south'],
+    description: 'The Leonids can produce bright, fast meteors and occasional storms. Typical years produce around 15 meteors per hour.',
     duration: 'Night'
   },
   {
     date: '2026-12-14',
     title: 'Geminids Meteor Shower Peak',
     type: 'meteor',
-    description: 'The king of meteor showers! Can produce up to 120 multicolored meteors per hour at its peak.',
+    hemispheres: ['north', 'south'],
+    description: 'One of the strongest annual showers, with up to 120 meteors per hour under dark skies. Visible from both hemispheres.',
     duration: 'Night'
   },
   {
-    date: '2026-12-21',
-    title: 'Winter Solstice',
-    type: 'supermoon',
-    description: 'Shortest day of the year in the Northern Hemisphere. The sun reaches its lowest point in the sky.',
-    duration: 'All day'
+    date: '2026-12-22',
+    title: 'Ursids Meteor Shower Peak',
+    type: 'meteor',
+    hemispheres: ['north'],
+    description: 'A northern-sky shower producing around 10 meteors per hour. Watch near the north celestial pole after midnight.',
+    duration: 'Night'
   }
 ];
 
@@ -139,6 +166,7 @@ let selectedEvent = null;
 let launchesLoaded = false;
 let mobileCalendarExpanded = false;
 let scrollPosition = 0;
+let selectedHemisphere = 'north';
 
 // ============================================
 // API FETCHING - AUTO-UPDATE LAUNCHES
@@ -162,8 +190,11 @@ async function fetchSpaceLaunches() {
     // Convert API data to our event format
     const launchEvents = data.results
       .filter(launch => {
-        // Only include launches with dates
-        return launch.net && new Date(launch.net) > new Date();
+        const launchName = String(launch.name || '').toLowerCase();
+        const launchText = `${launchName} ${launch.mission?.description || ''}`.toLowerCase();
+        const isCrewed = CREWED_LAUNCH_PATTERN.test(launchText);
+        const isFlagship = FLAGSHIP_LAUNCH_KEYWORDS.some(keyword => launchName.includes(keyword));
+        return launch.net && new Date(launch.net) > new Date() && (isCrewed || isFlagship);
       })
       .map(launch => {
         const launchDate = new Date(launch.net);
@@ -191,6 +222,7 @@ async function fetchSpaceLaunches() {
           date: toYMDLocal(launchDate),
           title: launch.name || 'Space Launch',
           type: 'launch',
+          hemispheres: ['north', 'south'],
           description: `${agency} - ${launch.mission?.description || 'Launch mission'}`,
           duration: 'Launch window',
           youtubeUrl: youtubeUrl,
@@ -199,7 +231,7 @@ async function fetchSpaceLaunches() {
           location: launch.pad?.location?.name || 'TBD'
         };
       })
-      .slice(0, 50); // Limit to 50 launches to keep calendar manageable
+      .slice(0, 20); // Keep the calendar focused and readable
     
     // Combine celestial events with launch events
     astronomyEvents = [...celestialEvents, ...launchEvents];
@@ -255,7 +287,28 @@ function getMoonPhase(date) {
 function getEventsForDate(date) {
   // Compare using local dates (YYYY-MM-DD) to avoid timezone shifts
   const dateStr = toYMDLocal(date);
-  return astronomyEvents.filter(event => event.date === dateStr);
+  return getVisibleEvents().filter(event => event.date === dateStr);
+}
+
+function getVisibleEvents() {
+  return astronomyEvents.filter(event => {
+    const hemispheres = event.hemispheres || ['north', 'south'];
+    return hemispheres.includes(selectedHemisphere);
+  });
+}
+
+function getHemisphereLabel(event) {
+  const hemispheres = event.hemispheres || ['north', 'south'];
+  if (hemispheres.length === 2) return 'Both hemispheres';
+  return hemispheres[0] === 'north' ? 'Northern Hemisphere' : 'Southern Hemisphere';
+}
+
+function getEventTiming(event) {
+  return event.duration || 'Check local visibility times';
+}
+
+function getEventTooltipText(event) {
+  return `${event.description} Best viewing: ${getEventTiming(event)}.`;
 }
 
 // Format a Date as local YYYY-MM-DD
@@ -394,13 +447,16 @@ function renderMobileUpcomingView() {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const visibleDays = mobileCalendarExpanded ? daysInMonth : Math.min(7, daysInMonth);
+  const today = new Date();
+  const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+  const startDay = mobileCalendarExpanded ? 1 : (isCurrentMonth ? today.getDate() : 1);
+  const visibleDays = mobileCalendarExpanded ? daysInMonth : Math.min(7, daysInMonth - startDay + 1);
 
   const dayCards = [];
-  for (let day = 1; day <= visibleDays; day++) {
+  for (let day = startDay; day < startDay + visibleDays; day++) {
     const dayDate = new Date(year, month, day);
     const dateStr = toYMDLocal(dayDate);
-    const eventsForDay = astronomyEvents.filter((event) => event.date === dateStr);
+    const eventsForDay = getVisibleEvents().filter((event) => event.date === dateStr);
     const labels = eventsForDay.slice(0, 2).map((event) => {
       const icon = event.type === 'eclipse' ? '🌙' : event.type === 'meteor' ? '☄️' : event.type === 'launch' ? '🚀' : '⭐';
       return `<span class="mobile-upcoming-event">${icon} ${escapeHTML(event.title)}</span>`;
@@ -544,9 +600,12 @@ function createDayElement(date, otherMonth, isToday = false) {
     events.forEach((event, idx) => {
       const eventIndicator = document.createElement('div');
       eventIndicator.className = `event-indicator ${event.type}`;
-      const displayTitle = event.agency ?
-        `${event.agency}: ${event.title.substring(0, 24)}` :
-        `${event.title.substring(0, 28)}`;
+      const tooltipText = getEventTooltipText(event);
+      eventIndicator.dataset.tooltip = tooltipText;
+      eventIndicator.title = window.innerWidth < 1025 ? tooltipText : '';
+      eventIndicator.tabIndex = 0;
+      eventIndicator.setAttribute('aria-label', tooltipText);
+      const displayTitle = event.agency ? `${event.agency}: ${event.title}` : event.title;
       // choose icon based on event type
       let iconClass = 'fa-star';
       if (event.type === 'eclipse') iconClass = 'fa-moon';
@@ -557,7 +616,40 @@ function createDayElement(date, otherMonth, isToday = false) {
       icon.className = `fas ${iconClass}`;
       icon.setAttribute('aria-hidden', 'true');
       eventIndicator.appendChild(icon);
-      eventIndicator.appendChild(document.createTextNode(` ${displayTitle}`));
+
+      const eventLabel = document.createElement('span');
+      eventLabel.className = 'event-label event-label-long';
+
+      const eventLabelText = document.createElement('span');
+      eventLabelText.className = 'event-label-text';
+      eventLabelText.textContent = ` ${displayTitle}`;
+      eventLabel.appendChild(eventLabelText);
+      eventIndicator.appendChild(eventLabel);
+
+      const updateMarqueeDistance = () => {
+        const overflowWidth = Math.max(0, eventLabelText.scrollWidth - eventLabel.clientWidth);
+        const marqueeWidth = overflowWidth + (overflowWidth > 0 ? 16 : 0);
+        eventLabel.style.setProperty('--marquee-shift', `${marqueeWidth}px`);
+
+        if (marqueeWidth > 0) {
+          let offset = 0;
+          let lastFrame = performance.now();
+          const moveLabel = (now) => {
+            const elapsed = Math.min(now - lastFrame, 50);
+            lastFrame = now;
+            offset += elapsed * 0.035;
+            if (offset >= marqueeWidth) offset = 0;
+            eventLabelText.style.transform = `translate3d(-${offset}px, 0, 0)`;
+            requestAnimationFrame(moveLabel);
+          };
+          eventLabelText.style.willChange = 'transform';
+          requestAnimationFrame(moveLabel);
+        }
+      };
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(updateMarqueeDistance);
+      });
 
       eventIndicator.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -599,6 +691,7 @@ function updateMonth() {
     monthDisplay.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
   }
   renderCalendarView();
+  generateEventsList();
 }
 
 // ============================================
@@ -614,7 +707,13 @@ function generateEventsList() {
   
   eventsList.innerHTML = '';
 
-  const sortedEvents = [...astronomyEvents].sort((a, b) => a.date.localeCompare(b.date));
+  const sortedEvents = [...getEventsForMonth(currentDate.getFullYear(), currentDate.getMonth())]
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  if (!sortedEvents.length) {
+    eventsList.innerHTML = '<p class="events-empty">No selected-hemisphere events are listed for this month.</p>';
+    return;
+  }
 
   sortedEvents.forEach(event => {
     const eventCard = document.createElement('div');
@@ -655,6 +754,8 @@ function generateEventsList() {
       <div class="event-date">${dateStr}</div>
       <div class="event-title">${escapeHTML(event.title)}</div>
       <div class="event-description">${escapeHTML(event.description)}</div>
+      <div class="event-meta"><i class="fas fa-clock" aria-hidden="true"></i> Best viewing: ${escapeHTML(getEventTiming(event))}</div>
+      <div class="event-meta"><i class="fas fa-earth-americas" aria-hidden="true"></i> ${escapeHTML(getHemisphereLabel(event))}</div>
       ${locationHTML}
       ${buttonHTML}
     `;
@@ -721,6 +822,8 @@ function showEventDetails(target) {
           ${detailsButton}
         </div>
         <div class="event-description">${escapeHTML(event.description)}</div>
+        <div class="event-meta"><i class="fas fa-clock" aria-hidden="true"></i> Best viewing: ${escapeHTML(getEventTiming(event))}</div>
+        <div class="event-meta"><i class="fas fa-earth-americas" aria-hidden="true"></i> ${escapeHTML(getHemisphereLabel(event))}</div>
         ${locationHTML}
       </div>
     `;
@@ -804,6 +907,27 @@ END:VCALENDAR`;
  * Initialize all event listeners when DOM is ready
  */
 function initializeEventListeners() {
+  document.querySelectorAll('.hemisphere-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedHemisphere = btn.dataset.hemisphere;
+      document.querySelectorAll('.hemisphere-btn').forEach(option => {
+        const isSelected = option === btn;
+        option.classList.toggle('active', isSelected);
+        option.setAttribute('aria-pressed', String(isSelected));
+      });
+
+      try {
+        localStorage.setItem('oaj_hemisphere', selectedHemisphere);
+      } catch (error) {
+        // Continue without persistence when storage is unavailable.
+      }
+
+      mobileCalendarExpanded = false;
+      updateMonth();
+      generateEventsList();
+    });
+  });
+
   // Previous month button
   const prevBtn = document.getElementById('prevMonth');
   if (prevBtn) {
@@ -888,6 +1012,21 @@ document.addEventListener('DOMContentLoaded', () => {
   // Check if we're on a page with the calendar
   const calendarGrid = document.getElementById('calendarGrid');
   if (calendarGrid) {
+    try {
+      const savedHemisphere = localStorage.getItem('oaj_hemisphere');
+      if (savedHemisphere === 'north' || savedHemisphere === 'south') {
+        selectedHemisphere = savedHemisphere;
+      }
+    } catch (error) {
+      // Use the northern default when storage is unavailable.
+    }
+
+    document.querySelectorAll('.hemisphere-btn').forEach(btn => {
+      const isSelected = btn.dataset.hemisphere === selectedHemisphere;
+      btn.classList.toggle('active', isSelected);
+      btn.setAttribute('aria-pressed', String(isSelected));
+    });
+
     // Show initial calendar with celestial events
     updateMonth();
     generateEventsList();
@@ -1778,7 +1917,7 @@ function initializeWeatherWidget() {
  * Get all events for a specific month
  */
 function getEventsForMonth(year, month) {
-  return astronomyEvents.filter(event => {
+  return getVisibleEvents().filter(event => {
     const eventDate = parseYMD(event.date);
     return eventDate.getFullYear() === year && eventDate.getMonth() === month;
   });

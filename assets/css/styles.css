@@ -1416,6 +1416,47 @@ section a:not(.button):not(.nav-link):focus-visible {
   animation: fadeIn 1s ease 0.2s backwards;
 }
 
+.hemisphere-picker {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.hemisphere-picker legend {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.78rem;
+  margin-bottom: 0.35rem;
+}
+
+.hemisphere-options {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.hemisphere-btn {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.78);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  padding: 0.55rem 0.7rem;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.hemisphere-btn:hover,
+.hemisphere-btn.active {
+  background: rgba(74, 158, 255, 0.2);
+  border-color: var(--color-accent);
+  color: white;
+}
+
+.hemisphere-btn i {
+  color: var(--color-accent);
+  margin-right: 0.25rem;
+}
+
 .month-navigation {
   display: flex;
   align-items: center;
@@ -1570,7 +1611,7 @@ section a:not(.button):not(.nav-link):focus-visible {
 
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 1rem;
   margin-bottom: 2rem;
   animation: fadeIn 1s ease 0.4s backwards;
@@ -1605,6 +1646,7 @@ section a:not(.button):not(.nav-link):focus-visible {
   cursor: pointer;
   transition: all 0.3s;
   position: relative;
+  min-width: 0;
   overflow: hidden;
 }
 
@@ -1649,6 +1691,96 @@ section a:not(.button):not(.nav-link):focus-visible {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  position: relative;
+  min-width: 0;
+}
+
+.event-label {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 0;
+}
+
+.event-label-text {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.event-label-long {
+  text-overflow: clip;
+}
+
+@keyframes event-label-marquee {
+  0%, 18% {
+    transform: translateX(0);
+  }
+  82%, 100% {
+    transform: translateX(calc(-1 * var(--marquee-shift, 0px)));
+  }
+}
+
+.event-label-long .event-label-text {
+  padding-right: 1rem;
+}
+
+@media (min-width: 1025px) {
+  .calendar-day,
+  .event-list {
+    overflow: visible;
+  }
+
+  .event-list {
+    max-height: none;
+    overflow: visible !important;
+  }
+
+  .calendar-day:has(.event-indicator:hover),
+  .calendar-day:has(.event-indicator:focus-visible) {
+    z-index: 30;
+  }
+
+  .event-indicator[data-tooltip]:hover,
+  .event-indicator[data-tooltip]:focus-visible {
+    overflow: visible;
+    z-index: 20;
+  }
+
+  .event-indicator[data-tooltip]::after {
+    background: #101827;
+    border: 1px solid rgba(120, 190, 255, 0.7);
+    border-radius: 8px;
+    bottom: calc(100% + 0.6rem);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+    color: #f5f8ff;
+    content: attr(data-tooltip);
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 400;
+    left: 0;
+    line-height: 1.4;
+    min-width: 230px;
+    max-width: 300px;
+    width: max-content;
+    opacity: 0;
+    padding: 0.7rem 0.8rem;
+    pointer-events: none;
+    position: absolute;
+    transform: translateY(0.25rem);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    white-space: normal;
+    visibility: hidden;
+  }
+
+  .event-indicator[data-tooltip]:hover::after,
+  .event-indicator[data-tooltip]:focus-visible::after {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+  }
 }
 
 /* Wrapper to cap visible events so day box doesn't expand */
@@ -1717,6 +1849,11 @@ section a:not(.button):not(.nav-link):focus-visible {
   border-left: 3px solid var(--color-moon);
 }
 
+.event-indicator.deep-sky {
+  background: rgba(74, 158, 255, 0.25);
+  border-left: 3px solid var(--color-accent);
+}
+
 .event-indicator.launch {
   background: rgba(255, 71, 87, 0.3);
   border-left: 3px solid var(--color-launch);
@@ -1767,6 +1904,10 @@ section a:not(.button):not(.nav-link):focus-visible {
   border-left-color: var(--color-moon);
 }
 
+.event-card.deep-sky {
+  border-left-color: var(--color-accent);
+}
+
 .event-card.launch {
   border-left-color: var(--color-launch);
 }
@@ -1789,6 +1930,19 @@ section a:not(.button):not(.nav-link):focus-visible {
   font-size: 0.9rem;
   color: #ffffff;
   line-height: 1.5;
+}
+
+.event-meta {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  margin-top: 0.45rem;
+}
+
+.event-meta i {
+  color: var(--color-accent);
+  margin-right: 0.35rem;
+  width: 0.9rem;
 }
 
 .export-btn {
@@ -2015,6 +2169,10 @@ section a:not(.button):not(.nav-link):focus-visible {
 
 .legend-color.supermoon {
   background: var(--color-moon);
+}
+
+.legend-color.deep-sky {
+  background: var(--color-accent);
 }
 
 .legend-color.launch {
