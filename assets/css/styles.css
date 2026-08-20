@@ -2615,9 +2615,11 @@ footer {
 @media screen and (max-width: 600px) {
   #header-main {
     padding: 0.8rem 1rem;
+    flex-wrap: nowrap;
+    justify-content: space-between;
   }
   .content-wrapper {
-    padding: 0 1rem;
+    padding: 0 0.5rem;
   }
 
   /* Ensure content wrapper shrinks on small screens */
@@ -2642,6 +2644,7 @@ footer {
     width: 44px;
     height: 44px;
     position: relative;
+    margin-left: auto;
     z-index: 10003;
     touch-action: manipulation;
   }
@@ -2968,6 +2971,14 @@ footer {
   #header-main {
     padding: 0.7rem 0.8rem;
   }
+
+  section {
+    padding-inline: 0.75rem;
+  }
+
+  .content-wrapper {
+    padding-inline: 0.35rem;
+  }
   
   .logo-container {
     font-size: 0.9rem;
@@ -3011,6 +3022,13 @@ footer {
   section p, .session-container p {
     font-size: 0.95rem;
     line-height: 1.6;
+  }
+
+  .spec-name,
+  .spec-what,
+  .spec-meaning,
+  .improvement-heading {
+    padding: 1rem;
   }
   
   .sub-links a {
@@ -3086,6 +3104,17 @@ footer {
   
   section p, .session-container p {
     font-size: 0.9rem;
+  }
+
+  .content-wrapper {
+    padding-inline: 0;
+  }
+
+  .spec-name,
+  .spec-what,
+  .spec-meaning,
+  .improvement-heading {
+    padding: 0.85rem;
   }
   
   section {
