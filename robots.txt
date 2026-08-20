@@ -1,4 +1,3 @@
 User-agent: *
 Allow: /
-Disallow: /reviews/entries/
 Sitemap: https://www.ourastrojourney.co.uk/sitemap.xml

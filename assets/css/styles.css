@@ -3486,6 +3486,21 @@ footer {
   color: rgba(255, 255, 255, 0.78);
 }
 
+.improvements-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.improvement-heading {
+  padding: 1.25rem 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  font-weight: 700;
+  line-height: 1.7;
+}
+
+.improvement-row {
+  display: contents;
+}
+
 @media (max-width: 800px) {
   .rev-content {
     flex-direction: column !important;
@@ -3524,6 +3539,10 @@ footer {
 
   /* mobile flip-card behaviour (front/back faces, click to reveal meaning) added later */
   .specs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .improvements-grid {
     grid-template-columns: 1fr;
   }
 

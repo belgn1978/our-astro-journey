@@ -5,7 +5,14 @@
 // - imageSrc: Root-relative thumbnail/cover image path (for example /assets/images/reviews/my-review-cover.jpg)
 // Optional fields:
 // - imageAlt: Accessible alt text for the card image
-const reviewPages = [];
+const reviewPages = [
+  {
+    title: 'DwarfLabs Dwarf Mini Review',
+    href: '/reviews/entries/',
+    imageSrc: '/reviews/images/dwarfmini.jpg',
+    imageAlt: 'Dwarf Mini smart telescope'
+  }
+];
 
 function escapeHTML(value) {
   return String(value)
