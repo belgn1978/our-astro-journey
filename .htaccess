@@ -1,0 +1,14 @@
+RewriteEngine On
+
+# Canonical host
+RewriteCond %{HTTP_HOST} ^www\.ourastrojourney\.co\.uk$ [NC]
+RewriteRule ^(.*)$ https://ourastrojourney.co.uk/$1 [R=301,L]
+
+# Canonicalise homepage and duplicate index variants
+RewriteRule ^index\.html$ / [R=301,L]
+RewriteRule ^(.+?)/index\.html$ /$1/ [R=301,L]
+
+# Redirect duplicate review hub route to the canonical review page
+RewriteRule ^reviews/?$ /reviews.html [R=301,L]
+RewriteRule ^reviews/index\.html$ /reviews.html [R=301,L]
+RewriteRule ^reviews/entries/index\.html$ /reviews/entries/ [R=301,L]

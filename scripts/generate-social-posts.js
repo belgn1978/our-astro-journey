@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const { siteUpdates } = require('../assets/js/site-updates.js');
 
-const SITE_URL = 'https://www.ourastrojourney.co.uk';
+const SITE_URL = 'https://ourastrojourney.co.uk';
 const outputPath = path.join(__dirname, '..', 'social-posts.md');
 
 function absoluteUrl(relativeUrl) {
