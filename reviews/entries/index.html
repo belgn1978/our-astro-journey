@@ -29,34 +29,64 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Review",
-      "itemReviewed": {
-        "@type": "Product",
-        "name": "DWARF Mini Smart Telescope",
-        "brand": { "@type": "Brand", "name": "DwarfLabs" },
-        "image": "https://ourastrojourney.co.uk/reviews/images/dwarfmini.jpg"
-      },
-      "author": {
-        "@type": "Person",
-        "name": "Matt Brambley"
-      },
-      "reviewBody": "An honest DWARF Mini smart telescope review covering setup, key specs, usability, image quality, and astrophotography workflow in typical UK conditions.",
-      "reviewRating": {
-        "@type": "Rating",
-        "ratingValue": "4.5",
-        "bestRating": "5"
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": "Our Astro Journey"
-      }
+      "@graph": [
+        {
+          "@type": "Review",
+          "@id": "https://ourastrojourney.co.uk/reviews/entries/#review",
+          "url": "https://ourastrojourney.co.uk/reviews/entries/",
+          "itemReviewed": {
+            "@type": "Product",
+            "name": "DWARF Mini Smart Telescope",
+            "brand": { "@type": "Brand", "name": "DwarfLabs" },
+            "image": "https://ourastrojourney.co.uk/reviews/images/dwarfmini.jpg"
+          },
+          "author": {
+            "@type": "Person",
+            "name": "Matt Brambley"
+          },
+          "reviewBody": "An honest DWARF Mini smart telescope review covering setup, key specs, usability, image quality, and astrophotography workflow in typical UK conditions.",
+          "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": "4.5",
+            "bestRating": "5"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "Our Astro Journey"
+          },
+          "inLanguage": "en-GB"
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://ourastrojourney.co.uk/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Reviews",
+              "item": "https://ourastrojourney.co.uk/reviews.html"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "DWARF Mini Smart Telescope Review",
+              "item": "https://ourastrojourney.co.uk/reviews/entries/"
+            }
+          ]
+        }
+      ]
     }
     </script>
   </head>
   <body class="review-entry-page">
     <a class="skip-link" href="#page-main">Skip to main content</a>
     <header id="header-main">
-      <div class="logo-container"><a href="../../" class="nav-link logo-link" id="logo"><img src="../../assets/images/branding/logo.png" alt="OurAstroJourney logo" class="logo-img" width="1408" height="768"></a></div>
+      <div class="logo-container"><a href="../../index.html" class="nav-link logo-link" id="logo"><img src="../../assets/images/branding/logo.png" alt="OurAstroJourney logo" class="logo-img" width="1408" height="768"></a></div>
       <button id="mobile-menu-button" class="mobile-menu-toggle" aria-label="Open navigation menu" aria-controls="mobile-navigation-main" aria-expanded="false">
         <i class="fas fa-bars"></i>
       </button>
@@ -111,7 +141,7 @@
                 <p>The app itself includes a number of useful features, and it also gives you access to a community element that makes the experience more social and collaborative.</p>
             </div>
             <div class="rev-img">
-              <img src="../images/dwarfmini.jpg" alt="Dwarf Mini smart telescope" width="1200" height="1600" />
+              <img src="../images/dwarfmini.jpg" alt="Dwarf Mini smart telescope" width="1200" height="1600" fetchpriority="high" />
             </div>
           </div>
         </div>
@@ -197,7 +227,7 @@
                 <p>With more time, the dust clouds would have been much more visible. There were also three street lights close to where I was imaging, so more data would have helped quite a bit.</p>
               </div>
               <div class="rec-img">
-                <img src="../images/dwarf-C20.jpeg" alt="North America Nebula captured with the Dwarf Mini" width="1876" height="1207" />
+                <img src="../images/dwarf-C20.jpeg" alt="North America Nebula captured with the Dwarf Mini" width="1876" height="1207" loading="lazy" />
               </div>
             </div>
             <div class="rev-subcontent">
@@ -211,13 +241,13 @@
               </div>
               <div class="rev-img sun-gallery" aria-label="Solar eclipse images">
                 <a href="../images/during-eclipse.jpg" target="_blank" rel="noopener noreferrer">
-                  <img src="../images/during-eclipse.jpg" alt="The Sun during the 2026 eclipse" width="1280" height="720" />
+                  <img src="../images/during-eclipse.jpg" alt="The Sun during the 2026 eclipse" width="1280" height="720" loading="lazy" />
                 </a>
                 <a href="../images/dwarf-sun.jpg" target="_blank" rel="noopener noreferrer">
-                  <img src="../images/dwarf-sun.jpg" alt="The Sun captured with the Dwarf Mini" width="1280" height="720" />
+                  <img src="../images/dwarf-sun.jpg" alt="The Sun captured with the Dwarf Mini" width="1280" height="720" loading="lazy" />
                 </a>
                 <a href="../images/after-eclipse.jpg" target="_blank" rel="noopener noreferrer">
-                  <img src="../images/after-eclipse.jpg" alt="The Sun after the 2026 eclipse" width="1280" height="720" />
+                  <img src="../images/after-eclipse.jpg" alt="The Sun after the 2026 eclipse" width="1280" height="720" loading="lazy" />
                 </a>
               </div>
             </div>
