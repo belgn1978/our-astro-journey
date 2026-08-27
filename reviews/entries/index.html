@@ -31,14 +31,21 @@
       "@context": "https://schema.org",
       "@graph": [
         {
+          "@type": "Product",
+          "@id": "https://ourastrojourney.co.uk/reviews/entries/#product",
+          "name": "DWARF Mini Smart Telescope",
+          "brand": { "@type": "Brand", "name": "DwarfLabs" },
+          "image": "https://ourastrojourney.co.uk/reviews/images/dwarfmini.jpg",
+          "review": {
+            "@id": "https://ourastrojourney.co.uk/reviews/entries/#review"
+          }
+        },
+        {
           "@type": "Review",
           "@id": "https://ourastrojourney.co.uk/reviews/entries/#review",
           "url": "https://ourastrojourney.co.uk/reviews/entries/",
           "itemReviewed": {
-            "@type": "Product",
-            "name": "DWARF Mini Smart Telescope",
-            "brand": { "@type": "Brand", "name": "DwarfLabs" },
-            "image": "https://ourastrojourney.co.uk/reviews/images/dwarfmini.jpg"
+            "@id": "https://ourastrojourney.co.uk/reviews/entries/#product"
           },
           "author": {
             "@type": "Person",
