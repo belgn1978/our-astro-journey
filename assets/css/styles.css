@@ -1446,6 +1446,18 @@ section a:not(.button):not(.nav-link):focus-visible {
   border-color: rgba(255, 170, 80, 0.45);
 }
 
+.iss-share-links {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.iss-share-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .resources-page .resource-list {
   margin: 0.25rem 0 0;
   padding-left: 1.15rem;
