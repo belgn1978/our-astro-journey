@@ -408,6 +408,27 @@ function injectBeginnerNavigationLink() {
   addLink(document.getElementById('mobile-navigation-main'), 'nav-link mobile-nav-link');
 }
 
+function injectIssTransitNavigationLink() {
+  const addLink = (nav, className) => {
+    if (!nav || nav.querySelector('a[href="./iss-transit-planner.html"]')) return;
+
+    const contactLink = nav.querySelector('a[href="./contact.html"]');
+    const link = document.createElement('a');
+    link.href = './iss-transit-planner.html';
+    link.className = className;
+    link.textContent = 'ISS Transits';
+
+    if (contactLink) {
+      nav.insertBefore(link, contactLink);
+    } else {
+      nav.appendChild(link);
+    }
+  };
+
+  addLink(document.getElementById('navigation-main'), 'nav-link');
+  addLink(document.getElementById('mobile-navigation-main'), 'nav-link mobile-nav-link');
+}
+
 function renderHomeUpdates() {
   const container = document.getElementById('home-updates-list');
   const updates = Array.isArray(window.siteUpdates) ? [...window.siteUpdates] : [];
@@ -1003,6 +1024,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize the mobile navigation on every page where it exists.
   initializeMobileMenu();
   injectBeginnerNavigationLink();
+  injectIssTransitNavigationLink();
   highlightActiveNavigationLink();
   renderHomeUpdates();
   window.addEventListener('resize', () => {
@@ -1042,6 +1064,9 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // Initialize weather and dark sky features
   initializeWeatherWidget();
+
+  // Initialize ISS transit planner features
+  initializeIssTransitWidget();
   
   // Setup image download watermarks
   setupImageDownloadWatermarks();
@@ -1485,7 +1510,8 @@ function getCountryLabel(countryCode) {
 function initializeCountrySelectors() {
   const weatherCountrySelect = document.getElementById('weather-country-select');
   const darkSkyCountrySelect = document.getElementById('darksky-country-select');
-  const selectors = [weatherCountrySelect, darkSkyCountrySelect].filter(Boolean);
+  const issCountrySelect = document.getElementById('iss-country-select');
+  const selectors = [weatherCountrySelect, darkSkyCountrySelect, issCountrySelect].filter(Boolean);
   if (!selectors.length) return;
 
   const hasOption = (selectEl, value) => Array.from(selectEl.options).some((option) => option.value === value);
@@ -1911,6 +1937,236 @@ function initializeWeatherWidget() {
       }
     });
   }
+}
+
+/* ---------- ISS transit planner ---------- */
+
+const ISS_LOCATION_STORAGE_KEY = 'oaj_iss_location_query';
+const ISS_POSITION_API_URL = 'https://api.wheretheiss.at/v1/satellites/25544';
+
+let issObserverLocation = null;
+let issLiveTimerId = null;
+
+function setIssStatus(message, isError = false) {
+  const statusEl = document.getElementById('iss-status');
+  if (!statusEl) return;
+  statusEl.textContent = message;
+  statusEl.style.color = isError ? '#ffb3b3' : 'rgba(255, 255, 255, 0.85)';
+}
+
+function formatIssCoordinates(latitude, longitude) {
+  const lat = Number(latitude).toFixed(4);
+  const lon = Number(longitude).toFixed(4);
+  return `${lat}, ${lon}`;
+}
+
+function toggleIssResultCard(visible) {
+  const card = document.getElementById('iss-result-card');
+  if (!card) return;
+  card.classList.toggle('hidden', !visible);
+  card.setAttribute('aria-hidden', String(!visible));
+}
+
+function renderIssPlanningTools(latitude, longitude, label) {
+  const locationName = document.getElementById('iss-location-name');
+  const coordsText = document.getElementById('iss-coords-text');
+  const distanceItem = document.getElementById('iss-live-distance-item');
+
+  const displayName = label || `Lat ${Number(latitude).toFixed(2)}, Lon ${Number(longitude).toFixed(2)}`;
+
+  if (locationName) locationName.textContent = displayName;
+  if (coordsText) coordsText.textContent = formatIssCoordinates(latitude, longitude);
+
+  issObserverLocation = { latitude: Number(latitude), longitude: Number(longitude) };
+  if (distanceItem) distanceItem.hidden = false;
+
+  toggleIssResultCard(true);
+  setIssStatus(`Planning coordinates ready for ${displayName}. Paste them into Transit-Finder to search upcoming ISS transits.`);
+}
+
+async function copyIssCoordinates() {
+  const coordsText = document.getElementById('iss-coords-text');
+  const copyBtn = document.getElementById('iss-copy-coords-btn');
+  if (!coordsText || !copyBtn) return;
+
+  const value = coordsText.textContent.trim();
+  if (!value || value === '—') return;
+
+  let copied = false;
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(value);
+      copied = true;
+    }
+  } catch (error) {
+    copied = false;
+  }
+
+  if (!copied) {
+    try {
+      const helper = document.createElement('textarea');
+      helper.value = value;
+      helper.setAttribute('readonly', '');
+      helper.style.position = 'absolute';
+      helper.style.left = '-9999px';
+      document.body.appendChild(helper);
+      helper.select();
+      copied = document.execCommand('copy');
+      document.body.removeChild(helper);
+    } catch (error) {
+      copied = false;
+    }
+  }
+
+  const originalLabel = 'Copy Coordinates';
+  copyBtn.textContent = copied ? 'Copied!' : 'Copy failed';
+  setTimeout(() => {
+    copyBtn.textContent = originalLabel;
+  }, 1800);
+}
+
+async function handleIssSearch() {
+  const input = document.getElementById('iss-location-input');
+  const countrySelect = document.getElementById('iss-country-select');
+  if (!input) return;
+  const query = input.value.trim();
+  const countryCode = countrySelect ? countrySelect.value : '';
+  if (!query) {
+    setIssStatus('Please enter a town, city, or postcode.', true);
+    return;
+  }
+
+  setIssStatus('Looking up location…');
+  try {
+    const place = await geocodePlaceByCountry(query, countryCode);
+    if (!place) {
+      setIssStatus('Location not found. Try a different place, postcode, zip code, or country.', true);
+      return;
+    }
+
+    renderIssPlanningTools(place.latitude, place.longitude, formatLocationName(place));
+  } catch (error) {
+    console.error(error);
+    setIssStatus('Unable to look up that location right now. Please try again.', true);
+  }
+}
+
+function requestIssLocation() {
+  if (!navigator.geolocation) {
+    setIssStatus('Geolocation is not available in this browser.', true);
+    return;
+  }
+
+  setIssStatus('Requesting your location…');
+  toggleIssResultCard(false);
+  navigator.geolocation.getCurrentPosition(async (position) => {
+    try {
+      const geoPlace = await reverseGeocodeCoordinates(position.coords.latitude, position.coords.longitude);
+      const label = formatLocationName(geoPlace);
+      renderIssPlanningTools(position.coords.latitude, position.coords.longitude, label);
+    } catch (error) {
+      setIssStatus('Unable to determine your location. Try the manual search.', true);
+      console.error(error);
+    }
+  }, (error) => {
+    console.error(error);
+    setIssStatus('Location permission denied or unavailable. Use the manual search instead.', true);
+  }, {
+    enableHighAccuracy: false,
+    timeout: 15000,
+    maximumAge: 300000
+  });
+}
+
+function updateIssLiveCard(data) {
+  const latEl = document.getElementById('iss-live-lat');
+  const lonEl = document.getElementById('iss-live-lon');
+  const altEl = document.getElementById('iss-live-alt');
+  const velEl = document.getElementById('iss-live-vel');
+  const distanceEl = document.getElementById('iss-live-distance');
+  const updatedEl = document.getElementById('iss-live-updated');
+
+  if (latEl) latEl.textContent = `${Number(data.latitude).toFixed(2)}°`;
+  if (lonEl) lonEl.textContent = `${Number(data.longitude).toFixed(2)}°`;
+  if (altEl) altEl.textContent = `${Math.round(Number(data.altitude)).toLocaleString('en-GB')} km`;
+  if (velEl) velEl.textContent = `${Math.round(Number(data.velocity)).toLocaleString('en-GB')} km/h`;
+
+  if (distanceEl && issObserverLocation) {
+    const distance = calculateDistanceKm(
+      issObserverLocation.latitude,
+      issObserverLocation.longitude,
+      Number(data.latitude),
+      Number(data.longitude)
+    );
+    distanceEl.textContent = `${Math.round(distance).toLocaleString('en-GB')} km`;
+  }
+
+  if (updatedEl) {
+    const timestamp = Number(data.timestamp) * 1000;
+    const updated = Number.isFinite(timestamp) ? new Date(timestamp) : new Date();
+    updatedEl.textContent = `Last updated ${updated.toLocaleTimeString('en-GB')}.`;
+  }
+}
+
+async function fetchIssLivePosition() {
+  const updatedEl = document.getElementById('iss-live-updated');
+  try {
+    const response = await fetch(ISS_POSITION_API_URL);
+    if (!response.ok) {
+      throw new Error('ISS position request failed');
+    }
+    const data = await response.json();
+    updateIssLiveCard(data);
+  } catch (error) {
+    console.error(error);
+    if (updatedEl) {
+      updatedEl.textContent = 'Live position is temporarily unavailable. Retrying…';
+    }
+  }
+}
+
+function startIssLiveUpdates() {
+  if (!document.getElementById('iss-live-card')) return;
+
+  fetchIssLivePosition();
+  if (issLiveTimerId) {
+    clearInterval(issLiveTimerId);
+  }
+  issLiveTimerId = setInterval(fetchIssLivePosition, 5000);
+}
+
+function initializeIssTransitWidget() {
+  const searchBtn = document.getElementById('iss-search-btn');
+  const locationBtn = document.getElementById('iss-location-btn');
+  const searchInput = document.getElementById('iss-location-input');
+  const copyBtn = document.getElementById('iss-copy-coords-btn');
+  const liveCard = document.getElementById('iss-live-card');
+  if (!searchBtn && !liveCard) return;
+
+  initializeLocationInputMemory('iss-location-input', ISS_LOCATION_STORAGE_KEY);
+
+  if (searchBtn) {
+    searchBtn.addEventListener('click', handleIssSearch);
+  }
+
+  if (locationBtn) {
+    locationBtn.addEventListener('click', requestIssLocation);
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        handleIssSearch();
+      }
+    });
+  }
+
+  if (copyBtn) {
+    copyBtn.addEventListener('click', copyIssCoordinates);
+  }
+
+  startIssLiveUpdates();
 }
 
 /**
