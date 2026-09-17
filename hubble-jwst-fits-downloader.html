@@ -242,19 +242,35 @@
               </ul>
             </div>
             <ul id="basket-list" class="basket-list"></ul>
-            <div class="basket-actions">
-              <button type="button" class="button" id="basket-script" disabled>
-                <i class="fas fa-file-arrow-down" aria-hidden="true"></i> Download script (.sh)
-              </button>
-              <button type="button" class="button button-secondary" id="basket-manifest" disabled>
-                <i class="fas fa-list" aria-hidden="true"></i> Download URL list (.txt)
-              </button>
-              <button type="button" class="button button-secondary" id="basket-copy" disabled>
-                <i class="fas fa-copy" aria-hidden="true"></i> Copy download URLs
-              </button>
-              <button type="button" class="button button-secondary basket-clear" id="basket-clear" disabled>
-                <i class="fas fa-trash" aria-hidden="true"></i> Clear basket
-              </button>
+            <div class="feature-card" role="note" aria-label="Bulk download options">
+              <h3>Bulk download options <span class="finder-note">(optional)</span></h3>
+              <p>You can ignore these if you are only downloading a few files. Use the individual <em>Download</em> button beside each FITS file instead.</p>
+              <div class="basket-actions">
+                <div>
+                  <button type="button" class="button" id="basket-script" disabled>
+                    <i class="fas fa-file-arrow-down" aria-hidden="true"></i> Download all with a script (.sh)
+                  </button>
+                  <p class="finder-note"><strong>What it does:</strong> saves a small script that downloads every file in the basket for you. Best for macOS/Linux, or Windows with WSL/Git Bash. You then run the script on your computer.</p>
+                </div>
+                <div>
+                  <button type="button" class="button button-secondary" id="basket-manifest" disabled>
+                    <i class="fas fa-list" aria-hidden="true"></i> Save all download links (.txt)
+                  </button>
+                  <p class="finder-note"><strong>What it does:</strong> saves a text file containing the direct MAST download link for every file. It does not download the FITS files itself.</p>
+                </div>
+                <div>
+                  <button type="button" class="button button-secondary" id="basket-copy" disabled>
+                    <i class="fas fa-copy" aria-hidden="true"></i> Copy all download links
+                  </button>
+                  <p class="finder-note"><strong>What it does:</strong> copies the direct links to your clipboard so you can paste them into a download manager, browser, document or terminal.</p>
+                </div>
+                <div>
+                  <button type="button" class="button button-secondary basket-clear" id="basket-clear" disabled>
+                    <i class="fas fa-trash" aria-hidden="true"></i> Remove everything from basket
+                  </button>
+                  <p class="finder-note"><strong>What it does:</strong> empties your basket only. It does not delete anything you have already downloaded.</p>
+                </div>
+              </div>
             </div>
             <p class="basket-note">Files download directly from the official STScI MAST archive — nothing is uploaded to or proxied through Our Astro Journey. Browsers limit automatic multi-file downloads, which is why larger sets are offered as a URL list or download script.</p>
           </div>
