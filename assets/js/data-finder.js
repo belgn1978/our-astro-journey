@@ -36,6 +36,7 @@
   var basketList = document.getElementById('basket-list');
   var basketCount = document.getElementById('basket-count');
   var basketSummary = document.getElementById('basket-summary');
+  var basketSizeNote = document.getElementById('basket-size-note');
   var basketScriptBtn = document.getElementById('basket-script');
   var basketManifestBtn = document.getElementById('basket-manifest');
   var basketCopyBtn = document.getElementById('basket-copy');
@@ -121,8 +122,9 @@
       basketSummary.textContent = 'No files yet. Add files from the search results below.';
       basketList.innerHTML = '';
     } else {
+      var totalBytes = basketTotalBytes(items);
       basketSummary.textContent = items.length + (items.length === 1 ? ' file' : ' files') +
-        ' · about ' + formatBytes(basketTotalBytes(items)) + ' total';
+        ' · about ' + formatBytes(totalBytes) + ' total';
       basketList.innerHTML = items.map(function (item, index) {
         var meta = [item.telescope, item.instrument, (item.filters || []).join(', ')]
           .filter(Boolean).join(' · ');
@@ -141,6 +143,23 @@
     basketManifestBtn.disabled = disabled;
     basketCopyBtn.disabled = disabled;
     basketClearBtn.disabled = disabled;
+
+    if (basketSizeNote) {
+      var GB = 1024 * 1024 * 1024;
+      if (disabled) {
+        basketSizeNote.hidden = true;
+      } else if (basketTotalBytes(items) > 10 * GB) {
+        basketSizeNote.hidden = false;
+        basketSizeNote.classList.add('basket-size-xl');
+        basketSizeNote.textContent = 'Very large dataset. Check available disk space before starting.';
+      } else if (basketTotalBytes(items) > GB) {
+        basketSizeNote.hidden = false;
+        basketSizeNote.classList.remove('basket-size-xl');
+        basketSizeNote.textContent = 'Large download. A desktop/laptop connection is recommended.';
+      } else {
+        basketSizeNote.hidden = true;
+      }
+    }
   }
 
   function addToBasket(products, context) {

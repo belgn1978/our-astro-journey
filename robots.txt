@@ -1,3 +1,4 @@
 User-agent: *
 Allow: /
+Disallow: /backend-ionos/
 Sitemap: https://ourastrojourney.co.uk/sitemap.xml
