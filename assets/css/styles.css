@@ -1842,6 +1842,10 @@ section a:not(.button):not(.nav-link):focus-visible {
   min-width: 0;
 }
 
+.event-indicator[role="button"] {
+  cursor: pointer;
+}
+
 .event-label {
   display: block;
   flex: 1 1 auto;
@@ -2031,7 +2035,6 @@ section a:not(.button):not(.nav-link):focus-visible {
   margin-bottom: 1rem;
   border-left: 4px solid var(--color-accent);
   transition: all 0.3s;
-  cursor: pointer;
 }
 
 .event-card:hover {
@@ -2148,6 +2151,8 @@ section a:not(.button):not(.nav-link):focus-visible {
   padding: 2rem;
   max-width: 600px;
   width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
   animation: slideUp 0.4s ease;
@@ -2169,8 +2174,8 @@ section a:not(.button):not(.nav-link):focus-visible {
   background: rgba(255, 255, 255, 0.1);
   color: white;
   border: none;
-  width: 35px;
-  height: 35px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.3s;
@@ -2281,6 +2286,17 @@ section a:not(.button):not(.nav-link):focus-visible {
   display: block;
   color: white;
   font-weight: 600;
+}
+
+.calendar-export-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.calendar-export-actions .button {
+  min-height: 44px;
 }
 
 /* Legend */
