@@ -1,5 +1,5 @@
 /* ============================================================
-   Hubble & JWST Data Finder
+   Hubble & JWST Image Data Downloader
    Searches the Our Astro Journey API (which proxies the official
    MAST/STScI archive) and manages a client-side download basket.
    ============================================================ */
@@ -56,6 +56,11 @@
   var toastTimer = null;
 
   function showToast(message) {
+    // data-finder.js loads just before the toast element in the page, so the
+    // initial DOM lookup can be null. Resolve it lazily the first time we need it.
+    if (!toastEl) {
+      toastEl = document.getElementById('finder-toast');
+    }
     if (!toastEl) return;
     toastEl.textContent = message;
     toastEl.hidden = false;
@@ -535,7 +540,6 @@
       if (!box || !box.dataset.products || !currentSearch) return;
       var products = JSON.parse(box.dataset.products).filter(function (p) { return p.recommended; });
       var group = currentSearch.groups[gi];
-      var before = loadBasket().length;
       var added = addToBasket(products, { telescope: group.telescope, instrument: group.instrument });
       var skipped = products.length - added;
       var message;
