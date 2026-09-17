@@ -167,6 +167,7 @@ let launchesLoaded = false;
 let mobileCalendarExpanded = false;
 let scrollPosition = 0;
 let selectedHemisphere = 'north';
+let modalReturnFocus = null;
 
 // ============================================
 // API FETCHING - AUTO-UPDATE LAUNCHES
@@ -625,6 +626,7 @@ function createDayElement(date, otherMonth, isToday = false) {
       eventIndicator.dataset.tooltip = tooltipText;
       eventIndicator.title = window.innerWidth < 1025 ? tooltipText : '';
       eventIndicator.tabIndex = 0;
+      eventIndicator.setAttribute('role', 'button');
       eventIndicator.setAttribute('aria-label', tooltipText);
       const displayTitle = event.agency ? `${event.agency}: ${event.title}` : event.title;
       // choose icon based on event type
@@ -652,7 +654,8 @@ function createDayElement(date, otherMonth, isToday = false) {
         const marqueeWidth = overflowWidth + (overflowWidth > 0 ? 16 : 0);
         eventLabel.style.setProperty('--marquee-shift', `${marqueeWidth}px`);
 
-        if (marqueeWidth > 0) {
+        const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (marqueeWidth > 0 && !reduceMotion) {
           let offset = 0;
           let lastFrame = performance.now();
           const moveLabel = (now) => {
@@ -675,6 +678,13 @@ function createDayElement(date, otherMonth, isToday = false) {
       eventIndicator.addEventListener('click', (e) => {
         e.stopPropagation();
         showEventDetails(date);
+      });
+      eventIndicator.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          e.stopPropagation();
+          showEventDetails(date);
+        }
       });
 
       // Add up to 3 visible items into the compact list
@@ -756,20 +766,20 @@ function generateEventsList() {
       const buttonIcon = event.liveStream ? 'fa-video' : 'fa-youtube';
       const buttonText = event.liveStream ? 'Watch Live' : 'View on YouTube';
       buttonHTML = `
-        <button class="export-btn watch-btn" data-url="${escapeHTML(safeYoutubeUrl)}">
-          <i class="fab ${buttonIcon}"></i> ${buttonText}
+        <button type="button" class="export-btn watch-btn" data-url="${escapeHTML(safeYoutubeUrl)}">
+          <i class="fab ${buttonIcon}" aria-hidden="true"></i> ${buttonText}
         </button>
       `;
     } else {
       buttonHTML = `
-        <button class="export-btn">
-          <i class="fas fa-calendar-plus"></i> Add to Calendar
+        <button type="button" class="export-btn">
+          <i class="fas fa-circle-info" aria-hidden="true"></i> View details
         </button>
       `;
     }
 
     // Add location for launch events
-    const locationHTML = event.location ? `<div class="event-location"><i class="fas fa-map-marker-alt"></i> ${escapeHTML(event.location)}</div>` : '';
+    const locationHTML = event.location ? `<div class="event-location"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> ${escapeHTML(event.location)}</div>` : '';
 
     eventCard.innerHTML = `
       <div class="event-date">${dateStr}</div>
@@ -828,7 +838,7 @@ function showEventDetails(target) {
   body.innerHTML = events.map(event => {
     const safeYoutubeUrl = sanitizeExternalUrl(event.youtubeUrl);
     const detailsButton = safeYoutubeUrl ?
-      `<button class="details-btn watch-btn" data-url="${escapeHTML(safeYoutubeUrl)}"><i class="fas fa-video"></i> Watch Live</button>` :
+      `<button type="button" class="details-btn watch-btn" data-url="${escapeHTML(safeYoutubeUrl)}"><i class="fas fa-video" aria-hidden="true"></i> Watch Live</button>` :
       '';
 
     const locationHTML = event.location ? `<div class="event-location"><i class="fas fa-map-marker-alt"></i> ${escapeHTML(event.location)}</div>` : '';
@@ -850,7 +860,11 @@ function showEventDetails(target) {
     `;
   }).join('');
 
+  modalReturnFocus = document.activeElement;
   modal.classList.add('active');
+  modal.setAttribute('aria-hidden', 'false');
+  const closeButton = document.getElementById('closeModal');
+  if (closeButton) requestAnimationFrame(() => closeButton.focus());
 
   body.querySelectorAll('.details-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -866,8 +880,13 @@ function closeModal() {
   const modal = document.getElementById('exportModal');
   if (modal) {
     modal.classList.remove('active');
+    modal.setAttribute('aria-hidden', 'true');
   }
   selectedEvent = null;
+  if (modalReturnFocus && typeof modalReturnFocus.focus === 'function') {
+    modalReturnFocus.focus();
+  }
+  modalReturnFocus = null;
 }
 
 // ============================================
@@ -970,8 +989,11 @@ function initializeEventListeners() {
   // View toggle buttons
   document.querySelectorAll('.view-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      document.querySelectorAll('.view-btn').forEach(b => {
+        const selected = b === btn;
+        b.classList.toggle('active', selected);
+        b.setAttribute('aria-pressed', String(selected));
+      });
       
       const view = btn.dataset.view;
       const monthView = document.getElementById('monthView');
@@ -1002,12 +1024,33 @@ function initializeEventListeners() {
     });
   });
 
-  // Close modal when clicking outside
+  // Close modal when clicking outside, with Escape support and a keyboard focus trap.
   const modal = document.getElementById('exportModal');
   if (modal) {
     modal.addEventListener('click', (e) => {
       if (e.target.id === 'exportModal') {
         closeModal();
+      }
+    });
+    modal.addEventListener('keydown', (e) => {
+      if (!modal.classList.contains('active')) return;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeModal();
+        return;
+      }
+      if (e.key === 'Tab') {
+        const focusable = Array.from(modal.querySelectorAll('button:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])'));
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     });
   }
