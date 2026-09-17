@@ -216,7 +216,7 @@
                 </button>
                 <button type="button" class="button button-secondary" id="finder-basket-toggle" aria-expanded="false" aria-controls="finder-basket">
                   <i class="fas fa-basket-shopping" aria-hidden="true"></i> Download basket
-                  <span class="basket-count" id="basket-count">0</span>
+                  (<span class="basket-count" id="basket-count">0</span>)
                 </button>
               </div>
               <p id="finder-status" class="finder-status" role="status" aria-live="polite"></p>
@@ -384,5 +384,6 @@
 
     <script src="./assets/js/main.js"></script>
     <script src="./assets/js/data-finder.js"></script>
+    <div id="finder-toast" class="finder-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
   </body>
 </html>

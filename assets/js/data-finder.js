@@ -41,6 +41,7 @@
   var basketManifestBtn = document.getElementById('basket-manifest');
   var basketCopyBtn = document.getElementById('basket-copy');
   var basketClearBtn = document.getElementById('basket-clear');
+  var toastEl = document.getElementById('finder-toast');
 
   /* ---------- Analytics ---------- */
 
@@ -48,6 +49,58 @@
     if (typeof window.gtag === 'function') {
       window.gtag('event', eventName, params || {});
     }
+  }
+
+  /* ---------- Toast confirmation ---------- */
+
+  var toastTimer = null;
+
+  function showToast(message) {
+    if (!toastEl) return;
+    toastEl.textContent = message;
+    toastEl.hidden = false;
+    // restart the animation and hide timer on rapid successive adds
+    toastEl.classList.remove('finder-toast-visible');
+    void toastEl.offsetWidth;
+    toastEl.classList.add('finder-toast-visible');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      toastEl.classList.remove('finder-toast-visible');
+      setTimeout(function () { toastEl.hidden = true; }, 300);
+    }, 2600);
+  }
+
+  /* ---------- Basket visibility ---------- */
+
+  var basketOpenedOnce = false;
+
+  function openBasket() {
+    if (!basketEl.hidden) return;
+    basketEl.hidden = false;
+    basketToggle.setAttribute('aria-expanded', 'true');
+    renderBasket();
+    if (typeof basketEl.scrollIntoView === 'function') {
+      basketEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  function highlightBasketToggle() {
+    basketToggle.classList.remove('basket-pulse');
+    void basketToggle.offsetWidth;
+    basketToggle.classList.add('basket-pulse');
+  }
+
+  function setButtonAdded(button) {
+    if (!button) return;
+    var original = button.textContent;
+    button.textContent = 'Added ✓';
+    button.classList.add('btn-added');
+    button.disabled = true;
+    setTimeout(function () {
+      button.textContent = original;
+      button.classList.remove('btn-added');
+      button.disabled = false;
+    }, 1600);
   }
 
   /* ---------- Helpers ---------- */
@@ -482,10 +535,25 @@
       if (!box || !box.dataset.products || !currentSearch) return;
       var products = JSON.parse(box.dataset.products).filter(function (p) { return p.recommended; });
       var group = currentSearch.groups[gi];
+      var before = loadBasket().length;
       var added = addToBasket(products, { telescope: group.telescope, instrument: group.instrument });
-      setStatus(added > 0
-        ? added + ' recommended file' + (added === 1 ? '' : 's') + ' added to your basket.'
-        : 'Those files are already in your basket.');
+      var skipped = products.length - added;
+      var message;
+      if (added > 0 && skipped > 0) {
+        message = added + ' file' + (added === 1 ? '' : 's') + ' added, ' + skipped + ' already in your basket';
+      } else if (added > 0) {
+        message = added + ' file' + (added === 1 ? '' : 's') + ' added to your download basket';
+      } else {
+        message = 'Those files are already in your basket';
+      }
+      setStatus(message + '.', false);
+      showToast(message);
+      if (added > 0) {
+        setButtonAdded(addBtn);
+        if (!basketOpenedOnce) { basketOpenedOnce = true; openBasket(); } else { highlightBasketToggle(); }
+      } else {
+        highlightBasketToggle();
+      }
       track('dataset_added', { count: added, telescope: group.telescope });
       return;
     }
@@ -500,8 +568,17 @@
       var gIndex = groupCard ? parseInt(groupCard.dataset.groupIndex, 10) : -1;
       var g = gIndex >= 0 ? currentSearch.groups[gIndex] : {};
       var addedOne = addToBasket([product], { telescope: g.telescope || '', instrument: g.instrument || '' });
-      setStatus(addedOne > 0 ? 'Added ' + product.filename + ' to your basket.' : 'That file is already in your basket.');
-      track('file_added', { filename: product.filename });
+      if (addedOne > 0) {
+        setStatus('Added ' + product.filename + ' to your download basket.', false);
+        showToast('Added to download basket');
+        setButtonAdded(singleAdd);
+        if (!basketOpenedOnce) { basketOpenedOnce = true; openBasket(); } else { highlightBasketToggle(); }
+      } else {
+        setStatus(product.filename + ' is already in your basket.', false);
+        showToast('Already in your basket');
+        highlightBasketToggle();
+      }
+      track('file_added', { filename: product.filename, added: addedOne });
       return;
     }
 
@@ -526,7 +603,9 @@
   basketList.addEventListener('click', function (event) {
     var btn = event.target.closest('.basket-remove');
     if (btn) {
+      var removed = loadBasket()[parseInt(btn.dataset.index, 10)];
       removeFromBasket(parseInt(btn.dataset.index, 10));
+      setStatus(removed ? 'Removed ' + removed.filename + ' from your basket.' : 'Item removed.');
     }
   });
 

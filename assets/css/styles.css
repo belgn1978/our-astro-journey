@@ -4223,3 +4223,56 @@ footer {
     grid-template-columns: 1fr;
   }
 }
+
+/* Download basket feedback */
+.finder-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(10, 20, 40, 0.97);
+  color: #e7f3ff;
+  border: 1px solid rgba(74, 158, 255, 0.6);
+  border-radius: 999px;
+  padding: 0.8rem 1.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 3000;
+  max-width: min(92vw, 34rem);
+  text-align: center;
+}
+
+.finder-toast.finder-toast-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.basket-pulse {
+  animation: basket-pulse 0.9s ease;
+}
+
+@keyframes basket-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(74, 158, 255, 0.55); }
+  60% { box-shadow: 0 0 0 14px rgba(74, 158, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(74, 158, 255, 0); }
+}
+
+.product-add.btn-added,
+.group-add-recommended.btn-added {
+  background: linear-gradient(135deg, #2fbf71, #1f9d55);
+  border-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .basket-pulse {
+    animation: none;
+  }
+
+  .finder-toast {
+    transition: none;
+  }
+}
