@@ -277,7 +277,8 @@ summary {
  .nav-link:hover::after,
 .nav-link:focus-visible::after,
 .nav-link-active::after,
-.nav-link[aria-current="page"]::after {
+.nav-link[aria-current="page"]::after,
+.nav-link[aria-current="true"]::after {
   opacity: 1;
   transform: scaleX(1);
 }
