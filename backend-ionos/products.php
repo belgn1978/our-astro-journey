@@ -39,11 +39,16 @@ try {
 
     $results = [];
     foreach ($obsids as $obsid) {
-        $ranked = $cache->remember(
+        // Never cache an empty product list: an empty response usually means a
+        // transient MAST problem, and caching it would hide real data for hours.
+        $ranked = $cache->rememberUnlessEmpty(
             'products:' . $obsid . ':' . $mode,
             static function () use ($client, $ranker, $obsid, $mode): array {
                 $rows = $client->getProducts($obsid);
                 return $ranker->rankProducts($rows, $mode);
+            },
+            static function (array $r): bool {
+                return ($r['totalScienceProducts'] ?? 0) === 0;
             },
             (int) ($OAJ_CONFIG['cache_ttl_products'] ?? 21600)
         );

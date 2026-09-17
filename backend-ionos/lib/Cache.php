@@ -78,6 +78,41 @@ final class Cache
     }
 
     /**
+     * Like remember(), but skips both reading and writing the cache when the
+     * produced value is "empty". Prevents transient upstream outages from
+     * poisoning the cache with empty result sets for hours.
+     *
+     * @template T
+     * @param callable():T $producer
+     * @param callable(T):bool $isEmpty
+     * @return T
+     */
+    public function rememberUnlessEmpty(string $key, callable $producer, callable $isEmpty, ?int $ttl = null)
+    {
+        $cached = $this->get($key);
+        if ($cached !== null && !$isEmpty($cached)) {
+            return $cached;
+        }
+        if ($cached !== null && $isEmpty($cached)) {
+            $this->delete($key); // drop previously cached empty result
+        }
+        $value = $producer();
+        if (!$isEmpty($value)) {
+            $this->set($key, $value, $ttl);
+        }
+        return $value;
+    }
+
+    /** Remove a single cache entry. */
+    public function delete(string $key): void
+    {
+        $path = $this->pathFor($key);
+        if (is_file($path)) {
+            @unlink($path);
+        }
+    }
+
+    /**
      * Simple fixed-window rate limiter.
      * Returns true when the request is allowed, false when the limit is exceeded.
      */
