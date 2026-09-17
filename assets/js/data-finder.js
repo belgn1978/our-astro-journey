@@ -188,7 +188,10 @@
             '<span class="basket-item-name">' + escapeHtml(item.filename) + '</span>' +
             '<span class="basket-item-meta">' + escapeHtml(meta) + ' · ' + escapeHtml(item.sizeLabel || formatBytes(item.sizeBytes)) + '</span>' +
           '</div>' +
-          '<button type="button" class="basket-remove" data-index="' + index + '" aria-label="Remove ' + escapeHtml(item.filename) + ' from basket">&times;</button>' +
+          '<div class="product-actions basket-item-actions">' +
+            '<a class="product-download" href="' + escapeHtml(item.downloadUrl) + '" rel="noopener noreferrer" target="_blank" aria-label="Download ' + escapeHtml(item.filename) + ' from the MAST archive">Download</a>' +
+            '<button type="button" class="basket-remove" data-index="' + index + '" aria-label="Remove ' + escapeHtml(item.filename) + ' from basket">&times;</button>' +
+          '</div>' +
         '</li>';
       }).join('');
     }
