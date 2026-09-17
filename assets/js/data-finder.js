@@ -378,7 +378,7 @@
         '<button type="button" class="button button-secondary group-products-btn" data-group="' + index + '" aria-expanded="false">' +
           '<i class="fas fa-folder-open" aria-hidden="true"></i> View products' +
         '</button>' +
-        '<button type="button" class="button group-add-recommended" data-group="' + index + '" disabled>' +
+        '<button type="button" class="button group-add-recommended" data-group="' + index + '">' +
           '<i class="fas fa-plus" aria-hidden="true"></i> Add recommended files' +
         '</button>' +
       '</div>' +
@@ -442,7 +442,6 @@
   function runSearch(target, telescope, mode) {
     setStatus('Resolving target and searching the MAST archive… this can take a minute or two for busy regions of the sky.', false);
     resultsEl.innerHTML = '';
-    document.querySelectorAll('.group-add-recommended').forEach(function (btn) { btn.disabled = true; });
 
     var query = '?target=' + encodeURIComponent(target) +
       '&telescope=' + encodeURIComponent(telescope) +
@@ -463,10 +462,28 @@
     });
   }
 
+  function normaliseProductResults(data, obsids) {
+    var merged = [];
+    var totalScienceProducts = 0;
+    data.results.forEach(function (result) {
+      totalScienceProducts += Number(result.totalScienceProducts || (result.products || []).length || 0);
+      (result.products || []).forEach(function (p) { p._obsid = result.obsid; });
+      merged = merged.concat(result.products || []);
+    });
+    var recommended = merged.filter(function (p) { return p.recommended; });
+    return {
+      obsid: obsids,
+      products: merged,
+      recommended: recommended,
+      totalScienceProducts: totalScienceProducts || merged.length,
+      recommendedCount: recommended.length
+    };
+  }
+
   function loadProductsForGroup(groupIndex, container, button) {
-    if (!currentSearch) return;
+    if (!currentSearch) return Promise.reject(new Error('Run a search first.'));
     var group = currentSearch.groups[groupIndex];
-    if (!group) return;
+    if (!group) return Promise.reject(new Error('That dataset is no longer available.'));
     var mode = modeSelect.value;
     var obsids = group.obsids.slice(0, 4).join(',');
 
@@ -474,28 +491,93 @@
     container.hidden = false;
     container.innerHTML = '<p class="finder-note">Loading products from the archive…</p>';
 
-    apiFetch('/products.php?obsid=' + encodeURIComponent(obsids) + '&mode=' + encodeURIComponent(mode))
+    return apiFetch('/products.php?obsid=' + encodeURIComponent(obsids) + '&mode=' + encodeURIComponent(mode))
       .then(function (data) {
-        var merged = [];
-        data.results.forEach(function (result) {
-          (result.products || []).forEach(function (p) { p._obsid = result.obsid; });
-          merged = merged.concat(result.products || []);
-        });
-        var combined = { obsid: obsids, products: merged };
+        var combined = normaliseProductResults(data, obsids);
         renderProducts(container, group, combined, mode);
         button.disabled = false;
         button.setAttribute('aria-expanded', 'true');
 
-        var recommended = merged.filter(function (p) { return p.recommended; });
         var addBtn = document.querySelector('.group-add-recommended[data-group="' + groupIndex + '"]');
         if (addBtn) {
-          addBtn.disabled = recommended.length === 0;
-          addBtn.dataset.ready = recommended.length > 0 ? '1' : '';
+          addBtn.disabled = false;
+          addBtn.dataset.ready = combined.recommendedCount > 0 ? '1' : '';
         }
+        return combined;
       })
       .catch(function (error) {
         container.innerHTML = '<p class="finder-status-error">' + escapeHtml(error.message) + ' Please try again.</p>';
         button.disabled = false;
+        throw error;
+      });
+  }
+
+  function finishRecommendedAdd(groupIndex, addBtn, box) {
+    if (!box || !box.dataset.products || !currentSearch) return;
+    var products = JSON.parse(box.dataset.products).filter(function (p) { return p.recommended; });
+    var group = currentSearch.groups[groupIndex];
+    if (!group) return;
+
+    if (products.length === 0) {
+      setStatus('No recommended image-processing files were found for this dataset.', false);
+      showToast('No recommended files found');
+      return;
+    }
+
+    var added = addToBasket(products, { telescope: group.telescope, instrument: group.instrument });
+    var skipped = products.length - added;
+    var message;
+    if (added > 0 && skipped > 0) {
+      message = added + ' file' + (added === 1 ? '' : 's') + ' added, ' + skipped + ' already in your basket';
+    } else if (added > 0) {
+      message = added + ' file' + (added === 1 ? '' : 's') + ' added to your download basket';
+    } else {
+      message = 'Those files are already in your basket';
+    }
+    setStatus(message + '.', false);
+    showToast(message);
+    if (added > 0) {
+      setButtonAdded(addBtn);
+      if (!basketOpenedOnce) { basketOpenedOnce = true; openBasket(); } else { highlightBasketToggle(); }
+    } else {
+      highlightBasketToggle();
+    }
+    track('dataset_added', { count: added, telescope: group.telescope });
+  }
+
+  function addRecommendedForGroup(groupIndex, addBtn) {
+    if (!currentSearch) return;
+    var group = currentSearch.groups[groupIndex];
+    var box = document.getElementById('group-products-' + groupIndex);
+    if (!group || !box) return;
+
+    if (box.dataset.products) {
+      finishRecommendedAdd(groupIndex, addBtn, box);
+      return;
+    }
+
+    var originalHtml = addBtn.innerHTML;
+    var mode = modeSelect.value;
+    var obsids = group.obsids.slice(0, 4).join(',');
+    addBtn.disabled = true;
+    addBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Loading recommended files…';
+    setStatus('Loading recommended files from the MAST archive…', false);
+
+    apiFetch('/products.php?obsid=' + encodeURIComponent(obsids) + '&mode=' + encodeURIComponent(mode))
+      .then(function (data) {
+        var combined = normaliseProductResults(data, obsids);
+        renderProducts(box, group, combined, mode);
+        box.hidden = true;
+        addBtn.disabled = false;
+        addBtn.innerHTML = originalHtml;
+        addBtn.dataset.ready = combined.recommendedCount > 0 ? '1' : '';
+        finishRecommendedAdd(groupIndex, addBtn, box);
+      })
+      .catch(function (error) {
+        addBtn.disabled = false;
+        addBtn.innerHTML = originalHtml;
+        setStatus(error.message + ' Please try again.', true);
+        showToast('Could not load recommended files');
       });
   }
 
@@ -529,36 +611,13 @@
         productsBtn.setAttribute('aria-expanded', 'true');
         return;
       }
-      loadProductsForGroup(index, container, productsBtn);
+      loadProductsForGroup(index, container, productsBtn).catch(function () { /* UI already shows the error */ });
       return;
     }
 
     var addBtn = event.target.closest('.group-add-recommended');
-    if (addBtn && addBtn.dataset.ready === '1') {
-      var gi = parseInt(addBtn.dataset.group, 10);
-      var box = document.getElementById('group-products-' + gi);
-      if (!box || !box.dataset.products || !currentSearch) return;
-      var products = JSON.parse(box.dataset.products).filter(function (p) { return p.recommended; });
-      var group = currentSearch.groups[gi];
-      var added = addToBasket(products, { telescope: group.telescope, instrument: group.instrument });
-      var skipped = products.length - added;
-      var message;
-      if (added > 0 && skipped > 0) {
-        message = added + ' file' + (added === 1 ? '' : 's') + ' added, ' + skipped + ' already in your basket';
-      } else if (added > 0) {
-        message = added + ' file' + (added === 1 ? '' : 's') + ' added to your download basket';
-      } else {
-        message = 'Those files are already in your basket';
-      }
-      setStatus(message + '.', false);
-      showToast(message);
-      if (added > 0) {
-        setButtonAdded(addBtn);
-        if (!basketOpenedOnce) { basketOpenedOnce = true; openBasket(); } else { highlightBasketToggle(); }
-      } else {
-        highlightBasketToggle();
-      }
-      track('dataset_added', { count: added, telescope: group.telescope });
+    if (addBtn) {
+      addRecommendedForGroup(parseInt(addBtn.dataset.group, 10), addBtn);
       return;
     }
 
