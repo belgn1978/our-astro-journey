@@ -1023,8 +1023,6 @@ function initializeEventListeners() {
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize the mobile navigation on every page where it exists.
   initializeMobileMenu();
-  injectBeginnerNavigationLink();
-  injectIssTransitNavigationLink();
   highlightActiveNavigationLink();
   renderHomeUpdates();
   window.addEventListener('resize', () => {
@@ -1150,34 +1148,43 @@ function initializeMobileMenu() {
   const backdrop = document.getElementById('mobile-nav-backdrop');
 
   if (!mobileMenuButton || !mobileMenuClose || !nav || !backdrop) {
-    console.error('❌ Mobile menu elements not found');
     return;
   }
 
   const isSmallScreen = () => window.matchMedia('(max-width: 600px)').matches;
+  const focusableSelector = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  let previouslyFocused = null;
 
-  const closeMenu = () => {
+  const closeMenu = (restoreFocus = true) => {
+    const wasOpen = nav.classList.contains('open');
     nav.classList.remove('open');
     backdrop.classList.remove('active');
     setBodyScrollLock(false);
     mobileMenuButton.setAttribute('aria-expanded', 'false');
+    mobileMenuButton.setAttribute('aria-label', 'Open navigation menu');
     nav.setAttribute('aria-hidden', 'true');
     backdrop.setAttribute('aria-hidden', 'true');
+
+    if (restoreFocus && wasOpen && previouslyFocused && typeof previouslyFocused.focus === 'function') {
+      previouslyFocused.focus();
+    }
   };
 
   const openMenu = () => {
     if (!isSmallScreen()) return;
+    previouslyFocused = document.activeElement;
     nav.classList.add('open');
     backdrop.classList.add('active');
     setBodyScrollLock(true);
     mobileMenuButton.setAttribute('aria-expanded', 'true');
+    mobileMenuButton.setAttribute('aria-label', 'Close navigation menu');
     nav.setAttribute('aria-hidden', 'false');
     backdrop.setAttribute('aria-hidden', 'false');
+    requestAnimationFrame(() => mobileMenuClose.focus());
   };
 
   mobileMenuButton.addEventListener('click', (event) => {
     event.preventDefault();
-    event.stopPropagation();
     if (nav.classList.contains('open')) {
       closeMenu();
     } else {
@@ -1187,64 +1194,46 @@ function initializeMobileMenu() {
 
   mobileMenuClose.addEventListener('click', (event) => {
     event.preventDefault();
-    event.stopPropagation();
     closeMenu();
   });
 
-  backdrop.addEventListener('click', (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    closeMenu();
-  });
-
-  document.addEventListener('click', (event) => {
-    if (!nav.classList.contains('open')) return;
-    if (nav.contains(event.target) || mobileMenuButton.contains(event.target)) return;
-    closeMenu();
-  });
+  backdrop.addEventListener('click', () => closeMenu());
 
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && nav.classList.contains('open')) {
+    if (!nav.classList.contains('open')) return;
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
       closeMenu();
+      return;
     }
+
+    if (event.key === 'Tab') {
+      const focusable = Array.from(nav.querySelectorAll(focusableSelector))
+        .filter((el) => !el.hasAttribute('disabled') && el.getAttribute('aria-hidden') !== 'true');
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+  });
+
+  nav.querySelectorAll('a[href]').forEach((link) => {
+    link.addEventListener('click', () => {
+      if (nav.classList.contains('open')) closeMenu(false);
+    });
   });
 
   window.addEventListener('resize', () => {
-    if (!isSmallScreen()) {
-      closeMenu();
-    }
+    if (!isSmallScreen()) closeMenu(false);
   });
-
-  const bindAnchorNavigation = (container) => {
-    container.querySelectorAll('a[href^="#"]').forEach((link) => {
-      link.addEventListener('click', (event) => {
-        const href = link.getAttribute('href');
-        if (!href || !href.startsWith('#')) return;
-
-        link.classList.add('nav-link-active');
-        setTimeout(() => link.classList.remove('nav-link-active'), 300);
-
-        closeMenu();
-
-        if (window.innerWidth <= 600) {
-          requestAnimationFrame(() => {
-            const target = document.querySelector(href);
-            if (target) {
-              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              target.setAttribute('tabindex', '-1');
-              target.focus({ preventScroll: true });
-            } else {
-              try { location.hash = href; } catch (e) {}
-            }
-          });
-        }
-      });
-    });
-  };
-
-  bindAnchorNavigation(nav);
-  bindAnchorNavigation(document.getElementById('navigation-main'));
-
 }
 
 function initializeDropdownToggle() {
