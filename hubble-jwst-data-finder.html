@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <title>Hubble & JWST Data Finder | Download FITS Files for Astrophotography</title>
+    <meta name="description" content="Find and download public Hubble and JWST data from the official MAST archive. Beginner-friendly search for FITS files, calibrated images and filter sets, with recommendations for image processing in Siril or PixInsight." />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Matt Brambley" />
+    <link rel="canonical" href="https://ourastrojourney.co.uk/hubble-jwst-data-finder.html" />
+    <link rel="alternate" hreflang="en-GB" href="https://ourastrojourney.co.uk/hubble-jwst-data-finder.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ourastrojourney.co.uk/hubble-jwst-data-finder.html" />
+    <meta property="og:site_name" content="Our Astro Journey" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:title" content="Hubble & JWST Data Finder | Download FITS Files for Astrophotography" />
+    <meta property="og:description" content="Search the official MAST archive for public Hubble and JWST data, find the right FITS files, and get beginner-friendly recommendations for image processing." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:image" content="https://ourastrojourney.co.uk/assets/images/branding/hero-ing.jpg" />
+    <meta property="og:image:secure_url" content="https://ourastrojourney.co.uk/assets/images/branding/hero-ing.jpg" />
+    <meta property="og:image:alt" content="Night sky background from Our Astro Journey" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="theme-color" content="#050812" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/branding/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/images/branding/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/images/branding/apple-touch-icon.png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="./assets/css/reset.css" />
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-J4NC85BT9H"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-J4NC85BT9H');
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebPage",
+          "name": "Hubble & JWST Data Finder",
+          "url": "https://ourastrojourney.co.uk/hubble-jwst-data-finder.html",
+          "description": "A beginner-friendly tool to find and download public Hubble Space Telescope and James Webb Space Telescope data from the official MAST archive, with recommendations for astrophotography image processing.",
+          "inLanguage": "en-GB",
+          "isPartOf": { "@id": "https://ourastrojourney.co.uk/#website" }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://ourastrojourney.co.uk/" },
+            { "@type": "ListItem", "position": 2, "name": "Hubble & JWST Data Finder", "item": "https://ourastrojourney.co.uk/hubble-jwst-data-finder.html" }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Is Hubble and JWST data really free to download?",
+              "acceptedAnswer": { "@type": "Answer", "text": "Yes. Once the exclusive access period for an observation ends, the data becomes public on the MAST archive and anyone can download the FITS files for free, including for astrophotography processing projects." }
+            },
+            {
+              "@type": "Question",
+              "name": "Which files should a beginner download?",
+              "acceptedAnswer": { "@type": "Answer", "text": "Start with the combined, calibrated images: look for i2d files for JWST and drc or drz files for Hubble. These are already calibrated and combined, so you can open them directly in software such as Siril or PixInsight without running the raw calibration pipeline." }
+            },
+            {
+              "@type": "Question",
+              "name": "What is a FITS file?",
+              "acceptedAnswer": { "@type": "Answer", "text": "FITS (Flexible Image Transport System) is the standard file format for professional astronomy data. It stores the image pixels plus metadata such as the telescope, instrument, filter, exposure time and sky coordinates." }
+            },
+            {
+              "@type": "Question",
+              "name": "Why do filters matter when downloading data?",
+              "acceptedAnswer": { "@type": "Answer", "text": "Each filter records a different slice of light. Colour images are made by assigning different filters to the red, green and blue channels, so you normally want data taken through several different filters of the same target." }
+            },
+            {
+              "@type": "Question",
+              "name": "Where does the data come from?",
+              "acceptedAnswer": { "@type": "Answer", "text": "All results come directly from the Mikulski Archive for Space Telescopes (MAST) at the Space Telescope Science Institute, the official archive for Hubble and JWST. Downloads link straight to the official archive; nothing is re-hosted by Our Astro Journey." }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+  </head>
+  <body class="finder-page">
+    <a class="skip-link" href="#page-main">Skip to main content</a>
+    <header id="header-main">
+      <div class="logo-container"><a href="./" class="nav-link logo-link" id="logo"><img src="./assets/images/branding/logo.png" alt="OurAstroJourney logo" class="logo-img" width="1408" height="768"></a></div>
+      <button id="mobile-menu-button" class="mobile-menu-toggle" aria-label="Open navigation menu" aria-controls="mobile-navigation-main" aria-expanded="false">
+        <i class="fas fa-bars"></i>
+      </button>
+      <nav id="navigation-main" aria-label="Primary navigation">
+        <a href="./about.html" class="nav-link">About</a>
+        <a href="./weather.html" class="nav-link">Weather</a>
+        <a href="./dark-skies.html" class="nav-link">Dark Skies</a>
+        <a href="./gallery.html" class="nav-link">Gallery</a>
+        <a href="./moon-gallery.html" class="nav-link">Moon</a>
+        <a href="./hubble-gallery.html" class="nav-link">Hubble</a>
+        <a href="./hubble-jwst-data-finder.html" class="nav-link" aria-current="page">Data Finder</a>
+        <a href="./news.html" class="nav-link">News</a>
+        <a href="./reviews.html" class="nav-link">Reviews</a>
+        <a href="./affiliate-links.html" class="nav-link">Discounts & Links</a>
+        <a href="./useful-resources.html" class="nav-link">Resources</a>
+        <a href="./contact.html" class="nav-link">Contact</a>
+      </nav>
+      <nav id="mobile-navigation-main" class="mobile-navigation" aria-label="Mobile primary navigation" aria-hidden="true">
+        <button id="mobile-menu-close" class="mobile-menu-close" aria-label="Close navigation menu">
+          <i class="fas fa-times"></i>
+        </button>
+        <a href="./about.html" class="nav-link mobile-nav-link">About</a>
+        <a href="./weather.html" class="nav-link mobile-nav-link">Weather</a>
+        <a href="./dark-skies.html" class="nav-link mobile-nav-link">Dark Skies</a>
+        <a href="./gallery.html" class="nav-link mobile-nav-link">Gallery</a>
+        <a href="./moon-gallery.html" class="nav-link mobile-nav-link">Moon</a>
+        <a href="./hubble-gallery.html" class="nav-link mobile-nav-link">Hubble</a>
+        <a href="./hubble-jwst-data-finder.html" class="nav-link mobile-nav-link" aria-current="page">Data Finder</a>
+        <a href="./news.html" class="nav-link mobile-nav-link">News</a>
+        <a href="./reviews.html" class="nav-link mobile-nav-link">Reviews</a>
+        <a href="./affiliate-links.html" class="nav-link mobile-nav-link">Discounts & Links</a>
+        <a href="./useful-resources.html" class="nav-link mobile-nav-link">Resources</a>
+        <a href="./contact.html" class="nav-link mobile-nav-link">Contact</a>
+      </nav>
+    </header>
+    <div id="mobile-nav-backdrop" class="mobile-nav-backdrop" aria-hidden="true"></div>
+
+    <main id="page-main" role="main">
+      <section class="page-hero">
+        <div class="content-wrapper">
+          <h1 class="section-heading">Hubble &amp; JWST Data Finder</h1>
+          <p class="section-intro">Search the official MAST archive for public Hubble and JWST data and find the files you actually need for astrophotography processing — without learning archive jargon first.</p>
+        </div>
+      </section>
+
+      <section id="finder-tool" aria-labelledby="finder-tool-heading">
+        <div class="content-wrapper">
+          <h2 id="finder-tool-heading" class="visually-hidden">Search the archive</h2>
+          <div class="finder-panel">
+            <form id="finder-form" novalidate>
+              <div class="finder-grid">
+                <div class="finder-field">
+                  <label for="finder-target">Target</label>
+                  <input id="finder-target" name="target" type="search" autocomplete="off" spellcheck="false"
+                         placeholder="e.g. M51, Orion Nebula, NGC 7000, Pillars of Creation" maxlength="120" />
+                  <p class="finder-hint">An object name, or coordinates such as <span class="finder-mono">202.47, 47.20</span></p>
+                </div>
+                <fieldset class="finder-field">
+                  <legend>Telescope</legend>
+                  <div class="finder-choice-row" role="radiogroup" aria-label="Telescope">
+                    <label class="finder-choice"><input type="radio" name="telescope" value="both" checked /> <span>Both</span></label>
+                    <label class="finder-choice"><input type="radio" name="telescope" value="hst" /> <span>Hubble</span></label>
+                    <label class="finder-choice"><input type="radio" name="telescope" value="jwst" /> <span>JWST</span></label>
+                  </div>
+                </fieldset>
+                <div class="finder-field">
+                  <label for="finder-mode">What do you want?</label>
+                  <select id="finder-mode" name="mode">
+                    <option value="recommended" selected>Recommended data for image processing</option>
+                    <option value="processed">Processed / calibrated images</option>
+                    <option value="exposures">Individual exposures</option>
+                    <option value="all">All useful science products</option>
+                    <option value="advanced">Advanced / manual</option>
+                  </select>
+                </div>
+              </div>
+              <div class="finder-actions">
+                <button type="submit" class="button" id="finder-submit">
+                  <i class="fas fa-satellite-dish" aria-hidden="true"></i> Search the archive
+                </button>
+                <button type="button" class="button button-secondary" id="finder-basket-toggle" aria-expanded="false" aria-controls="finder-basket">
+                  <i class="fas fa-basket-shopping" aria-hidden="true"></i> Download basket
+                  <span class="basket-count" id="basket-count">0</span>
+                </button>
+              </div>
+              <p id="finder-status" class="finder-status" role="status" aria-live="polite"></p>
+            </form>
+          </div>
+
+          <div id="finder-basket" class="finder-basket" hidden>
+            <div class="basket-header">
+              <h2 class="basket-heading">Download basket</h2>
+              <p class="basket-summary" id="basket-summary">No files yet. Add files from the search results below.</p>
+            </div>
+            <ul id="basket-list" class="basket-list"></ul>
+            <div class="basket-actions">
+              <button type="button" class="button" id="basket-script" disabled>
+                <i class="fas fa-file-arrow-down" aria-hidden="true"></i> Download script (.sh)
+              </button>
+              <button type="button" class="button button-secondary" id="basket-manifest" disabled>
+                <i class="fas fa-list" aria-hidden="true"></i> Download URL list (.txt)
+              </button>
+              <button type="button" class="button button-secondary" id="basket-copy" disabled>
+                <i class="fas fa-copy" aria-hidden="true"></i> Copy download URLs
+              </button>
+              <button type="button" class="button button-secondary basket-clear" id="basket-clear" disabled>
+                <i class="fas fa-trash" aria-hidden="true"></i> Clear basket
+              </button>
+            </div>
+            <p class="basket-note">Files download directly from the official STScI MAST archive — nothing is uploaded to or proxied through Our Astro Journey. Browsers limit automatic multi-file downloads, so the basket generates a list or a curl script instead.</p>
+          </div>
+
+          <div id="finder-results" class="finder-results" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section id="finder-about" aria-labelledby="finder-about-heading">
+        <div class="content-wrapper">
+          <h2 class="section-heading" id="finder-about-heading">What this tool does</h2>
+          <p class="section-intro">The Hubble Space Telescope and the James Webb Space Telescope have photographed thousands of galaxies, nebulae and star clusters. Almost all of that data is public — but the official archive can be overwhelming. This tool searches the same official data and presents it in plain English.</p>
+          <div class="feature-card-grid">
+            <article class="feature-card">
+              <h3>Where the data comes from</h3>
+              <p>Every search and download goes to the <a href="https://mast.stsci.edu/" target="_blank" rel="noopener noreferrer">MAST archive</a> (Mikulski Archive for Space Telescopes) at the Space Telescope Science Institute — the official home of Hubble and JWST data. Nothing is re-hosted here.</p>
+            </article>
+            <article class="feature-card">
+              <h3>What FITS files are</h3>
+              <p>Hubble FITS files and JWST FITS files are the standard professional astronomy format. They contain the image itself plus metadata: telescope, instrument, filter, exposure time and sky position. You open them in processing software, not a normal image viewer.</p>
+            </article>
+            <article class="feature-card">
+              <h3>Calibrated vs raw data</h3>
+              <p>Raw exposures need a full calibration pipeline. Calibrated exposures have had instrument effects removed. Combined images (JWST <span class="finder-mono">i2d</span>, Hubble <span class="finder-mono">drc</span>/<span class="finder-mono">drz</span>) are calibrated exposures stacked together — usually the best starting point for beginners.</p>
+            </article>
+            <article class="feature-card">
+              <h3>Which files beginners want</h3>
+              <p>For image processing, pick the recommended combined images for each filter. One filter per file is normal: you combine them yourself and decide the colours. Skip files labelled raw, preview or metadata unless you know you need them.</p>
+            </article>
+            <article class="feature-card">
+              <h3>Why filters matter</h3>
+              <p>A colour image needs several filters of the same target. Broadband filters (like F090W, F200W, F444W) capture wide slices of light; narrowband filters (like F656N or F187N) isolate glowing gas. The tool suggests possible colour mappings, but there is no single correct answer — experimenting is part of the fun.</p>
+            </article>
+            <article class="feature-card">
+              <h3>Why field overlap matters</h3>
+              <p>Two observations can use perfect filters but point at slightly different parts of a target. This tool groups nearby pointings and warns when datasets may not cover exactly the same patch of sky. The check uses approximate field centres, not exact footprint polygons, so always sanity-check before long processing sessions.</p>
+            </article>
+            <article class="feature-card">
+              <h3>Processing the data</h3>
+              <p>Downloaded FITS files open directly in <a href="https://siril.org/" target="_blank" rel="noopener noreferrer">Siril</a> (free) and PixInsight, and in Photoshop with plugins. A typical JWST workflow: open one i2d file per filter, stretch each to reveal detail, assign filters to red/green/blue, then combine and adjust colour balance.</p>
+            </article>
+            <article class="feature-card">
+              <h3>Keep exploring</h3>
+              <ul class="resource-list">
+                <li><a href="./hubble-gallery.html">Our Hubble gallery</a> — see what processed Hubble data can look like.</li>
+                <li><a href="./beginner-learning-path.html">Beginner learning path</a> — build up your processing skills step by step.</li>
+                <li><a href="./first-night-checklist.html">First-night checklist</a> — practical setup help for your own imaging.</li>
+                <li><a href="./gallery.html">Full gallery</a> — our own astrophotography progress.</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="finder-faq" aria-labelledby="finder-faq-heading">
+        <div class="content-wrapper">
+          <h2 class="section-heading" id="finder-faq-heading">Frequently asked questions</h2>
+          <div class="faq-list">
+            <details class="faq-item">
+              <summary>Is Hubble and JWST data really free to download?</summary>
+              <p>Yes. Once an observation's exclusive access period ends, the data becomes public on the MAST archive. Anyone can download the FITS files for free and process them into images, including for astrophotography projects and publications with credit to STScI.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Which files should a beginner download?</summary>
+              <p>Start with the combined, calibrated images: look for <span class="finder-mono">i2d</span> files for JWST and <span class="finder-mono">drc</span> or <span class="finder-mono">drz</span> files for Hubble. They are already calibrated and combined, so you can open them directly in Siril or PixInsight. This tool marks those as recommended.</p>
+            </details>
+            <details class="faq-item">
+              <summary>What is a FITS file?</summary>
+              <p>FITS (Flexible Image Transport System) is the standard file format for professional astronomy. It stores the image pixels plus metadata such as telescope, instrument, filter, exposure time and coordinates. Siril, PixInsight, GIMP (with plugins) and FITS Liberator can all open them.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Why do filters matter when downloading data?</summary>
+              <p>Each filter records a different slice of light. Colour images are created by assigning different filters to the red, green and blue channels. To make a colour picture of a target you normally need data through at least three different filters, ideally of the same region.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Where does the data come from?</summary>
+              <p>All results and downloads come directly from the Mikulski Archive for Space Telescopes (MAST) at the Space Telescope Science Institute, the official archive for Hubble and JWST. Our Astro Journey never re-hosts or modifies the science files.</p>
+            </details>
+            <details class="faq-item">
+              <summary>Can I share a search with someone?</summary>
+              <p>Yes. After searching, the page URL updates with your target, telescope and mode (for example <span class="finder-mono">?target=M51&amp;telescope=jwst</span>). Copy the address bar to share the exact search.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="social-container">
+          <p class="footer-heading">Connect With Us</p>
+          <div class="social-links">
+            <a href="https://www.instagram.com/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.threads.net/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Threads"><i class="fa-brands fa-threads"></i></a>
+            <a href="https://www.tiktok.com/@ourastrojourney" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+          </div>
+        </div>
+        <div class="copyright-container">
+          <p>&copy; 2026 Matt Brambley | OurAstroJourney</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="./assets/js/main.js"></script>
+    <script src="./assets/js/data-finder.js"></script>
+  </body>
+</html>

@@ -1,5 +1,16 @@
 const siteUpdates = [
   {
+    date: '2026-09-17',
+    badge: 'New tool',
+    title: 'Hubble & JWST Data Finder is live',
+    summary: 'Search the official MAST archive for public Hubble and JWST data, find the right FITS files, and get beginner-friendly recommendations for image processing.',
+    url: './hubble-jwst-data-finder.html',
+    cta: 'Open the data finder',
+    featured: true,
+    socialTitle: 'New tool: Hubble & JWST Data Finder',
+    socialSummary: 'Find and download public Hubble and JWST data from the official MAST archive with beginner-friendly recommendations.'
+  },
+  {
     date: '2026-08-06',
     badge: 'New onboarding',
     title: 'Start Here and beginner learning pages are live',
