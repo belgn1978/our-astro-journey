@@ -161,8 +161,10 @@
                 <li><strong>Choose a telescope.</strong> Search Hubble, JWST or both.</li>
                 <li><strong>Choose what you need.</strong> For most people, &ldquo;Recommended data for image processing&rdquo; is the best starting point.</li>
                 <li><strong>Review the recommended datasets.</strong> The tool groups observations, filters and instruments, and explains which combinations may be useful for colour processing.</li>
-                <li><strong>Add files to your download basket.</strong> Select individual files or whole recommended groups.</li>
-                <li><strong>Download from MAST.</strong> Generate a download list or script and get the files directly from the official STScI MAST archive.</li>
+                <li><strong>Add files to your download basket.</strong> Select individual files or use <em>Add recommended files</em> to let the tool choose the best starting files for that dataset.</li>
+                <li><strong>Open the download basket.</strong> For a small set, use the <em>Download</em> button beside each file. This is the simplest option and downloads each FITS file directly from MAST.</li>
+                <li><strong>For larger sets, use the bulk options.</strong> The <span class="finder-mono">.sh</span> script is for macOS/Linux (or Windows with WSL/Git Bash). The text list and Copy URLs options are there if you want to manage the links yourself.</li>
+                <li><strong>Process the FITS files on a computer.</strong> Keep the files for the same target together, then open them in software such as Siril or PixInsight. Phones are fine for searching, but the actual files can be very large.</li>
               </ol>
               <p>The files do <strong>not</strong> come from Our Astro Journey and are not hosted by us. Every download comes from the official MAST archive — this tool simply helps you locate and organise the correct public datasets.</p>
             </article>
@@ -229,6 +231,16 @@
               <p class="basket-summary" id="basket-summary">No files yet. Add files from the search results below.</p>
               <p class="basket-size-note" id="basket-size-note" hidden></p>
             </div>
+            <div class="feature-card" role="note" aria-label="What to do with your download basket">
+              <h3>What do I do now?</h3>
+              <p><strong>For most people, the easiest option is to download the files one by one on a desktop or laptop.</strong> Tap or click <em>Download</em> beside each FITS file below. The file comes directly from the official MAST archive.</p>
+              <ul class="resource-list">
+                <li><strong>A few files:</strong> use the individual <em>Download</em> buttons. This is the recommended beginner route.</li>
+                <li><strong>Lots of files:</strong> use <em>Download script (.sh)</em> on macOS/Linux, or on Windows if you use WSL or Git Bash.</li>
+                <li><strong>Want the links instead:</strong> use <em>Download URL list (.txt)</em> or <em>Copy download URLs</em>.</li>
+                <li><strong>After downloading:</strong> keep the files together in a folder for that target and open them in Siril, PixInsight or other FITS-compatible software.</li>
+              </ul>
+            </div>
             <ul id="basket-list" class="basket-list"></ul>
             <div class="basket-actions">
               <button type="button" class="button" id="basket-script" disabled>
@@ -244,7 +256,7 @@
                 <i class="fas fa-trash" aria-hidden="true"></i> Clear basket
               </button>
             </div>
-            <p class="basket-note">Files download directly from the official STScI MAST archive — nothing is uploaded to or proxied through Our Astro Journey. Browsers limit automatic multi-file downloads, so the basket generates a list or a curl script instead.</p>
+            <p class="basket-note">Files download directly from the official STScI MAST archive — nothing is uploaded to or proxied through Our Astro Journey. Browsers limit automatic multi-file downloads, which is why larger sets are offered as a URL list or download script.</p>
           </div>
 
           <div id="finder-results" class="finder-results" aria-live="polite"></div>
