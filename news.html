@@ -136,9 +136,9 @@
           <div class="calendar-wrapper">
             <div class="calendar-controls">
               <div class="month-navigation">
-                <button class="nav-btn" id="prevMonth"><i class="fas fa-chevron-left"></i></button>
-                <div class="current-month" id="currentMonth">January 2026</div>
-                <button class="nav-btn" id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                <button type="button" class="nav-btn" id="prevMonth" aria-label="Previous month"><i class="fas fa-chevron-left" aria-hidden="true"></i></button>
+                <div class="current-month" id="currentMonth" aria-live="polite">January 2026</div>
+                <button type="button" class="nav-btn" id="nextMonth" aria-label="Next month"><i class="fas fa-chevron-right" aria-hidden="true"></i></button>
               </div>
               <fieldset class="hemisphere-picker">
                 <legend>Show events for</legend>
@@ -151,9 +151,9 @@
                   </button>
                 </div>
               </fieldset>
-              <div class="view-toggle">
-                <button class="view-btn active" data-view="month">Month</button>
-                <button class="view-btn" data-view="events">Events</button>
+              <div class="view-toggle" role="group" aria-label="Calendar view">
+                <button type="button" class="view-btn active" data-view="month" aria-pressed="true">Month</button>
+                <button type="button" class="view-btn" data-view="events" aria-pressed="false">Events</button>
               </div>
             </div>
 
@@ -166,7 +166,7 @@
 
             <div id="eventsView" style="display: none;">
               <div class="events-sidebar">
-                <h2 class="events-heading"><i class="fas fa-star"></i> Major Space & Astronomical Events</h2>
+                <h2 class="events-heading"><i class="fas fa-star" aria-hidden="true"></i> Major Space & Astronomical Events</h2>
                 <div id="eventsList"></div>
               </div>
             </div>
@@ -204,14 +204,34 @@
       </section>
     </main>
 
+    <div id="exportModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modalTitle">Event details</h2>
+          <button type="button" class="close-modal" id="closeModal" aria-label="Close event details">
+            <i class="fas fa-times" aria-hidden="true"></i>
+          </button>
+        </div>
+        <div class="event-details-body" id="eventDetailsBody"></div>
+        <div class="calendar-export-actions" aria-label="Add selected event to a calendar">
+          <button type="button" class="button export-option" data-export="google">
+            <i class="fa-brands fa-google" aria-hidden="true"></i> Google Calendar
+          </button>
+          <button type="button" class="button button-secondary export-option" data-export="ical">
+            <i class="fas fa-calendar-plus" aria-hidden="true"></i> Download calendar file (.ics)
+          </button>
+        </div>
+      </div>
+    </div>
+
     <footer>
       <div class="footer-content">
         <div class="social-container">
           <p class="footer-heading">Connect With Us</p>
           <div class="social-links">
-            <a href="https://www.instagram.com/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Our Astro Journey on Instagram"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://www.threads.net/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Our Astro Journey on Threads"><i class="fa-brands fa-threads"></i></a>
-            <a href="https://www.tiktok.com/@ourastrojourney" target="_blank" rel="noopener noreferrer" aria-label="Our Astro Journey on TikTok"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="https://www.instagram.com/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Our Astro Journey on Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+            <a href="https://www.threads.net/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Our Astro Journey on Threads"><i class="fa-brands fa-threads" aria-hidden="true"></i></a>
+            <a href="https://www.tiktok.com/@ourastrojourney" target="_blank" rel="noopener noreferrer" aria-label="Our Astro Journey on TikTok"><i class="fa-brands fa-tiktok" aria-hidden="true"></i></a>
           </div>
         </div>
         <div class="copyright-container">
