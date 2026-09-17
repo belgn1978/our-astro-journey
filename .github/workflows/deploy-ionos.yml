@@ -1,8 +1,9 @@
 name: Build and Deploy to IONOS
 
+# The public site is deployed by GitHub Pages. This older IONOS frontend
+# workflow expects a Next.js app that is no longer present, so keep it manual
+# until/unless an IONOS frontend deployment is needed again.
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch: {}
 
 jobs:
