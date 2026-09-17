@@ -1268,20 +1268,6 @@ function initializeMobileMenu() {
     }
   });
 
-  nav.querySelectorAll('a[href]').forEach((link) => {
-    link.addEventListener('click', (event) => {
-      const href = link.href;
-      if (!href) return;
-
-      // Closing the off-canvas menu before the browser performs the link's
-      // default action can cancel navigation on some mobile browsers.
-      // Navigate explicitly, then let the next page start with a closed menu.
-      event.preventDefault();
-      closeMenu(false);
-      window.location.assign(href);
-    });
-  });
-
   window.addEventListener('resize', () => {
     if (!isSmallScreen()) closeMenu(false);
   });
