@@ -89,39 +89,27 @@
   <body class="review-entry-page">
     <a class="skip-link" href="#page-main">Skip to main content</a>
     <header id="header-main">
-      <div class="logo-container"><a href="../../index.html" class="nav-link logo-link" id="logo"><img src="../../assets/images/branding/logo.png" alt="OurAstroJourney logo" class="logo-img" width="1408" height="768"></a></div>
-      <button id="mobile-menu-button" class="mobile-menu-toggle" aria-label="Open navigation menu" aria-controls="mobile-navigation-main" aria-expanded="false">
-        <i class="fas fa-bars"></i>
+      <div class="logo-container"><a href="../../index.html" class="nav-link logo-link" id="logo"><img src="../../assets/images/branding/logo.png" alt="Our Astro Journey home" class="logo-img" width="1408" height="768"></a></div>
+      <button type="button" id="mobile-menu-button" class="mobile-menu-toggle" aria-label="Open navigation menu" aria-controls="mobile-navigation-main" aria-expanded="false">
+        <i class="fas fa-bars" aria-hidden="true"></i>
       </button>
       <nav id="navigation-main" aria-label="Primary navigation">
-        <a href="../../about.html" class="nav-link">About</a>
-        <a href="../../weather.html" class="nav-link">Weather</a>
-        <a href="../../dark-skies.html" class="nav-link">Dark Skies</a>
+        <a href="../../tools.html" class="nav-link">Tools</a>
         <a href="../../gallery.html" class="nav-link">Gallery</a>
-        <a href="../../moon-gallery.html" class="nav-link">Moon</a>
-        <a href="../../hubble-gallery.html" class="nav-link">Hubble</a>
-        <a href="../../hubble-jwst-fits-downloader.html" class="nav-link">Hubble/JWST Data</a>
-        <a href="../../news.html" class="nav-link">News</a>
-        <a href="../../reviews.html" class="nav-link">Reviews</a>
-        <a href="../../affiliate-links.html" class="nav-link">Discounts & Links</a>
+        <a href="../../reviews.html" class="nav-link" aria-current="page">Reviews</a>
         <a href="../../useful-resources.html" class="nav-link">Resources</a>
+        <a href="../../news.html" class="nav-link">News</a>
+        <a href="../../about.html" class="nav-link">About</a>
         <a href="../../contact.html" class="nav-link">Contact</a>
       </nav>
       <nav id="mobile-navigation-main" class="mobile-navigation" aria-label="Mobile primary navigation" aria-hidden="true">
-        <button id="mobile-menu-close" class="mobile-menu-close" aria-label="Close navigation menu">
-          <i class="fas fa-times"></i>
-        </button>
-        <a href="../../about.html" class="nav-link mobile-nav-link">About</a>
-        <a href="../../weather.html" class="nav-link mobile-nav-link">Weather</a>
-        <a href="../../dark-skies.html" class="nav-link mobile-nav-link">Dark Skies</a>
+        <button type="button" id="mobile-menu-close" class="mobile-menu-close" aria-label="Close navigation menu"><i class="fas fa-times" aria-hidden="true"></i></button>
+        <a href="../../tools.html" class="nav-link mobile-nav-link">Tools</a>
         <a href="../../gallery.html" class="nav-link mobile-nav-link">Gallery</a>
-        <a href="../../moon-gallery.html" class="nav-link mobile-nav-link">Moon</a>
-        <a href="../../hubble-gallery.html" class="nav-link mobile-nav-link">Hubble</a>
-        <a href="../../hubble-jwst-fits-downloader.html" class="nav-link mobile-nav-link">Hubble/JWST Data</a>
-        <a href="../../news.html" class="nav-link mobile-nav-link">News</a>
-        <a href="../../reviews.html" class="nav-link mobile-nav-link">Reviews</a>
-        <a href="../../affiliate-links.html" class="nav-link mobile-nav-link">Discounts & Links</a>
+        <a href="../../reviews.html" class="nav-link mobile-nav-link" aria-current="page">Reviews</a>
         <a href="../../useful-resources.html" class="nav-link mobile-nav-link">Resources</a>
+        <a href="../../news.html" class="nav-link mobile-nav-link">News</a>
+        <a href="../../about.html" class="nav-link mobile-nav-link">About</a>
         <a href="../../contact.html" class="nav-link mobile-nav-link">Contact</a>
       </nav>
     </header>
@@ -157,37 +145,37 @@
           <h2 class="rev-subheading section-subheading">Specs and what they mean for you</h2>
           <!-- desktop: 3-col grid of name/what/meaning; mobile: each .spec-row becomes a flip card (behaviour added later) -->
           <div class="specs-grid" id="specsGrid">
-            <div class="spec-row" role="button" tabindex="0" aria-pressed="false">
+            <div class="spec-row">
                 <div class="spec-name">Dimensions</div>
                 <div class="spec-what">140mm height, 115mm width, and 45mm depth</div>
                 <div class="spec-meaning">The Dwarf Mini is about the size of a thick paperback book, making it easy to carry in a backpack or take on a holiday.</div>
             </div>
-            <div class="spec-row" role="button" tabindex="0" aria-pressed="false">
+            <div class="spec-row">
                 <div class="spec-name">Weight</div>
                 <div class="spec-what">840g</div>
                 <div class="spec-meaning">About the same weight as a 1.25l bottle of water. Light enough to carry comfortably but heavy enough to feel sturdy.</div>
             </div>
-            <div class="spec-row" role="button" tabindex="0" aria-pressed="false">
+            <div class="spec-row">
                 <div class="spec-name">Aperture</div>
                 <div class="spec-what">30mm</div>
                 <div class="spec-meaning">This is the size of the front lens. Think of it as the telescope's light bucket. A larger aperture collects more light, helping you capture fainter targets.</div>
             </div>
-            <div class="spec-row" role="button" tabindex="0" aria-pressed="false">
+            <div class="spec-row">
                 <div class="spec-name">Focal Length</div>
                 <div class="spec-what">150mm</div>
                 <div class="spec-meaning">This determines how "zoomed in" the view is. Short focal lengths provide a wider view, but targets can look smaller, while longer focal lengths give you a more zoomed-in view. This can make it harder to find and track.</div>
             </div>
-            <div class="spec-row" role="button" tabindex="0" aria-pressed="false">
+            <div class="spec-row">
                 <div class="spec-name">Battery</div>
                 <div class="spec-what">Built-in rechargeable battery via USB-C (up to 4 hours)</div>
                 <div class="spec-meaning">It is long enough for most observing sessions, but you should always have a fully charged power bank handy.</div>
             </div>
-            <div class="spec-row" role="button" tabindex="0" aria-pressed="false">
+            <div class="spec-row">
                 <div class="spec-name">Storage</div>
                 <div class="spec-what">64GB internal storage</div>
                 <div class="spec-meaning">Plenty of space for multiple sessions, but the Dwarf Mini does not offer internal memory expansion. You will need to move data via the included USB-C cable to a computer.</div>
             </div>
-            <div class="spec-row" role="button" tabindex="0" aria-pressed="false">
+            <div class="spec-row">
                 <div class="spec-name">Filters</div>
                 <div class="spec-what">Solar filter, dual-band filter, astro filter</div>
                 <div class="spec-meaning">The included solar filter is required to safely observe the Sun. The dual-band filter is best for nebulae. The astro filter is the general-purpose filter for everything else.</div>
@@ -377,9 +365,9 @@
         <div class="social-container">
           <p class="footer-heading">Connect With Us</p>
           <div class="social-links">
-            <a href="https://www.instagram.com/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://www.threads.net/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Threads"><i class="fa-brands fa-threads"></i></a>
-            <a href="https://www.tiktok.com/@ourastrojourney" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+            <a href="https://www.instagram.com/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Our Astro Journey on Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.threads.net/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Our Astro Journey on Threads"><i class="fa-brands fa-threads"></i></a>
+            <a href="https://www.tiktok.com/@ourastrojourney" target="_blank" rel="noopener noreferrer" aria-label="Our Astro Journey on TikTok"><i class="fa-brands fa-tiktok"></i></a>
           </div>
         </div>
         <div class="copyright-container">
