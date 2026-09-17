@@ -56,15 +56,12 @@
   var toastTimer = null;
 
   function showToast(message) {
-    // data-finder.js loads just before the toast element in the page, so the
-    // initial DOM lookup can be null. Resolve it lazily the first time we need it.
     if (!toastEl) {
       toastEl = document.getElementById('finder-toast');
     }
     if (!toastEl) return;
     toastEl.textContent = message;
     toastEl.hidden = false;
-    // restart the animation and hide timer on rapid successive adds
     toastEl.classList.remove('finder-toast-visible');
     void toastEl.offsetWidth;
     toastEl.classList.add('finder-toast-visible');
@@ -288,7 +285,6 @@
       track('manifest_generated', { format: format, file_count: items.length });
       setStatus('Your download ' + (format === 'sh' ? 'script' : 'list') + ' has been generated.');
     }).catch(function () {
-      // Offline fallback: build the file in the browser from stored URLs.
       var lines;
       if (format === 'sh') {
         lines = ['#!/usr/bin/env bash', '# Downloads come directly from the official STScI MAST archive.', 'set -euo pipefail', ''];
@@ -465,7 +461,7 @@
   function normaliseProductResults(data, obsids) {
     var merged = [];
     var totalScienceProducts = 0;
-    data.results.forEach(function (result) {
+    (data.results || []).forEach(function (result) {
       totalScienceProducts += Number(result.totalScienceProducts || (result.products || []).length || 0);
       (result.products || []).forEach(function (p) { p._obsid = result.obsid; });
       merged = merged.concat(result.products || []);
@@ -480,6 +476,41 @@
     };
   }
 
+  function fetchProductResults(obsids, mode) {
+    var ids = String(obsids || '').split(',').map(function (id) { return id.trim(); }).filter(Boolean);
+    if (ids.length === 0) {
+      return Promise.reject(new Error('No observation ids were available for this dataset.'));
+    }
+
+    var requests = ids.map(function (id) {
+      return apiFetch('/products.php?obsid=' + encodeURIComponent(id) + '&mode=' + encodeURIComponent(mode))
+        .then(function (data) { return { ok: true, data: data }; })
+        .catch(function (error) { return { ok: false, error: error }; });
+    });
+
+    return Promise.all(requests).then(function (responses) {
+      var results = [];
+      var failures = [];
+      responses.forEach(function (response) {
+        if (response.ok) {
+          results = results.concat(response.data.results || []);
+        } else {
+          failures.push(response.error);
+        }
+      });
+
+      if (results.length === 0) {
+        throw failures[0] || new Error('No product data was returned by the archive.');
+      }
+
+      return {
+        success: true,
+        results: results,
+        partialFailures: failures.length
+      };
+    });
+  }
+
   function loadProductsForGroup(groupIndex, container, button) {
     if (!currentSearch) return Promise.reject(new Error('Run a search first.'));
     var group = currentSearch.groups[groupIndex];
@@ -491,7 +522,7 @@
     container.hidden = false;
     container.innerHTML = '<p class="finder-note">Loading products from the archive…</p>';
 
-    return apiFetch('/products.php?obsid=' + encodeURIComponent(obsids) + '&mode=' + encodeURIComponent(mode))
+    return fetchProductResults(obsids, mode)
       .then(function (data) {
         var combined = normaliseProductResults(data, obsids);
         renderProducts(container, group, combined, mode);
@@ -502,6 +533,9 @@
         if (addBtn) {
           addBtn.disabled = false;
           addBtn.dataset.ready = combined.recommendedCount > 0 ? '1' : '';
+        }
+        if (data.partialFailures > 0) {
+          setStatus('Products loaded, but part of the archive response was unavailable. Available files are shown.', false);
         }
         return combined;
       })
@@ -519,7 +553,7 @@
     if (!group) return;
 
     if (products.length === 0) {
-      setStatus('No recommended image-processing files were found for this dataset.', false);
+      setStatus('No recommended image-processing files were found for this dataset. Try View products to inspect the available files.', false);
       showToast('No recommended files found');
       return;
     }
@@ -563,7 +597,7 @@
     addBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Loading recommended files…';
     setStatus('Loading recommended files from the MAST archive…', false);
 
-    apiFetch('/products.php?obsid=' + encodeURIComponent(obsids) + '&mode=' + encodeURIComponent(mode))
+    fetchProductResults(obsids, mode)
       .then(function (data) {
         var combined = normaliseProductResults(data, obsids);
         renderProducts(box, group, combined, mode);
@@ -571,6 +605,9 @@
         addBtn.disabled = false;
         addBtn.innerHTML = originalHtml;
         addBtn.dataset.ready = combined.recommendedCount > 0 ? '1' : '';
+        if (data.partialFailures > 0) {
+          setStatus('Some archive requests were unavailable, so the available recommended files were used.', false);
+        }
         finishRecommendedAdd(groupIndex, addBtn, box);
       })
       .catch(function (error) {
