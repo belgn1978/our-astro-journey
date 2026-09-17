@@ -213,7 +213,10 @@ summary {
   width: 100%;
   background: var(--header-bg);
   backdrop-filter: blur(16px);
-  z-index: 1000;
+  /* Keep the header's stacking context above the mobile backdrop.
+     The off-canvas menu lives inside this header, so a lower header z-index
+     lets the backdrop sit on top of the visible menu and steal link taps. */
+  z-index: 10000;
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
