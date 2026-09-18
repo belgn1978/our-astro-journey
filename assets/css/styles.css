@@ -329,6 +329,7 @@ summary {
 .location-choice span { display: grid; }
 .location-choice small { color: rgba(244,244,244,.65); font-weight: 400; }
 .dialog-close { width: 2.5rem; height: 2.5rem; padding: 0; border-radius: 50%; background: rgba(255,255,255,.1); box-shadow: none; font-size: 1.6rem; }
+.dialog-primary-actions { display: flex; gap: .65rem; }
 .coordinate-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
 .location-search-row { display: grid; grid-template-columns: 1fr auto; gap: .6rem; }
 .location-search-row .button { white-space: nowrap; }
@@ -362,6 +363,7 @@ summary {
 .target-planner-card dl { display: grid; gap: .65rem; }
 .target-planner-card dl > div { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px solid rgba(255,255,255,.12); }
 .target-planner-card dd { text-align: right; font-weight: 800; }
+.planner-time-note { margin: .9rem 0 0; color: rgba(255,255,255,.62); font-size: .76rem; }
 .target-planner-card .button { width: 100%; margin-top: 1rem; }
 
 @media (max-width: 900px) {
@@ -384,6 +386,8 @@ summary {
   .results-heading select { width: 100%; }
   .coordinate-grid { grid-template-columns: 1fr; }
   .location-search-row { grid-template-columns: 1fr; }
+  .dialog-actions { align-items: stretch; flex-direction: column; }
+  .dialog-primary-actions { display: grid; grid-template-columns: 1fr 1fr; }
   .target-detail-hero { min-height: 560px; }
   .target-hero-overlay { padding-top: 7rem; }
   .guidance-list > div { grid-template-columns: 1fr; gap: .25rem; }
