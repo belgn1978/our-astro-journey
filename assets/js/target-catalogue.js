@@ -51,7 +51,10 @@
     const bortleFactors = {1:0.55,2:0.7,3:0.85,4:1,5:1.25,6:1.6,7:2.1,8:2.8,9:3.6};
     const altitude = maxAltitude(target);
     const altitudeFactor = altitude >= 60 ? 1 : altitude >= 40 ? 1.15 : altitude >= 25 ? 1.4 : altitude >= 15 ? 1.8 : 2.4;
-    const midpoint = Math.max(10, Math.round(target.integration * (bortleFactors[locationProfile.bortle] || 1.6) * altitudeFactor / 5) * 5);
+    const skySensitivity = {galaxies:1,reflection:1,dark:1,emission:.45,remnants:.5,planetary:.55,open:.3,globular:.4};
+    const rawSkyFactor = bortleFactors[locationProfile.bortle] || 1.6;
+    const adjustedSkyFactor = 1 + (rawSkyFactor - 1) * (skySensitivity[target.category] || 1);
+    const midpoint = Math.max(10, Math.round(target.integration * adjustedSkyFactor * altitudeFactor / 5) * 5);
     return { minimum: Math.max(10, Math.round(midpoint * 0.45 / 5) * 5), recommended: midpoint, deep: Math.round(midpoint * 2 / 15) * 15 };
   }
 
@@ -87,6 +90,17 @@
     if (/primarily an imaging/i.test(target.visibility)) return 'Primarily imaging';
     if (/difficult|challenging/i.test(target.visibility)) return 'Visual: challenging';
     return 'Visual + imaging';
+  }
+
+  function sourceLinks(target) {
+    const messier = target.catalogue.match(/\bM(\d+)\b/);
+    const links = [
+      '<a href="https://github.com/mattiaverga/OpenNGC" target="_blank" rel="noopener noreferrer">OpenNGC catalogue data</a>',
+      '<a href="https://simbad.cds.unistra.fr/simbad/" target="_blank" rel="noopener noreferrer">SIMBAD astronomical database</a>',
+      '<a href="https://aladin.cds.unistra.fr/" target="_blank" rel="noopener noreferrer">CDS Aladin / DSS2 imagery</a>'
+    ];
+    if (messier) links.splice(1, 0, `<a href="https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-${messier[1]}/" target="_blank" rel="noopener noreferrer">NASA Hubble Messier ${messier[1]}</a>`);
+    return links.join(' · ');
   }
 
   function targetCard(target) {
@@ -231,8 +245,9 @@
     host.innerHTML = `<section class="target-detail-hero"><div class="target-hero-image"><img src="${imageUrl(target,1400,850)}" alt="Sky survey view centred on ${escapeHtml(target.name)}" width="1400" height="850" /></div><div class="target-hero-overlay"><div class="content-wrapper"><nav class="catalogue-breadcrumbs" aria-label="Breadcrumb"><a href="./targets.html">Catalogue</a><span>/</span><a href="./target-category.html?category=${target.category}">${escapeHtml(category.name)}</a><span>/</span><span>${escapeHtml(target.name)}</span></nav><p class="eyebrow">${escapeHtml(category.name)} · ${escapeHtml(target.constellation)}</p><h1>${escapeHtml(target.name)}</h1><p class="target-catalogue-code">${escapeHtml(target.catalogue)}</p><p class="target-hero-copy">${escapeHtml(target.description)}</p></div></div></section>
       <section><div class="content-wrapper target-detail-grid"><article class="target-main-column"><div class="target-facts"><div><span>Object type</span><strong>${escapeHtml(category.name)}</strong></div><div><span>Distance</span><strong>${escapeHtml(target.distance)}</strong></div><div><span>Apparent size</span><strong>${escapeHtml(target.size)}</strong></div><div><span>Magnitude</span><strong>${target.magnitude == null ? 'Not meaningful / not listed' : target.magnitude}</strong></div><div><span>Coordinates (J2000)</span><strong>RA ${escapeHtml(target.ra)} · Dec ${target.dec.toFixed(2)}°</strong></div><div><span>Best evening months</span><strong>${months.join('–')}</strong></div></div>
       <h2>What to expect</h2><p>${escapeHtml(target.visibility)}.</p><p>${escapeHtml(target.description)}</p><h2>How to find it</h2><p>${escapeHtml(target.finding)}</p><h2>Imaging guidance</h2><dl class="guidance-list"><div><dt>Difficulty</dt><dd>${difficultyDots(target.difficulty)} ${difficultyLabel(target.difficulty)}</dd></div><div><dt>Suggested filters</dt><dd>${escapeHtml(target.filters)}</dd></div><div><dt>Framing</dt><dd>${escapeHtml(target.focal)}</dd></div></dl>
-      <div class="estimate-explainer"><h3>About these time estimates</h3><p>These are rough total-integration starting points, not guarantees. Transparency, moonlight, camera sensitivity, focal ratio, sub length and processing all matter. The estimate changes with the Bortle level and maximum altitude saved in this browser.</p></div></article>
+      <div class="estimate-explainer"><h3>About these time estimates</h3><p>These are rough total-integration starting points, not guarantees. Transparency, moonlight, camera sensitivity, focal ratio, sub length and processing all matter. The estimate changes with the Bortle level and maximum altitude saved in this browser. Emission-nebula and supernova-remnant estimates assume use of the suggested dual-band or narrowband filter; broadband capture in a bright sky may need substantially longer.</p></div></article>
       <aside class="target-planner-card"><p class="eyebrow">From your location</p><h2>Your target plan</h2><p id="detail-location-label">${escapeHtml(locationProfile.saved ? locationProfile.label : 'General northern-sky view')}</p><div class="planner-score ${altitude < 15 ? 'poor' : altitude < 30 ? 'fair' : 'good'}"><strong>${altitude > 0 ? `${altitude}°` : 'Not visible'}</strong><span>${altitude > 0 ? 'maximum altitude' : 'from this latitude'}</span></div><dl><div><dt>Latitude suitability</dt><dd>${altitude >= 30 ? 'Good' : altitude >= 15 ? 'Low but possible' : 'Not recommended'}</dd></div><div><dt>Sky setting</dt><dd>Bortle ${locationProfile.bortle}</dd></div><div><dt>Detectable result</dt><dd>${duration(estimate.minimum)}</dd></div><div><dt>Recommended</dt><dd>${duration(estimate.recommended)}</dd></div><div><dt>Deep project</dt><dd>${duration(estimate.deep)}+</dd></div></dl><button type="button" class="button" data-open-location>Change location or sky</button></aside></div></section>
+      <section aria-labelledby="sources-heading"><div class="content-wrapper"><div class="catalogue-sources"><h2 id="sources-heading">Data sources and image credit</h2><p>${sourceLinks(target)}</p><p>Coordinates use the J2000 epoch. Distances and integrated magnitudes are rounded guidance because published values can differ between studies and measurement methods. The survey thumbnail is a DSS2 colour view served by CDS; it is not an example of what amateur equipment will necessarily record.</p></div></div></section>
       <section aria-labelledby="related-heading"><div class="content-wrapper"><h2 id="related-heading" class="section-heading">Similar targets</h2><div class="target-card-grid">${data.targets.filter(item=>item.category===target.category&&item.id!==target.id).slice(0,3).map(targetCard).join('')}</div></div></section>`;
     document.querySelectorAll('[data-open-location]').forEach(button => button.addEventListener('click', () => document.getElementById('location-dialog').showModal()));
   }
