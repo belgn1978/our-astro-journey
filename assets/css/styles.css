@@ -277,6 +277,7 @@ summary {
 .target-card p { color: rgba(244,244,244,.78); }
 .category-count,
 .catalogue-code { color: #87c8ff !important; font-size: .82rem; font-weight: 700; letter-spacing: .04em; }
+.target-use-badge { align-self: flex-start; padding: .28rem .55rem; border: 1px solid rgba(134,200,255,.35); border-radius: 999px; background: rgba(74,158,255,.1); color: #b8ddff; font-size: .72rem; font-weight: 800; }
 .category-image,
 .target-card-image { min-height: 100%; background: #02050c; }
 .category-image img,
