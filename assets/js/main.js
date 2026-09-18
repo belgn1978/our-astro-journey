@@ -1206,6 +1206,7 @@ function initializeMobileMenu() {
     mobileMenuButton.setAttribute('aria-expanded', 'false');
     mobileMenuButton.setAttribute('aria-label', 'Open navigation menu');
     nav.setAttribute('aria-hidden', 'true');
+    nav.setAttribute('inert', '');
     backdrop.setAttribute('aria-hidden', 'true');
 
     if (restoreFocus && wasOpen && previouslyFocused && typeof previouslyFocused.focus === 'function') {
@@ -1222,6 +1223,7 @@ function initializeMobileMenu() {
     mobileMenuButton.setAttribute('aria-expanded', 'true');
     mobileMenuButton.setAttribute('aria-label', 'Close navigation menu');
     nav.setAttribute('aria-hidden', 'false');
+    nav.removeAttribute('inert');
     backdrop.setAttribute('aria-hidden', 'false');
     requestAnimationFrame(() => mobileMenuClose.focus());
   };
@@ -1271,6 +1273,8 @@ function initializeMobileMenu() {
   window.addEventListener('resize', () => {
     if (!isSmallScreen()) closeMenu(false);
   });
+
+  closeMenu(false);
 }
 
 function initializeDropdownToggle() {
