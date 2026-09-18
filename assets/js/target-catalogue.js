@@ -5,6 +5,7 @@
   if (!data) return;
 
   const STORAGE_KEY = 'oaj-target-location-v1';
+  const NASA_MESSIER_PAGES = new Set([1,2,3,4,5,7,8,9,10,11,12,13,14,15,16,17,19,20,22,24,27,28,30,31,32,33,35,42,43,44,45,46,48,49,51,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,94,95,96,98,99,100,101,102,104,105,106,107,108,109,110]);
   const view = document.body.dataset.catalogueView;
   let locationProfile = readProfile();
 
@@ -32,8 +33,50 @@
     renderCurrentView();
   }
 
+  function openLocationDialog() {
+    const dialog = document.getElementById('location-dialog');
+    if (!dialog) return;
+    if (typeof dialog.showModal === 'function') dialog.showModal();
+    else dialog.setAttribute('open', '');
+  }
+
+  function closeLocationDialog(dialog) {
+    if (typeof dialog.close === 'function') dialog.close();
+    else dialog.removeAttribute('open');
+  }
+
   function maxAltitude(target) {
     return Math.max(-90, Math.min(90, 90 - Math.abs(locationProfile.lat - target.dec)));
+  }
+
+  function localSiderealHours(date) {
+    const julianDate = date.getTime() / 86400000 + 2440587.5;
+    const centuries = (julianDate - 2451545.0) / 36525;
+    const gmstDegrees = 280.46061837 + 360.98564736629 * (julianDate - 2451545.0) + 0.000387933 * centuries * centuries - (centuries * centuries * centuries) / 38710000;
+    return (((gmstDegrees + locationProfile.lon) % 360) + 360) % 360 / 15;
+  }
+
+  function currentAltitude(target, date) {
+    const radians = Math.PI / 180;
+    const latitude = locationProfile.lat * radians;
+    const declination = target.dec * radians;
+    let hourAngle = localSiderealHours(date) - parseRa(target.ra);
+    hourAngle = ((hourAngle + 12) % 24 + 24) % 24 - 12;
+    const sineAltitude = Math.sin(latitude) * Math.sin(declination) + Math.cos(latitude) * Math.cos(declination) * Math.cos(hourAngle * 15 * radians);
+    return Math.asin(Math.max(-1, Math.min(1, sineAltitude))) / radians;
+  }
+
+  function hoursUntilTransit(target, date) {
+    const siderealHours = ((parseRa(target.ra) - localSiderealHours(date)) % 24 + 24) % 24;
+    return siderealHours / 1.0027379;
+  }
+
+  function transitLabel(hours) {
+    if (hours < 0.08 || hours > 23.85) return 'Transiting now';
+    const totalMinutes = Math.round(hours * 60);
+    const wholeHours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return wholeHours ? `${wholeHours} hr ${minutes} min` : `${minutes} min`;
   }
 
   function suitableFromLatitude(target) {
@@ -82,7 +125,7 @@
   }
 
   function difficultyDots(level) {
-    return `<span class="difficulty-dots" aria-label="Difficulty ${level} out of 5">${[1,2,3,4,5].map(n => `<i class="${n <= level ? 'active' : ''}"></i>`).join('')}</span>`;
+    return `<span class="difficulty-dots" aria-hidden="true">${[1,2,3,4,5].map(n => `<i class="${n <= level ? 'active' : ''}"></i>`).join('')}</span>`;
   }
 
   function useLabel(target) {
@@ -99,8 +142,21 @@
       '<a href="https://simbad.cds.unistra.fr/simbad/" target="_blank" rel="noopener noreferrer">SIMBAD astronomical database</a>',
       '<a href="https://aladin.cds.unistra.fr/" target="_blank" rel="noopener noreferrer">CDS Aladin / DSS2 imagery</a>'
     ];
-    if (messier) links.splice(1, 0, `<a href="https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-${messier[1]}/" target="_blank" rel="noopener noreferrer">NASA Hubble Messier ${messier[1]}</a>`);
+    if (messier && NASA_MESSIER_PAGES.has(Number(messier[1]))) links.splice(1, 0, `<a href="https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-${messier[1]}/" target="_blank" rel="noopener noreferrer">NASA Hubble Messier ${messier[1]}</a>`);
     return links.join(' · ');
+  }
+
+  function updateMetadata(title, description, canonicalPath) {
+    document.title = title;
+    const descriptionNode = document.querySelector('meta[name="description"]');
+    if (descriptionNode) descriptionNode.content = description;
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      document.head.appendChild(canonical);
+    }
+    canonical.href = `https://ourastrojourney.co.uk/${canonicalPath}`;
   }
 
   function targetCard(target) {
@@ -127,9 +183,9 @@
   function buildLocationDialog() {
     const host = document.getElementById('location-dialog-host');
     if (!host) return;
-    host.innerHTML = `<dialog id="location-dialog" class="location-dialog"><form method="dialog" id="location-form">
-      <div class="dialog-heading"><div><p class="eyebrow">Private and adjustable</p><h2>Set your observing location</h2></div><button class="dialog-close" value="cancel" aria-label="Close location settings">×</button></div>
-      <p>Your choice is saved only in this browser. Precise device coordinates are not stored by Our Astro Journey.</p>
+    host.innerHTML = `<dialog id="location-dialog" class="location-dialog" aria-labelledby="location-dialog-title" aria-describedby="location-privacy-note"><form method="dialog" id="location-form">
+      <div class="dialog-heading"><div><p class="eyebrow">Private and adjustable</p><h2 id="location-dialog-title">Set your observing location</h2></div><button class="dialog-close" value="cancel" aria-label="Close location settings">×</button></div>
+      <p id="location-privacy-note">Your choice is saved only in this browser. Precise device coordinates are not stored by Our Astro Journey.</p>
       <fieldset><legend>How precise should it be?</legend>
         <label class="location-choice"><input type="radio" name="precision" value="broad" checked /><span><strong>Broad region</strong><small>Choose a latitude band. Enough for broad visibility and season guidance.</small></span></label>
         <label class="location-choice"><input type="radio" name="precision" value="manual" /><span><strong>Town or manual coordinates</strong><small>Enter approximate coordinates. Rounding them protects your exact location.</small></span></label>
@@ -140,7 +196,7 @@
       <div id="device-location-fields" hidden><button id="get-device-location" type="button" class="button button-secondary">Use my device location</button><p id="device-location-status" role="status"></p></div>
       <label>Bortle level<select id="bortle-level">${[1,2,3,4,5,6,7,8,9].map(n=>`<option value="${n}" ${n===locationProfile.bortle?'selected':''}>Bortle ${n}${n===1?' — exceptionally dark':n===4?' — rural/suburban transition':n===6?' — bright suburban':n===9?' — inner city':''}</option>`).join('')}</select></label>
       <p class="form-note">Bortle level has a large effect on broadband integration estimates. Use your real local experience if it differs from regional maps.</p>
-      <div class="dialog-actions"><button value="cancel" class="button button-secondary">Cancel</button><button id="save-location" value="default" class="button">Save location</button></div>
+      <div class="dialog-actions"><button id="clear-location" type="button" class="button button-secondary">Clear saved location</button><span class="dialog-primary-actions"><button value="cancel" class="button button-secondary">Cancel</button><button id="save-location" value="default" class="button">Save location</button></span></div>
     </form></dialog>`;
     const dialog = document.getElementById('location-dialog');
     let deviceCoords = null;
@@ -190,9 +246,16 @@
         if (!deviceCoords) { document.getElementById('device-location-status').textContent = 'Choose “Use my device location” first.'; return; }
         profile = {...deviceCoords,label:'Precise device location',bortle,precision,saved:true};
       }
-      saveProfile(profile); dialog.close();
+      saveProfile(profile); closeLocationDialog(dialog);
     });
-    document.querySelectorAll('[data-open-location]').forEach(button => button.addEventListener('click', () => dialog.showModal()));
+    document.getElementById('clear-location').addEventListener('click', () => {
+      localStorage.removeItem(STORAGE_KEY);
+      locationProfile = { lat: 53, lon: -2, label: 'General northern-sky view', bortle: 6, precision: 'broad', saved: false };
+      updateLocationLabels();
+      renderCurrentView();
+      closeLocationDialog(dialog);
+    });
+    document.querySelectorAll('[data-open-location]').forEach(button => button.addEventListener('click', openLocationDialog));
   }
 
   function renderCategories() {
@@ -215,7 +278,7 @@
     document.getElementById('category-title').textContent = category ? category.name : 'All targets';
     document.getElementById('category-breadcrumb').textContent = category ? category.name : 'All targets';
     document.getElementById('category-description').textContent = category ? category.description : 'Search the complete catalogue or filter it by difficulty and suitability.';
-    document.title = `${category ? category.name : 'All Astrophotography Targets'} | Our Astro Journey`;
+    updateMetadata(`${category ? category.name : 'All Astrophotography Targets'} | Our Astro Journey`, category ? `${category.description} Filter targets by difficulty and visibility from your location.` : 'Search 150 practical amateur astrophotography targets by type, difficulty and visibility from your location.', `target-category.html?category=${encodeURIComponent(categoryKey)}`);
     const render = () => {
       const search = document.getElementById('target-search').value.toLowerCase().trim();
       const difficulty = document.getElementById('difficulty-filter').value;
@@ -240,16 +303,16 @@
     const target = data.targets.find(item => item.id === new URLSearchParams(location.search).get('id'));
     const host = document.getElementById('target-detail');
     if (!target) { host.innerHTML = '<section class="page-hero"><div class="content-wrapper"><h1>Target not found</h1><p><a href="./targets.html">Return to the target catalogue</a>.</p></div></section>'; return; }
-    const category = data.categories[target.category], estimate = integrationEstimate(target), altitude = Math.round(maxAltitude(target)), months = bestMonths(target);
-    document.title = `${target.name} Astrophotography Guide | Our Astro Journey`;
+    const category = data.categories[target.category], estimate = integrationEstimate(target), altitude = Math.round(maxAltitude(target)), months = bestMonths(target), now = new Date(), altitudeNow = Math.round(currentAltitude(target, now)), nextTransit = hoursUntilTransit(target, now);
+    updateMetadata(`${target.name} Astrophotography Guide | Our Astro Journey`, `How to find, observe and photograph ${target.name} (${target.catalogue}), including visibility, difficulty and integration-time guidance for your location.`, `target.html?id=${encodeURIComponent(target.id)}`);
     host.innerHTML = `<section class="target-detail-hero"><div class="target-hero-image"><img src="${imageUrl(target,1400,850)}" alt="Sky survey view centred on ${escapeHtml(target.name)}" width="1400" height="850" /></div><div class="target-hero-overlay"><div class="content-wrapper"><nav class="catalogue-breadcrumbs" aria-label="Breadcrumb"><a href="./targets.html">Catalogue</a><span>/</span><a href="./target-category.html?category=${target.category}">${escapeHtml(category.name)}</a><span>/</span><span>${escapeHtml(target.name)}</span></nav><p class="eyebrow">${escapeHtml(category.name)} · ${escapeHtml(target.constellation)}</p><h1>${escapeHtml(target.name)}</h1><p class="target-catalogue-code">${escapeHtml(target.catalogue)}</p><p class="target-hero-copy">${escapeHtml(target.description)}</p></div></div></section>
       <section><div class="content-wrapper target-detail-grid"><article class="target-main-column"><div class="target-facts"><div><span>Object type</span><strong>${escapeHtml(category.name)}</strong></div><div><span>Distance</span><strong>${escapeHtml(target.distance)}</strong></div><div><span>Apparent size</span><strong>${escapeHtml(target.size)}</strong></div><div><span>Magnitude</span><strong>${target.magnitude == null ? 'Not meaningful / not listed' : target.magnitude}</strong></div><div><span>Coordinates (J2000)</span><strong>RA ${escapeHtml(target.ra)} · Dec ${target.dec.toFixed(2)}°</strong></div><div><span>Best evening months</span><strong>${months.join('–')}</strong></div></div>
       <h2>What to expect</h2><p>${escapeHtml(target.visibility)}.</p><p>${escapeHtml(target.description)}</p><h2>How to find it</h2><p>${escapeHtml(target.finding)}</p><h2>Imaging guidance</h2><dl class="guidance-list"><div><dt>Difficulty</dt><dd>${difficultyDots(target.difficulty)} ${difficultyLabel(target.difficulty)}</dd></div><div><dt>Suggested filters</dt><dd>${escapeHtml(target.filters)}</dd></div><div><dt>Framing</dt><dd>${escapeHtml(target.focal)}</dd></div></dl>
       <div class="estimate-explainer"><h3>About these time estimates</h3><p>These are rough total-integration starting points, not guarantees. Transparency, moonlight, camera sensitivity, focal ratio, sub length and processing all matter. The estimate changes with the Bortle level and maximum altitude saved in this browser. Emission-nebula and supernova-remnant estimates assume use of the suggested dual-band or narrowband filter; broadband capture in a bright sky may need substantially longer.</p></div></article>
-      <aside class="target-planner-card"><p class="eyebrow">From your location</p><h2>Your target plan</h2><p id="detail-location-label">${escapeHtml(locationProfile.saved ? locationProfile.label : 'General northern-sky view')}</p><div class="planner-score ${altitude < 15 ? 'poor' : altitude < 30 ? 'fair' : 'good'}"><strong>${altitude > 0 ? `${altitude}°` : 'Not visible'}</strong><span>${altitude > 0 ? 'maximum altitude' : 'from this latitude'}</span></div><dl><div><dt>Latitude suitability</dt><dd>${altitude >= 30 ? 'Good' : altitude >= 15 ? 'Low but possible' : 'Not recommended'}</dd></div><div><dt>Sky setting</dt><dd>Bortle ${locationProfile.bortle}</dd></div><div><dt>Detectable result</dt><dd>${duration(estimate.minimum)}</dd></div><div><dt>Recommended</dt><dd>${duration(estimate.recommended)}</dd></div><div><dt>Deep project</dt><dd>${duration(estimate.deep)}+</dd></div></dl><button type="button" class="button" data-open-location>Change location or sky</button></aside></div></section>
+      <div class="target-planner-card" aria-labelledby="target-plan-heading"><p class="eyebrow">From your location</p><h2 id="target-plan-heading">Your target plan</h2><p id="detail-location-label">${escapeHtml(locationProfile.saved ? locationProfile.label : 'General northern-sky view')}</p><div class="planner-score ${altitude < 15 ? 'poor' : altitude < 30 ? 'fair' : 'good'}"><strong>${altitude > 0 ? `${altitude}°` : 'Not visible'}</strong><span>${altitude > 0 ? 'maximum altitude' : 'from this latitude'}</span></div><dl><div><dt>Latitude suitability</dt><dd>${altitude >= 30 ? 'Good' : altitude >= 15 ? 'Low but possible' : 'Not recommended'}</dd></div><div><dt>Current altitude</dt><dd>${altitudeNow > 0 ? `${altitudeNow}° above horizon` : `${Math.abs(altitudeNow)}° below horizon`}</dd></div><div><dt>Next meridian transit</dt><dd>${transitLabel(nextTransit)}</dd></div><div><dt>Sky setting</dt><dd>Bortle ${locationProfile.bortle}</dd></div><div><dt>Detectable result</dt><dd>${duration(estimate.minimum)}</dd></div><div><dt>Recommended</dt><dd>${duration(estimate.recommended)}</dd></div><div><dt>Deep project</dt><dd>${duration(estimate.deep)}+</dd></div></dl><p class="planner-time-note">Live position is approximate and uses your saved longitude and the current device time.</p><button type="button" class="button" data-open-location>Change location or sky</button></div></div></section>
       <section aria-labelledby="sources-heading"><div class="content-wrapper"><div class="catalogue-sources"><h2 id="sources-heading">Data sources and image credit</h2><p>${sourceLinks(target)}</p><p>Coordinates use the J2000 epoch. Distances and integrated magnitudes are rounded guidance because published values can differ between studies and measurement methods. The survey thumbnail is a DSS2 colour view served by CDS; it is not an example of what amateur equipment will necessarily record.</p></div></div></section>
       <section aria-labelledby="related-heading"><div class="content-wrapper"><h2 id="related-heading" class="section-heading">Similar targets</h2><div class="target-card-grid">${data.targets.filter(item=>item.category===target.category&&item.id!==target.id).slice(0,3).map(targetCard).join('')}</div></div></section>`;
-    document.querySelectorAll('[data-open-location]').forEach(button => button.addEventListener('click', () => document.getElementById('location-dialog').showModal()));
+    document.querySelectorAll('[data-open-location]').forEach(button => button.addEventListener('click', openLocationDialog));
   }
 
   function renderCurrentView() {
