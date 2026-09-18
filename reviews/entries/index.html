@@ -10,6 +10,11 @@
     <meta name="theme-color" content="#050812" />
     <meta name="author" content="Matt Brambley" />
     <link rel="canonical" href="https://ourastrojourney.co.uk/reviews/entries/" />
+    <script>
+      if (window.location.pathname.endsWith('/reviews/entries/index.html')) {
+        window.location.replace('/reviews/entries/' + window.location.search + window.location.hash);
+      }
+    </script>
     <meta property="og:type" content="article" />
     <meta property="og:url" content="https://ourastrojourney.co.uk/reviews/entries/" />
     <meta property="og:site_name" content="Our Astro Journey" />
