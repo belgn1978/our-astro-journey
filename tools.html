@@ -33,11 +33,23 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "CollectionPage",
-      "name": "Astronomy Tools",
-      "url": "https://ourastrojourney.co.uk/tools.html",
-      "description": "Free astronomy tools for weather planning, dark-sky finding, ISS transit planning, and Hubble/JWST image data downloads.",
-      "inLanguage": "en-GB"
+      "@graph": [
+        {
+          "@type": "CollectionPage",
+          "name": "Astronomy Tools",
+          "url": "https://ourastrojourney.co.uk/tools.html",
+          "description": "Free astronomy tools for weather planning, dark-sky finding, ISS transit planning, and Hubble/JWST image data downloads.",
+          "inLanguage": "en-GB",
+          "isPartOf": { "@id": "https://ourastrojourney.co.uk/#website" }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://ourastrojourney.co.uk/" },
+            { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://ourastrojourney.co.uk/tools.html" }
+          ]
+        }
+      ]
     }
     </script>
   </head>
