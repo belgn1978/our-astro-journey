@@ -82,6 +82,13 @@
     return `<span class="difficulty-dots" aria-label="Difficulty ${level} out of 5">${[1,2,3,4,5].map(n => `<i class="${n <= level ? 'active' : ''}"></i>`).join('')}</span>`;
   }
 
+  function useLabel(target) {
+    if (/imaging only/i.test(target.visibility)) return 'Imaging only';
+    if (/primarily an imaging/i.test(target.visibility)) return 'Primarily imaging';
+    if (/difficult|challenging/i.test(target.visibility)) return 'Visual: challenging';
+    return 'Visual + imaging';
+  }
+
   function targetCard(target) {
     const estimate = integrationEstimate(target);
     const altitude = Math.round(maxAltitude(target));
@@ -91,7 +98,7 @@
         <img src="${imageUrl(target, 600, 390)}" alt="Sky survey view centred on ${escapeHtml(target.name)}" width="600" height="390" loading="lazy" decoding="async" />
       </a>
       <div class="target-card-body"><div class="target-card-topline"><span>${escapeHtml(data.categories[target.category].name)}</span><span>${escapeHtml(target.constellation)}</span></div>
-      <h2><a href="./target.html?id=${encodeURIComponent(target.id)}">${escapeHtml(target.name)}</a></h2><p class="catalogue-code">${escapeHtml(target.catalogue)}</p>
+      <h2><a href="./target.html?id=${encodeURIComponent(target.id)}">${escapeHtml(target.name)}</a></h2><p class="catalogue-code">${escapeHtml(target.catalogue)}</p><span class="target-use-badge">${useLabel(target)}</span>
       <div class="target-card-stats"><span>${difficultyDots(target.difficulty)} ${difficultyLabel(target.difficulty)}</span><span><i class="fa-regular fa-clock" aria-hidden="true"></i> ${duration(estimate.minimum)} minimum</span><span><i class="fa-solid fa-location-dot" aria-hidden="true"></i> ${altitudeText}</span></div>
       <p>${escapeHtml(target.description)}</p><a class="text-link" href="./target.html?id=${encodeURIComponent(target.id)}">View target guide <span aria-hidden="true">→</span></a></div>
     </article>`;
