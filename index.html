@@ -9,8 +9,13 @@
   <title>Our Astro Journey | Astronomy For Beginners And Smart Telescope Guides</title>
   <meta name="description" content="Beginner astronomy and astrophotography in plain English, including smart telescope guides, honest reviews, moon photography, deep-sky practice, and solar eclipse safety advice.">
   <meta name="author" content="Matt Brambley">
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="index, follow, max-image-preview:large" />
   <link rel="canonical" href="https://ourastrojourney.co.uk/" />
+  <script>
+    if (window.location.pathname === '/index.html') {
+      window.location.replace('/' + window.location.search + window.location.hash);
+    }
+  </script>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous">
   
   <!-- Open Graph / Facebook -->
@@ -21,6 +26,10 @@
   <meta property="og:title" content="Our Astro Journey | Astronomy For Beginners And Smart Telescope Guides">
   <meta property="og:description" content="Beginner astronomy and astrophotography in plain English, including smart telescope guides, honest reviews, moon photography, deep-sky practice, and solar eclipse safety advice.">
   <meta property="og:image" content="https://ourastrojourney.co.uk/assets/images/branding/hero-ing.jpg">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Our Astro Journey | Astronomy For Beginners And Smart Telescope Guides" />
+    <meta name="twitter:description" content="Beginner astronomy and astrophotography in plain English, including smart telescope guides, honest reviews, moon photography, deep-sky practice, and solar eclipse safety advice." />
+    <meta name="twitter:image" content="https://ourastrojourney.co.uk/assets/images/branding/hero-ing.jpg" />
   <meta property="og:image:secure_url" content="https://ourastrojourney.co.uk/assets/images/branding/hero-ing.jpg">
   <meta property="og:image:alt" content="Our Astro Journey astrophotography blog hero image showing a night sky scene">
   <meta property="og:image:width" content="1200">

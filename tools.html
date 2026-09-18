@@ -16,10 +16,15 @@
     <meta property="og:title" content="Astronomy Tools | Our Astro Journey" />
     <meta property="og:description" content="Four free astronomy tools for planning sessions, finding darker skies, timing ISS transits, and downloading Hubble/JWST data." />
     <meta property="og:image" content="https://ourastrojourney.co.uk/assets/images/branding/hero-ing.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Astronomy Tools | Our Astro Journey" />
+    <meta name="twitter:description" content="Four free astronomy tools for planning sessions, finding darker skies, timing ISS transits, and downloading Hubble/JWST data." />
+    <meta name="twitter:image" content="https://ourastrojourney.co.uk/assets/images/branding/hero-ing.jpg" />
     <meta name="theme-color" content="#050812" />
     <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/branding/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="./assets/images/branding/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="./assets/images/branding/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="./assets/css/reset.css" />
     <link rel="stylesheet" href="./assets/css/styles.css?v=20260917-nav4" />
@@ -33,11 +38,23 @@
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "CollectionPage",
-      "name": "Astronomy Tools",
-      "url": "https://ourastrojourney.co.uk/tools.html",
-      "description": "Free astronomy tools for weather planning, dark-sky finding, ISS transit planning, and Hubble/JWST image data downloads.",
-      "inLanguage": "en-GB"
+      "@graph": [
+        {
+          "@type": "CollectionPage",
+          "name": "Astronomy Tools",
+          "url": "https://ourastrojourney.co.uk/tools.html",
+          "description": "Free astronomy tools for weather planning, dark-sky finding, ISS transit planning, and Hubble/JWST image data downloads.",
+          "inLanguage": "en-GB",
+          "isPartOf": { "@id": "https://ourastrojourney.co.uk/#website" }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://ourastrojourney.co.uk/" },
+            { "@type": "ListItem", "position": 2, "name": "Tools", "item": "https://ourastrojourney.co.uk/tools.html" }
+          ]
+        }
+      ]
     }
     </script>
   </head>
