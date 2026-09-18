@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <title>Astrophotography Target Catalogue | Our Astro Journey</title>
+    <meta name="description" content="Explore amateur astrophotography targets by type, difficulty and visibility from your location, with practical integration-time guidance." />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="author" content="Matt Brambley" />
+    <link rel="canonical" href="https://ourastrojourney.co.uk/targets.html" />
+    <meta name="theme-color" content="#050812" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/branding/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/images/branding/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/images/branding/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="./assets/css/reset.css" />
+    <link rel="stylesheet" href="./assets/css/styles.css?v=20260918-catalogue1" />
+  </head>
+  <body data-catalogue-view="categories">
+    <a class="skip-link" href="#page-main">Skip to main content</a>
+    <header id="header-main">
+      <div class="logo-container"><a href="./" class="nav-link logo-link" id="logo"><img src="./assets/images/branding/logo.png" alt="Our Astro Journey home" class="logo-img" width="1408" height="768"></a></div>
+      <button type="button" id="mobile-menu-button" class="mobile-menu-toggle" aria-label="Open navigation menu" aria-controls="mobile-navigation-main" aria-expanded="false"><i class="fas fa-bars" aria-hidden="true"></i></button>
+      <nav id="navigation-main" aria-label="Primary navigation">
+        <a href="./tools.html" class="nav-link" aria-current="page">Tools</a><a href="./gallery.html" class="nav-link">Gallery</a><a href="./reviews.html" class="nav-link">Reviews</a><a href="./useful-resources.html" class="nav-link">Resources</a><a href="./news.html" class="nav-link">News</a><a href="./about.html" class="nav-link">About</a><a href="./contact.html" class="nav-link">Contact</a>
+      </nav>
+      <nav id="mobile-navigation-main" class="mobile-navigation" aria-label="Mobile primary navigation" aria-hidden="true">
+        <button type="button" id="mobile-menu-close" class="mobile-menu-close" aria-label="Close navigation menu"><i class="fas fa-times" aria-hidden="true"></i></button>
+        <a href="./tools.html" class="nav-link mobile-nav-link" aria-current="page">Tools</a><a href="./gallery.html" class="nav-link mobile-nav-link">Gallery</a><a href="./reviews.html" class="nav-link mobile-nav-link">Reviews</a><a href="./useful-resources.html" class="nav-link mobile-nav-link">Resources</a><a href="./news.html" class="nav-link mobile-nav-link">News</a><a href="./about.html" class="nav-link mobile-nav-link">About</a><a href="./contact.html" class="nav-link mobile-nav-link">Contact</a>
+      </nav>
+    </header>
+    <div id="mobile-nav-backdrop" class="mobile-nav-backdrop" aria-hidden="true"></div>
+    <main id="page-main">
+      <section class="page-hero catalogue-hero"><div class="content-wrapper">
+        <p class="eyebrow">Plan your next image</p>
+        <h1 class="section-heading">Astrophotography Target Catalogue</h1>
+        <p class="section-intro">Discover targets that suit your sky, your location and the time you have available. Start with a category or set your location for personalised visibility guidance.</p>
+      </div></section>
+      <section aria-labelledby="location-heading"><div class="content-wrapper">
+        <div class="catalogue-location-panel">
+          <div><p class="eyebrow">Your sky</p><h2 id="location-heading">Personalise the catalogue</h2><p id="location-summary">No location set. Results currently use a general northern-sky view.</p></div>
+          <button type="button" class="button" data-open-location>Set location &amp; sky</button>
+        </div>
+      </div></section>
+      <section aria-labelledby="categories-heading"><div class="content-wrapper">
+        <div class="section-heading-row"><div><p class="eyebrow">Browse by object type</p><h2 id="categories-heading" class="section-heading">Choose a category</h2></div><a href="./target-category.html?category=all">View every target</a></div>
+        <div id="category-grid" class="catalogue-category-grid" aria-live="polite"></div>
+      </div></section>
+      <section aria-labelledby="tonight-heading"><div class="content-wrapper">
+        <p class="eyebrow">A useful starting point</p><h2 id="tonight-heading" class="section-heading">Best matches for your location</h2>
+        <div id="recommended-targets" class="target-card-grid" aria-live="polite"></div>
+      </div></section>
+    </main>
+    <div id="location-dialog-host"></div>
+    <footer><div class="footer-content"><div class="social-container"><p class="footer-heading">Connect With Us</p><div class="social-links"><a href="https://www.instagram.com/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Our Astro Journey on Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a><a href="https://www.threads.net/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Our Astro Journey on Threads"><i class="fa-brands fa-threads" aria-hidden="true"></i></a><a href="https://www.tiktok.com/@ourastrojourney" target="_blank" rel="noopener noreferrer" aria-label="Our Astro Journey on TikTok"><i class="fa-brands fa-tiktok" aria-hidden="true"></i></a></div></div><div class="copyright-container"><p>&copy; 2026 Matt Brambley | OurAstroJourney</p></div></div></footer>
+    <script src="./assets/js/main.js?v=20260917-nav3"></script>
+    <script src="./assets/js/target-data.js?v=20260918-1"></script>
+    <script src="./assets/js/target-catalogue.js?v=20260918-1"></script>
+  </body>
+</html>
