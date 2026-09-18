@@ -11,6 +11,11 @@
   <meta name="author" content="Matt Brambley">
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <link rel="canonical" href="https://ourastrojourney.co.uk/" />
+  <script>
+    if (window.location.pathname === '/index.html') {
+      window.location.replace('/' + window.location.search + window.location.hash);
+    }
+  </script>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous">
   
   <!-- Open Graph / Facebook -->
