@@ -1056,6 +1056,39 @@ function initializeEventListeners() {
   }
 }
 
+function ensureFooterLegalLinks() {
+  const footerContent = document.querySelector('footer .footer-content');
+  if (!footerContent) return;
+
+  let legal = footerContent.querySelector('.footer-legal');
+  if (!legal) {
+    legal = document.createElement('nav');
+    legal.className = 'footer-legal';
+    legal.setAttribute('aria-label', 'Legal');
+    legal.innerHTML =
+      '<a href="./privacy.html">Privacy</a>' +
+      '<a href="./terms.html">Terms</a>' +
+      '<button type="button" class="footer-cookie-settings" data-cookie-settings>Cookie settings</button>';
+
+    const copyright = footerContent.querySelector('.copyright-container');
+    if (copyright) {
+      footerContent.insertBefore(legal, copyright);
+    } else {
+      footerContent.appendChild(legal);
+    }
+  }
+
+  legal.querySelectorAll('[data-cookie-settings]').forEach((button) => {
+    if (button.dataset.cookieBound === '1') return;
+    button.dataset.cookieBound = '1';
+    button.addEventListener('click', () => {
+      if (window.OAJCookiePreferences && typeof window.OAJCookiePreferences.show === 'function') {
+        window.OAJCookiePreferences.show();
+      }
+    });
+  });
+}
+
 // ============================================
 // INITIALIZATION
 // ============================================
@@ -1067,6 +1100,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize the mobile navigation on every page where it exists.
   initializeMobileMenu();
   highlightActiveNavigationLink();
+  ensureFooterLegalLinks();
   renderHomeUpdates();
   window.addEventListener('resize', () => {
     renderCalendarView();
