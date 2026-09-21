@@ -5,6 +5,11 @@
   if (!data) return;
 
   const STORAGE_KEY = 'oaj-target-location-v1';
+  const EQUIPMENT_STORAGE_KEY = 'oaj-target-equipment-v1';
+  const FOV_PRESETS = {
+    'dwarf-mini': { label: 'DWARF Mini', width: 2.14, height: 1.20, note: 'Approx. rectangular field derived from the published 2.45° diagonal telephoto FOV and 16:9 sensor.' },
+    'dwarf-3': { label: 'DWARF 3', width: 2.95, height: 1.66, note: 'Approx. rectangular field derived from the published 3.38° diagonal telephoto FOV and 16:9 sensor.' }
+  };
   const NASA_MESSIER_PAGES = new Set([1,2,3,4,5,7,8,9,10,11,12,13,14,15,16,17,19,20,22,24,27,28,30,31,32,33,35,42,43,44,45,46,48,49,51,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,94,95,96,98,99,100,101,102,104,105,106,107,108,109,110]);
   const view = document.body.dataset.catalogueView;
   let locationProfile = readProfile();
@@ -106,6 +111,112 @@
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return mins ? `${hours} hr ${mins} min` : `${hours} hr`;
+  }
+
+  function parseTargetSize(size) {
+    const values = String(size || '').match(/[\d.]+/g);
+    if (!values || !values.length) return { width: 0, height: 0 };
+    const width = Number(values[0]) / 60;
+    const height = Number(values[1] || values[0]) / 60;
+    return { width, height };
+  }
+
+  function readEquipmentProfile() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(EQUIPMENT_STORAGE_KEY));
+      if (saved && Number.isFinite(saved.width) && Number.isFinite(saved.height) && saved.width > 0 && saved.height > 0) return saved;
+    } catch (_) { /* Ignore invalid local equipment preferences. */ }
+    const preset = FOV_PRESETS['dwarf-mini'];
+    return { preset: 'dwarf-mini', label: preset.label, width: preset.width, height: preset.height, rotated: false };
+  }
+
+  function saveEquipmentProfile(profile) {
+    localStorage.setItem(EQUIPMENT_STORAGE_KEY, JSON.stringify(profile));
+  }
+
+  function framingAssessment(targetSize, fovWidth, fovHeight) {
+    const normal = Math.max(targetSize.width / fovWidth, targetSize.height / fovHeight);
+    const rotated = Math.max(targetSize.width / fovHeight, targetSize.height / fovWidth);
+    const bestRatio = Math.min(normal, rotated);
+    const bestRotation = rotated < normal;
+    if (bestRatio > 1) return { label: 'Mosaic or cropped framing', detail: 'The full target is larger than a single frame with this setup.', className: 'poor', suggestRotation: bestRotation };
+    if (bestRatio > 0.82) return { label: 'Tight fit', detail: 'It fits, but there is little room around the target.', className: 'fair', suggestRotation: bestRotation };
+    if (bestRatio > 0.45) return { label: 'Comfortable fit', detail: 'A useful balance between target size and surrounding sky.', className: 'good', suggestRotation: bestRotation };
+    if (bestRatio > 0.18) return { label: 'Wide framing', detail: 'The target fits easily with plenty of surrounding sky.', className: 'good', suggestRotation: bestRotation };
+    return { label: 'Small in the frame', detail: 'The target will occupy only a small part of the image at this field of view.', className: 'fair', suggestRotation: bestRotation };
+  }
+
+  function renderFovPreview(target, profile) {
+    const preview = document.getElementById('fov-preview-stage');
+    const status = document.getElementById('fov-assessment');
+    const sizeLine = document.getElementById('fov-size-line');
+    if (!preview || !status || !sizeLine) return;
+    const targetSize = parseTargetSize(target.size);
+    const fovWidth = profile.rotated ? profile.height : profile.width;
+    const fovHeight = profile.rotated ? profile.width : profile.height;
+    const assessment = framingAssessment(targetSize, fovWidth, fovHeight);
+    const canvasWidth = Math.max(fovWidth, targetSize.width) * 1.18;
+    const canvasHeight = Math.max(fovHeight, targetSize.height) * 1.18;
+    const frameWidth = Math.max(8, Math.min(96, fovWidth / canvasWidth * 100));
+    const frameHeight = Math.max(8, Math.min(96, fovHeight / canvasHeight * 100));
+    const targetWidth = Math.max(1.5, Math.min(96, targetSize.width / canvasWidth * 100));
+    const targetHeight = Math.max(1.5, Math.min(96, targetSize.height / canvasHeight * 100));
+    preview.innerHTML = '<div class="fov-frame" style="width:' + frameWidth + '%;height:' + frameHeight + '%" aria-hidden="true"><span>camera frame</span></div><div class="fov-target-shape" style="width:' + targetWidth + '%;height:' + targetHeight + '%" aria-hidden="true"><span>' + escapeHtml(target.name) + '</span></div>';
+    status.className = 'fov-assessment ' + assessment.className;
+    status.innerHTML = '<strong>' + assessment.label + '</strong><span>' + assessment.detail + (assessment.suggestRotation && !profile.rotated ? ' Rotating the frame 90° gives the better fit.' : '') + '</span>';
+    sizeLine.textContent = profile.label + ': ' + fovWidth.toFixed(2) + '° × ' + fovHeight.toFixed(2) + '° · Target: ' + targetSize.width.toFixed(2) + '° × ' + targetSize.height.toFixed(2) + '°';
+  }
+
+  function initFovPlanner(target) {
+    const host = document.getElementById('fov-planner-host');
+    if (!host) return;
+    let profile = readEquipmentProfile();
+    const presetOptions = Object.entries(FOV_PRESETS).map(([key, preset]) => '<option value="' + key + '"' + (profile.preset === key ? ' selected' : '') + '>' + preset.label + '</option>').join('');
+    host.innerHTML = '<section class="fov-planner" aria-labelledby="fov-planner-heading"><div class="fov-planner-heading"><div><p class="eyebrow">Framing preview</p><h2 id="fov-planner-heading">Will it fit in your field of view?</h2><p>Compare this target\'s apparent size with your imaging frame. The setting is saved only in this browser.</p></div></div><div class="fov-controls"><label>Equipment<select id="fov-preset">' + presetOptions + '<option value="custom"' + (profile.preset === 'custom' ? ' selected' : '') + '>Custom field of view</option></select></label><div id="fov-custom-fields" class="fov-custom-fields"' + (profile.preset === 'custom' ? '' : ' hidden') + '><label>Frame width (°)<input id="fov-width" type="number" min="0.05" max="180" step="0.01" value="' + profile.width.toFixed(2) + '" /></label><label>Frame height (°)<input id="fov-height" type="number" min="0.05" max="180" step="0.01" value="' + profile.height.toFixed(2) + '" /></label></div><button id="fov-rotate" type="button" class="button button-secondary" aria-pressed="' + (profile.rotated ? 'true' : 'false') + '">Rotate frame 90°</button></div><div class="fov-preview-wrap"><div id="fov-preview-stage" class="fov-preview-stage" role="img" aria-label="Scale comparison between the target and selected camera field of view"></div><div><p id="fov-assessment" class="fov-assessment"></p><p id="fov-size-line" class="fov-size-line"></p><p id="fov-preset-note" class="form-note"></p></div></div></section>';
+
+    const presetSelect = document.getElementById('fov-preset');
+    const customFields = document.getElementById('fov-custom-fields');
+    const widthInput = document.getElementById('fov-width');
+    const heightInput = document.getElementById('fov-height');
+    const rotateButton = document.getElementById('fov-rotate');
+    const note = document.getElementById('fov-preset-note');
+
+    const refresh = () => {
+      const preset = FOV_PRESETS[profile.preset];
+      note.textContent = preset ? preset.note : 'Enter the field of view produced by your telescope and camera combination.';
+      rotateButton.setAttribute('aria-pressed', profile.rotated ? 'true' : 'false');
+      renderFovPreview(target, profile);
+      saveEquipmentProfile(profile);
+    };
+
+    presetSelect.addEventListener('change', () => {
+      profile.preset = presetSelect.value;
+      customFields.hidden = profile.preset !== 'custom';
+      if (FOV_PRESETS[profile.preset]) {
+        const preset = FOV_PRESETS[profile.preset];
+        profile = { preset: profile.preset, label: preset.label, width: preset.width, height: preset.height, rotated: profile.rotated };
+        widthInput.value = profile.width.toFixed(2);
+        heightInput.value = profile.height.toFixed(2);
+      } else {
+        profile.label = 'Custom setup';
+      }
+      refresh();
+    });
+
+    [widthInput, heightInput].forEach(input => input.addEventListener('input', () => {
+      if (profile.preset !== 'custom') return;
+      const width = Number(widthInput.value), height = Number(heightInput.value);
+      if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) return;
+      profile.width = width; profile.height = height; profile.label = 'Custom setup';
+      refresh();
+    }));
+
+    rotateButton.addEventListener('click', () => {
+      profile.rotated = !profile.rotated;
+      refresh();
+    });
+
+    refresh();
   }
 
   function difficultyLabel(level) {
@@ -308,11 +419,12 @@
     host.innerHTML = `<section class="target-detail-hero"><div class="target-hero-image"><img src="${imageUrl(target,1400,850)}" alt="Sky survey view centred on ${escapeHtml(target.name)}" width="1400" height="850" /></div><div class="target-hero-overlay"><div class="content-wrapper"><nav class="catalogue-breadcrumbs" aria-label="Breadcrumb"><a href="./targets.html">Catalogue</a><span>/</span><a href="./target-category.html?category=${target.category}">${escapeHtml(category.name)}</a><span>/</span><span>${escapeHtml(target.name)}</span></nav><p class="eyebrow">${escapeHtml(category.name)} · ${escapeHtml(target.constellation)}</p><h1>${escapeHtml(target.name)}</h1><p class="target-catalogue-code">${escapeHtml(target.catalogue)}</p><p class="target-hero-copy">${escapeHtml(target.description)}</p></div></div></section>
       <section><div class="content-wrapper target-detail-grid"><article class="target-main-column"><div class="target-facts"><div><span>Object type</span><strong>${escapeHtml(category.name)}</strong></div><div><span>Distance</span><strong>${escapeHtml(target.distance)}</strong></div><div><span>Apparent size</span><strong>${escapeHtml(target.size)}</strong></div><div><span>Magnitude</span><strong>${target.magnitude == null ? 'Not meaningful / not listed' : target.magnitude}</strong></div><div><span>Coordinates (J2000)</span><strong>RA ${escapeHtml(target.ra)} · Dec ${target.dec.toFixed(2)}°</strong></div><div><span>Best evening months</span><strong>${months.join('–')}</strong></div></div>
       <h2>What to expect</h2><p>${escapeHtml(target.visibility)}.</p><p>${escapeHtml(target.description)}</p><h2>How to find it</h2><p>${escapeHtml(target.finding)}</p><h2>Imaging guidance</h2><dl class="guidance-list"><div><dt>Difficulty</dt><dd>${difficultyDots(target.difficulty)} ${difficultyLabel(target.difficulty)}</dd></div><div><dt>Suggested filters</dt><dd>${escapeHtml(target.filters)}</dd></div><div><dt>Framing</dt><dd>${escapeHtml(target.focal)}</dd></div></dl>
-      <div class="estimate-explainer"><h3>About these time estimates</h3><p>These are rough total-integration starting points, not guarantees. Transparency, moonlight, camera sensitivity, focal ratio, sub length and processing all matter. The estimate changes with the Bortle level and maximum altitude saved in this browser. Emission-nebula and supernova-remnant estimates assume use of the suggested dual-band or narrowband filter; broadband capture in a bright sky may need substantially longer.</p></div></article>
+      <div id="fov-planner-host"></div><div class="estimate-explainer"><h3>About these time estimates</h3><p>These are rough total-integration starting points, not guarantees. Transparency, moonlight, camera sensitivity, focal ratio, sub length and processing all matter. The estimate changes with the Bortle level and maximum altitude saved in this browser. Emission-nebula and supernova-remnant estimates assume use of the suggested dual-band or narrowband filter; broadband capture in a bright sky may need substantially longer.</p></div></article>
       <div class="target-planner-card" aria-labelledby="target-plan-heading"><p class="eyebrow">From your location</p><h2 id="target-plan-heading">Your target plan</h2><p id="detail-location-label">${escapeHtml(locationProfile.saved ? locationProfile.label : 'General northern-sky view')}</p><div class="planner-score ${altitude < 15 ? 'poor' : altitude < 30 ? 'fair' : 'good'}"><strong>${altitude > 0 ? `${altitude}°` : 'Not visible'}</strong><span>${altitude > 0 ? 'maximum altitude' : 'from this latitude'}</span></div><dl><div><dt>Latitude suitability</dt><dd>${altitude >= 30 ? 'Good' : altitude >= 15 ? 'Low but possible' : 'Not recommended'}</dd></div><div><dt>Current altitude</dt><dd>${altitudeNow > 0 ? `${altitudeNow}° above horizon` : `${Math.abs(altitudeNow)}° below horizon`}</dd></div><div><dt>Next meridian transit</dt><dd>${transitLabel(nextTransit)}</dd></div><div><dt>Sky setting</dt><dd>Bortle ${locationProfile.bortle}</dd></div><div><dt>Detectable result</dt><dd>${duration(estimate.minimum)}</dd></div><div><dt>Recommended</dt><dd>${duration(estimate.recommended)}</dd></div><div><dt>Deep project</dt><dd>${duration(estimate.deep)}+</dd></div></dl><p class="planner-time-note">Live position is approximate and uses your saved longitude and the current device time.</p><button type="button" class="button" data-open-location>Change location or sky</button></div></div></section>
       <section aria-labelledby="sources-heading"><div class="content-wrapper"><div class="catalogue-sources"><h2 id="sources-heading">Data sources and image credit</h2><p>${sourceLinks(target)}</p><p>Coordinates use the J2000 epoch. Distances and integrated magnitudes are rounded guidance because published values can differ between studies and measurement methods. The survey thumbnail is a DSS2 colour view served by CDS; it is not an example of what amateur equipment will necessarily record.</p></div></div></section>
       <section aria-labelledby="related-heading"><div class="content-wrapper"><h2 id="related-heading" class="section-heading">Similar targets</h2><div class="target-card-grid">${data.targets.filter(item=>item.category===target.category&&item.id!==target.id).slice(0,3).map(targetCard).join('')}</div></div></section>`;
     document.querySelectorAll('[data-open-location]').forEach(button => button.addEventListener('click', openLocationDialog));
+    initFovPlanner(target);
   }
 
   function renderCurrentView() {
