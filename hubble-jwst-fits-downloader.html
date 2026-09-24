@@ -1,54 +1,200 @@
 <!DOCTYPE html>
 <html lang="en-GB">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="The Our Astro Journey Hubble & JWST image data downloader is temporarily offline while we test improvements to the download and FITS processing workflow." />
-  <meta name="theme-color" content="#081426" />
-  <link rel="canonical" href="https://ourastrojourney.co.uk/hubble-jwst-fits-downloader.html" />
-  <link rel="stylesheet" href="./assets/css/styles.css?v=20260924-subnav-dark1" />
-  <title>Hubble & JWST Downloader — Under Maintenance | Our Astro Journey</title>
-  <style>
-    body{background:#081426;color:#eef7ff}
-    .maintenance-shell{min-height:72vh;display:grid;place-items:center;padding:4rem 1.25rem}
-    .maintenance-card{width:min(760px,100%);padding:2rem;border:1px solid rgba(126,196,255,.28);border-radius:24px;background:linear-gradient(180deg,rgba(18,36,67,.94),rgba(9,22,42,.94));box-shadow:0 22px 70px rgba(0,0,0,.35);text-align:center}
-    .maintenance-icon{font-size:3.25rem;line-height:1;margin-bottom:1rem}
-    .maintenance-card h1{margin:.2rem 0 1rem;font-size:clamp(2rem,5vw,3.25rem)}
-    .maintenance-card p{max-width:640px;margin:.75rem auto;color:rgba(238,247,255,.84);line-height:1.65}
-    .maintenance-actions{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem}
-    .maintenance-note{margin-top:1.35rem!important;font-size:.95rem;color:rgba(238,247,255,.65)!important}
-  </style>
-</head>
-<body>
-  <header class="site-header">
-    <div class="site-header-inner">
-      <a class="brand-link" href="./index.html" aria-label="Our Astro Journey home">
-        <span class="site-title">Our Astro Journey</span>
-      </a>
-      <nav class="site-nav" aria-label="Main navigation">
-        <a href="./tools.html" aria-current="page">Tools</a>
-        <a href="./gallery.html">Gallery</a>
-        <a href="./reviews.html">Reviews</a>
-        <a href="./useful-resources.html">Resources</a>
-        <a href="./news.html">News</a>
-        <a href="./about.html">About</a>
-        <a href="./contact.html">Contact</a>
-      </nav>
-    </div>
-  </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <title>Hubble &amp; JWST Downloader — Under Maintenance | Our Astro Journey</title>
+    <meta name="description" content="The Our Astro Journey Hubble & JWST image data downloader is temporarily offline while we test improvements to the download and FITS processing workflow." />
+    <link rel="canonical" href="https://ourastrojourney.co.uk/hubble-jwst-fits-downloader.html" />
+    <meta name="theme-color" content="#050812" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/branding/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/images/branding/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/images/branding/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="./assets/css/reset.css" />
+    <link rel="stylesheet" href="./assets/css/styles.css?v=20260924-subnav-dark1" />
+    <style>
+      .maintenance-main {
+        min-height: 68vh;
+        display: grid;
+        place-items: center;
+        padding: clamp(2.5rem, 7vw, 5rem) 1rem;
+      }
 
-  <main class="maintenance-shell">
-    <section class="maintenance-card" aria-labelledby="maintenance-title">
-      <div class="maintenance-icon" aria-hidden="true">🛠️</div>
-      <h1 id="maintenance-title">Hubble &amp; JWST Downloader is under maintenance</h1>
-      <p>We are testing improvements to the colour-filter recommendations, FITS handling and ready-to-process download workflow before reopening the tool publicly.</p>
-      <p>The archive itself is unaffected. This maintenance only applies to the Our Astro Journey helper tool.</p>
-      <div class="maintenance-actions">
-        <a class="button" href="./tools.html">Back to Tools</a>
-        <a class="button button-secondary" href="./useful-resources.html">Useful Resources</a>
+      .maintenance-card {
+        width: min(760px, 100%);
+        padding: clamp(1.5rem, 4vw, 2.5rem);
+        border: 1px solid rgba(88, 187, 255, 0.3);
+        border-radius: 24px;
+        background:
+          radial-gradient(circle at 50% 0%, rgba(29, 126, 201, 0.14), transparent 44%),
+          rgba(10, 22, 43, 0.94);
+        box-shadow: 0 22px 65px rgba(0, 0, 0, 0.34);
+        text-align: center;
+      }
+
+      .maintenance-icon {
+        width: 64px;
+        height: 64px;
+        display: grid;
+        place-items: center;
+        margin: 0 auto 1.15rem;
+        border: 1px solid rgba(88, 187, 255, 0.38);
+        border-radius: 50%;
+        background: rgba(37, 145, 226, 0.12);
+        color: #7ec8ff;
+        font-size: 1.65rem;
+      }
+
+      .maintenance-kicker {
+        margin: 0 0 0.55rem;
+        color: #75c6ff;
+        font-size: 0.88rem;
+        font-weight: 800;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+      }
+
+      .maintenance-card h1 {
+        max-width: 650px;
+        margin: 0 auto 1rem;
+        font-size: clamp(2rem, 5vw, 3rem);
+        line-height: 1.12;
+      }
+
+      .maintenance-card p {
+        max-width: 620px;
+        margin: 0.7rem auto;
+        color: rgba(238, 247, 255, 0.82);
+        font-size: clamp(1rem, 2.2vw, 1.08rem);
+        line-height: 1.65;
+      }
+
+      .maintenance-actions {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 1.5rem;
+      }
+
+      .maintenance-note {
+        margin-top: 1.35rem !important;
+        color: rgba(238, 247, 255, 0.58) !important;
+        font-size: 0.92rem !important;
+      }
+
+      @media (max-width: 640px) {
+        .maintenance-main {
+          min-height: 62vh;
+          align-items: start;
+          padding-top: 2rem;
+        }
+
+        .maintenance-card {
+          padding: 1.4rem 1.15rem 1.55rem;
+          border-radius: 20px;
+        }
+
+        .maintenance-icon {
+          width: 54px;
+          height: 54px;
+          margin-bottom: 0.9rem;
+          font-size: 1.4rem;
+        }
+
+        .maintenance-card h1 {
+          font-size: clamp(1.85rem, 9vw, 2.35rem);
+        }
+
+        .maintenance-actions {
+          flex-direction: column;
+        }
+
+        .maintenance-actions .button {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#page-main">Skip to main content</a>
+
+    <header id="header-main">
+      <div class="logo-container">
+        <a href="./" class="nav-link logo-link" id="logo">
+          <img src="./assets/images/branding/logo.png" alt="Our Astro Journey home" class="logo-img" width="1408" height="768" />
+        </a>
       </div>
-      <p class="maintenance-note">Thanks for your patience. The tool will return once the new workflow has been fully checked.</p>
-    </section>
-  </main>
-</body>
+
+      <button type="button" id="mobile-menu-button" class="mobile-menu-toggle" aria-label="Open navigation menu" aria-controls="mobile-navigation-main" aria-expanded="false">
+        <i class="fas fa-bars" aria-hidden="true"></i>
+      </button>
+
+      <nav id="navigation-main" aria-label="Primary navigation">
+        <a href="./tools.html" class="nav-link" aria-current="page">Tools</a>
+        <a href="./gallery.html" class="nav-link">Gallery</a>
+        <a href="./reviews.html" class="nav-link">Reviews</a>
+        <a href="./useful-resources.html" class="nav-link">Resources</a>
+        <a href="./news.html" class="nav-link">News</a>
+        <a href="./about.html" class="nav-link">About</a>
+        <a href="./contact.html" class="nav-link">Contact</a>
+      </nav>
+
+      <nav id="mobile-navigation-main" class="mobile-navigation" aria-label="Mobile primary navigation" aria-hidden="true">
+        <button type="button" id="mobile-menu-close" class="mobile-menu-close" aria-label="Close navigation menu">
+          <i class="fas fa-times" aria-hidden="true"></i>
+        </button>
+        <a href="./tools.html" class="nav-link mobile-nav-link" aria-current="page">Tools</a>
+        <a href="./gallery.html" class="nav-link mobile-nav-link">Gallery</a>
+        <a href="./reviews.html" class="nav-link mobile-nav-link">Reviews</a>
+        <a href="./useful-resources.html" class="nav-link mobile-nav-link">Resources</a>
+        <a href="./news.html" class="nav-link mobile-nav-link">News</a>
+        <a href="./about.html" class="nav-link mobile-nav-link">About</a>
+        <a href="./contact.html" class="nav-link mobile-nav-link">Contact</a>
+      </nav>
+    </header>
+
+    <div id="mobile-nav-backdrop" class="mobile-nav-backdrop" aria-hidden="true"></div>
+
+    <main id="page-main">
+      <section class="maintenance-main">
+        <div class="maintenance-card">
+          <div class="maintenance-icon" aria-hidden="true">
+            <i class="fas fa-screwdriver-wrench"></i>
+          </div>
+          <p class="maintenance-kicker">Hubble &amp; JWST Data Tool</p>
+          <h1>Temporarily under maintenance</h1>
+          <p>We are testing improvements to colour-filter recommendations, FITS handling and the ready-to-process download workflow before reopening the tool publicly.</p>
+          <p>The Hubble and JWST archives themselves are unaffected. Only the Our Astro Journey helper tool is temporarily unavailable.</p>
+          <div class="maintenance-actions">
+            <a class="button" href="./tools.html"><i class="fas fa-arrow-left" aria-hidden="true"></i> Back to Tools</a>
+            <a class="button button-secondary" href="./useful-resources.html">Useful Resources</a>
+          </div>
+          <p class="maintenance-note">The downloader will return once the new workflow has been fully checked.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <div class="social-container">
+          <p class="footer-heading">Connect With Us</p>
+          <div class="social-links">
+            <a href="https://www.instagram.com/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Our Astro Journey on Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+            <a href="https://www.threads.net/our.astro.journey" target="_blank" rel="noopener noreferrer" aria-label="Our Astro Journey on Threads"><i class="fa-brands fa-threads" aria-hidden="true"></i></a>
+            <a href="https://www.tiktok.com/@ourastrojourney" target="_blank" rel="noopener noreferrer" aria-label="Our Astro Journey on TikTok"><i class="fa-brands fa-tiktok" aria-hidden="true"></i></a>
+          </div>
+        </div>
+        <div class="copyright-container">
+          <p>&copy; 2026 Matt Brambley | OurAstroJourney</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="./assets/js/main.js?v=20260917-nav3"></script>
+  </body>
 </html>
