@@ -437,7 +437,15 @@
   }
 
   function buildSafeColourPlan(group) {
-    var filters = ((group && group.filters) || []).map(normaliseFilterName).filter(Boolean);
+    var filters = [];
+    ((group && group.observations) || []).forEach(function (obs) {
+      effectiveFiltersForGroup(group, obs.filters || []).forEach(function (filter) {
+        if (filters.indexOf(filter) === -1) filters.push(filter);
+      });
+    });
+    if (!filters.length) {
+      filters = effectiveFiltersForGroup(group, (group && group.filters) || []);
+    }
     var telescope = String((group && group.telescope) || '').toUpperCase();
     var instrument = String((group && group.instrumentFull) || (group && group.instrument) || '').toUpperCase();
     if (filters.length < 3) return null;
@@ -521,7 +529,7 @@
 
       plan.filters.forEach(function (filter) {
         var options = observations.filter(function (obs) {
-          var obsFilters = (obs.filters || []).map(normaliseFilterName).filter(Boolean);
+          var obsFilters = effectiveFiltersForGroup(group, obs.filters || []);
           return obsFilters.indexOf(filter) !== -1 && angularDistanceDeg(anchor, obs) <= maxSepDeg;
         }).sort(function (a, b) {
           var da = angularDistanceDeg(anchor, a);
@@ -539,7 +547,7 @@
 
       var uniqueFilters = {};
       selected.forEach(function (obs) {
-        (obs.filters || []).map(normaliseFilterName).forEach(function (f) {
+        effectiveFiltersForGroup(group, obs.filters || []).forEach(function (f) {
           if (plan.filters.indexOf(f) !== -1) uniqueFilters[f] = true;
         });
       });
@@ -558,7 +566,14 @@
 
   function renderGroupCard(group, index) {
     var telescopeClass = group.telescope === 'JWST' ? 'badge-jwst' : 'badge-hst';
-    var filterChips = group.filters.map(function (f) {
+    var visibleFilters = [];
+    (group.observations || []).forEach(function (obs) {
+      effectiveFiltersForGroup(group, obs.filters || []).forEach(function (filter) {
+        if (visibleFilters.indexOf(filter) === -1) visibleFilters.push(filter);
+      });
+    });
+    if (!visibleFilters.length) visibleFilters = effectiveFiltersForGroup(group, group.filters || []);
+    var filterChips = visibleFilters.map(function (f) {
       return '<span class="filter-chip">' + escapeHtml(f) + '</span>';
     }).join('');
 
@@ -692,6 +707,61 @@
     return filter;
   }
 
+  function effectiveNircamFilters(filters) {
+    var list = (filters || []).map(normaliseFilterName).filter(Boolean);
+    var has = function (filter) { return list.indexOf(filter) !== -1; };
+
+    // NIRCam pupil-wheel bandpass filters require a blocking filter in the
+    // filter wheel. The blocking filter is NOT a second science channel.
+    // STScI pairs: F162M/F164N + F150W2; F323N + F322W2;
+    // F405N/F466N/F470N + F444W.
+    if ((has('F162M') || has('F164N')) && has('F150W2')) {
+      list = list.filter(function (f) { return f !== 'F150W2'; });
+    }
+    if (has('F323N') && has('F322W2')) {
+      list = list.filter(function (f) { return f !== 'F322W2'; });
+    }
+    if ((has('F405N') || has('F466N') || has('F470N')) && has('F444W')) {
+      list = list.filter(function (f) { return f !== 'F444W'; });
+    }
+    return list;
+  }
+
+  function effectiveFiltersForGroup(group, filters) {
+    var telescope = String((group && group.telescope) || '').toUpperCase();
+    var instrument = String((group && group.instrumentFull) || (group && group.instrument) || '').toUpperCase();
+    var list = (filters || []).map(normaliseFilterName).filter(Boolean);
+    if (telescope === 'JWST' && instrument.indexOf('NIRCAM') !== -1) {
+      list = effectiveNircamFilters(list);
+    }
+    return Array.from(new Set(list));
+  }
+
+  function effectiveFiltersForProduct(group, observation, product) {
+    var raw = (product && product.filters && product.filters.length)
+      ? product.filters
+      : ((observation && observation.filters) || []);
+    var list = effectiveFiltersForGroup(group, raw);
+    var telescope = String((group && group.telescope) || '').toUpperCase();
+    var instrument = String((group && group.instrumentFull) || (group && group.instrument) || '').toUpperCase();
+
+    if (telescope === 'JWST' && instrument.indexOf('NIRCAM') !== -1) {
+      var filename = String((product && product.filename) || '').toLowerCase();
+      if (/_nrc[ab]long_/.test(filename)) {
+        list = list.filter(function (f) {
+          var wave = filterWavelengthMicrons(f, 'JWST');
+          return wave && wave > 2.3;
+        });
+      } else if (/_nrc[ab][1-4]_/.test(filename)) {
+        list = list.filter(function (f) {
+          var wave = filterWavelengthMicrons(f, 'JWST');
+          return wave && wave <= 2.3;
+        });
+      }
+    }
+    return list;
+  }
+
   function selectColourObsids(group) {
     var plan = buildSafeColourPlan(group);
     var matched = plan ? matchedColourObservations(group, plan) : null;
@@ -700,7 +770,7 @@
     var selected = [];
     plan.filters.forEach(function (filter) {
       var best = matched.observations.find(function (obs) {
-        return (obs.filters || []).map(normaliseFilterName).indexOf(filter) !== -1;
+        return effectiveFiltersForGroup(group, obs.filters || []).indexOf(filter) !== -1;
       });
       if (best && selected.indexOf(String(best.obsid)) === -1) {
         selected.push(String(best.obsid));
@@ -741,9 +811,7 @@
       (result.products || []).forEach(function (p) {
         p._obsid = String(result.obsid);
         var obs = obsById[p._obsid];
-        if ((!p.filters || !p.filters.length) && obs && obs.filters) {
-          p.filters = obs.filters.map(normaliseFilterName).filter(Boolean);
-        }
+        p.filters = effectiveFiltersForProduct(group, obs, p);
         p.recommended = false;
         p.recommendReasons = [];
       });
@@ -780,8 +848,15 @@
       return false;
     });
 
-    selectedIds.forEach(function (id) {
+    selectedIds.forEach(function (id, idIndex) {
       var candidates = perId[id] || [];
+      var intendedFilter = (buildSafeColourPlan(group) || {}).filters || [];
+      intendedFilter = intendedFilter[idIndex] || '';
+      if (intendedFilter) {
+        candidates = candidates.filter(function (p) {
+          return (p.filters || []).indexOf(intendedFilter) !== -1;
+        });
+      }
       var chosen = null;
       if (commonModule) {
         chosen = candidates.find(function (p) {
