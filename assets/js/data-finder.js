@@ -439,7 +439,8 @@
           '<i class="fas fa-folder-open" aria-hidden="true"></i> View products' +
         '</button>' +
         '<button type="button" class="button group-add-recommended" data-group="' + index + '">' +
-          '<i class="fas fa-plus" aria-hidden="true"></i> Add recommended files' +
+          '<i class="fas fa-plus" aria-hidden="true"></i> ' +
+          ((group.colourSuggestions && group.colourSuggestions.length) ? 'Add colour filter set' : 'Add recommended files') +
         '</button>' +
       '</div>' +
       '<div class="group-products" id="group-products-' + index + '" hidden></div>' +
@@ -453,8 +454,8 @@
       return;
     }
 
-    var html = '<p class="finder-note">' + result.totalScienceProducts + ' science products in the archive for this observation; ' +
-      result.recommendedCount + ' recommended for image processing. Download links go directly to the official MAST archive.</p>';
+    var html = '<p class="finder-note">' + result.totalScienceProducts + ' science products checked; ' +
+      result.recommendedCount + ' selected as separate colour-filter channels for image processing. Download links go directly to the official MAST archive.</p>';
     html += '<ul class="product-list">';
     products.forEach(function (p, i) {
       var recommended = p.recommended ? ' product-recommended' : '';
@@ -522,14 +523,129 @@
     });
   }
 
-  function normaliseProductResults(data, obsids) {
+  function normaliseFilterName(value) {
+    var filter = String(value || '').trim().toUpperCase();
+    if (!filter || filter === 'CLEAR' || filter === 'NONE' || filter.indexOf('CLEAR') === 0) return '';
+    return filter;
+  }
+
+  function preferredColourFilters(group) {
+    var filters = [];
+    var suggestions = (group && group.colourSuggestions) || [];
+    suggestions.forEach(function (suggestion) {
+      var matches = String(suggestion.mapping || '').match(/F\d{3,4}[A-Z][A-Z0-9]*/g) || [];
+      matches.forEach(function (filter) {
+        filter = normaliseFilterName(filter);
+        if (filter && filters.indexOf(filter) === -1) filters.push(filter);
+      });
+    });
+
+    ((group && group.filters) || []).forEach(function (filter) {
+      filter = normaliseFilterName(filter);
+      if (filter && filters.indexOf(filter) === -1) filters.push(filter);
+    });
+    return filters;
+  }
+
+  function selectColourObsids(group) {
+    var observations = (group && group.observations) || [];
+    if (!observations.length) {
+      return ((group && group.obsids) || []).slice(0, 4);
+    }
+
+    var preferred = preferredColourFilters(group);
+    var selected = [];
+
+    preferred.forEach(function (filter) {
+      var best = null;
+      observations.forEach(function (obs) {
+        var obsFilters = (obs.filters || []).map(normaliseFilterName).filter(Boolean);
+        if (obsFilters.indexOf(filter) === -1) return;
+        if (!best || Number(obs.exposureSeconds || 0) > Number(best.exposureSeconds || 0)) {
+          best = obs;
+        }
+      });
+      if (best && selected.indexOf(String(best.obsid)) === -1) {
+        selected.push(String(best.obsid));
+      }
+    });
+
+    // A colour image needs distinct filters. Prefer three representative
+    // channels, then use a fourth only when no colour suggestion was possible.
+    var targetCount = preferred.length >= 3 ? 3 : Math.min(4, Math.max(1, preferred.length));
+    if (selected.length > targetCount) selected = selected.slice(0, targetCount);
+
+    if (selected.length < targetCount) {
+      observations.slice().sort(function (a, b) {
+        return Number(b.exposureSeconds || 0) - Number(a.exposureSeconds || 0);
+      }).forEach(function (obs) {
+        var id = String(obs.obsid || '');
+        if (id && selected.indexOf(id) === -1 && selected.length < targetCount) selected.push(id);
+      });
+    }
+
+    if (!selected.length) {
+      selected = ((group && group.obsids) || []).slice(0, 4).map(String);
+    }
+    return selected;
+  }
+
+  function productPreferenceScore(product) {
+    var subgroup = String(product.subGroup || '').toUpperCase();
+    var filename = String(product.filename || '').toLowerCase();
+    var category = String(product.category || '').toLowerCase();
+
+    if (subgroup === 'I2D' || subgroup === 'DRC' || subgroup === 'DRZ' ||
+        /_(i2d|drc|drz)\.fits(?:\.gz)?$/.test(filename)) return 100;
+    if (category === 'combined') return subgroup === 'DRW' || /_drw\.fits(?:\.gz)?$/.test(filename) ? 78 : 88;
+    if (subgroup === 'FLC' || subgroup === 'FLT' || subgroup === 'CAL') return 65;
+    if (category === 'calibrated') return 55;
+    return 0;
+  }
+
+  function normaliseProductResults(data, obsids, group) {
     var merged = [];
     var totalScienceProducts = 0;
+    var obsById = {};
+
+    ((group && group.observations) || []).forEach(function (obs) {
+      obsById[String(obs.obsid)] = obs;
+    });
+
     (data.results || []).forEach(function (result) {
       totalScienceProducts += Number(result.totalScienceProducts || (result.products || []).length || 0);
-      (result.products || []).forEach(function (p) { p._obsid = result.obsid; });
+      (result.products || []).forEach(function (p) {
+        p._obsid = String(result.obsid);
+        var obs = obsById[p._obsid];
+        if ((!p.filters || !p.filters.length) && obs && obs.filters) {
+          p.filters = obs.filters.map(normaliseFilterName).filter(Boolean);
+        }
+        p.recommended = false;
+        p.recommendReasons = [];
+      });
       merged = merged.concat(result.products || []);
     });
+
+    // The site recommendation is a colour-processing set, not simply the
+    // highest-level science products. Pick one strong image product for each
+    // selected observation/filter.
+    String(obsids || '').split(',').map(function (id) { return id.trim(); }).filter(Boolean).forEach(function (id) {
+      var candidates = merged.filter(function (p) { return String(p._obsid) === id; });
+      candidates.sort(function (a, b) {
+        var scoreDiff = productPreferenceScore(b) - productPreferenceScore(a);
+        if (scoreDiff) return scoreDiff;
+        return Number(b.sizeBytes || 0) - Number(a.sizeBytes || 0);
+      });
+      if (candidates.length && productPreferenceScore(candidates[0]) > 0) {
+        candidates[0].recommended = true;
+        var filterText = (candidates[0].filters || []).join(', ');
+        candidates[0].recommendReasons = [
+          filterText ? 'Selected colour channel: ' + filterText : 'Selected as one channel of the colour set',
+          'One image product is chosen per filter instead of several arbitrary science files'
+        ];
+      }
+    });
+
     var recommended = merged.filter(function (p) { return p.recommended; });
     return {
       obsid: obsids,
@@ -580,7 +696,7 @@
     var group = currentSearch.groups[groupIndex];
     if (!group) return Promise.reject(new Error('That dataset is no longer available.'));
     var mode = modeSelect.value;
-    var obsids = group.obsids.slice(0, 4).join(',');
+    var obsids = selectColourObsids(group).join(',');
 
     button.disabled = true;
     container.hidden = false;
@@ -588,7 +704,7 @@
 
     return fetchProductResults(obsids, mode)
       .then(function (data) {
-        var combined = normaliseProductResults(data, obsids);
+        var combined = normaliseProductResults(data, obsids, group);
         renderProducts(container, group, combined, mode);
         button.disabled = false;
         button.setAttribute('aria-expanded', 'true');
@@ -656,14 +772,14 @@
 
     var originalHtml = addBtn.innerHTML;
     var mode = modeSelect.value;
-    var obsids = group.obsids.slice(0, 4).join(',');
+    var obsids = selectColourObsids(group).join(',');
     addBtn.disabled = true;
     addBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Loading recommended files…';
     setStatus('Loading recommended files from the MAST archive…', false);
 
     fetchProductResults(obsids, mode)
       .then(function (data) {
-        var combined = normaliseProductResults(data, obsids);
+        var combined = normaliseProductResults(data, obsids, group);
         renderProducts(box, group, combined, mode);
         box.hidden = true;
         addBtn.disabled = false;
