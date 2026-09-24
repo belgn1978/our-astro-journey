@@ -738,9 +738,9 @@
   }
 
   function effectiveFiltersForProduct(group, observation, product) {
-    var raw = (product && product.filters && product.filters.length)
-      ? product.filters
-      : ((observation && observation.filters) || []);
+    var raw = [];
+    ((observation && observation.filters) || []).forEach(function (f) { raw.push(f); });
+    ((product && product.filters) || []).forEach(function (f) { raw.push(f); });
     var list = effectiveFiltersForGroup(group, raw);
     var telescope = String((group && group.telescope) || '').toUpperCase();
     var instrument = String((group && group.instrumentFull) || (group && group.instrument) || '').toUpperCase();
