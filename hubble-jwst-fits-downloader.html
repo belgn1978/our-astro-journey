@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>Hubble &amp; JWST FITS Downloader | Our Astro Journey</title>
     <meta name="description" content="Search public Hubble and JWST FITS data in MAST, find useful datasets and filters, and build a download basket for image processing." />
     <meta name="robots" content="index, follow, max-image-preview:large" />
@@ -31,6 +34,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="./assets/css/reset.css" />
     <link rel="stylesheet" href="./assets/css/styles.css?v=20260924-navigation8" />
+    <style>
+      .finder-results-pager{display:flex;align-items:center;justify-content:center;gap:.9rem;flex-wrap:wrap;margin:1.25rem 0;padding:.9rem 1rem;border:1px solid rgba(126,196,255,.18);border-radius:16px;background:rgba(255,255,255,.045)}
+      .finder-results-pager .button{min-width:8.25rem}
+      .finder-results-pager .button:disabled{opacity:.42;cursor:not-allowed}
+      .finder-results-page-label{min-width:7.5rem;text-align:center;color:rgba(255,255,255,.82);font-weight:700}
+      .finder-page-range{text-align:center;color:rgba(255,255,255,.68);font-size:.92rem}
+      .finder-back-to-top{position:fixed;right:1.2rem;bottom:1.2rem;z-index:2600;width:3.25rem;height:3.25rem;display:flex;align-items:center;justify-content:center;border:1px solid rgba(126,196,255,.72);border-radius:999px;background:rgba(13,30,58,.96);color:#fff!important;text-decoration:none!important;font-size:1.7rem;font-weight:800;line-height:1;box-shadow:0 12px 34px rgba(0,0,0,.42);backdrop-filter:blur(12px)}
+      .finder-back-to-top:hover,.finder-back-to-top:focus-visible{background:rgba(30,116,202,.98);transform:translateY(-2px)}
+      .group-add-unavailable{opacity:.55;cursor:not-allowed}
+      @media(max-width:640px){.finder-results-page-label{order:-1;flex:0 0 100%}.finder-results-pager .button{flex:1 1 0;min-width:7rem}.finder-back-to-top{right:.9rem;bottom:.9rem;width:3rem;height:3rem}}
+    </style>
     <script src="/assets/js/analytics-control.js"></script>
     <script type="application/ld+json">
     {
@@ -97,7 +111,7 @@
     }
     </script>
   </head>
-  <body class="finder-page">
+  <body class="finder-page" id="page-top">
     <a class="skip-link" href="#page-main">Skip to main content</a>
     <header id="header-main">
       <div class="logo-container"><a href="./" class="nav-link logo-link" id="logo"><img src="./assets/images/branding/logo.png" alt="Our Astro Journey home" class="logo-img" width="1408" height="768"></a></div>
@@ -487,10 +501,8 @@
     </footer>
 
     <script src="./assets/js/main.js?v=20260917-nav3"></script>
-    <script src="./assets/js/data-finder.js?v=20260924-navigation8"></script>
+    <script src="./assets/js/data-finder-v2.js"></script>
     <div id="finder-toast" class="finder-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
-    <button type="button" id="finder-back-to-top" class="finder-back-to-top" aria-label="Back to top" title="Back to top" hidden>
-      <span aria-hidden="true">↑</span>
-    </button>
+    <a href="#page-top" id="finder-back-to-top" class="finder-back-to-top" aria-label="Back to top" title="Back to top"><span aria-hidden="true">↑</span></a>
   </body>
 </html>
