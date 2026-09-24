@@ -4747,3 +4747,59 @@ footer {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Hubble/JWST downloader: contextual download-method help */
+.finder-download-guide,
+.finder-after-download {
+  margin-top: 1.25rem;
+}
+
+.download-method-chooser {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin: 1rem 0 1.35rem;
+}
+
+.download-method-button {
+  flex: 0 1 auto;
+}
+
+.download-method-button[aria-pressed="true"] {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.download-help-panel {
+  padding-top: 0.25rem;
+}
+
+.download-help-panel[hidden] {
+  display: none;
+}
+
+.download-help-panel h4 {
+  margin: 0 0 0.85rem;
+}
+
+.download-help-panel .finder-mono {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.finder-after-download .finder-steps,
+.download-help-panel .finder-steps {
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 640px) {
+  .download-method-chooser {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .download-method-button {
+    width: 100%;
+  }
+}
