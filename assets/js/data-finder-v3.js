@@ -22,7 +22,7 @@
   }
 
   var API_BASE = resolveApiBase();
-  var BASKET_KEY = 'oaj-data-finder-basket-v3';
+  var BASKET_KEY = 'oaj-data-finder-basket-v4';
 
   /* ---------- DOM references ---------- */
 
@@ -1133,7 +1133,7 @@
     if (added > 0 && skipped > 0) {
       message = added + ' file' + (added === 1 ? '' : 's') + ' added, ' + skipped + ' already in your basket';
     } else if (added > 0) {
-      message = added + ' file' + (added === 1 ? '' : 's') + ' added to your download basket';
+      message = added + ' ready-to-process channel' + (added === 1 ? '' : 's') + ' added to your download basket';
     } else {
       message = 'Those files are already in your basket';
     }
