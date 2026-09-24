@@ -245,14 +245,14 @@
               <h3 id="download-guide-heading">Which download method should I use?</h3>
               <p><strong>Recommended:</strong> use the Windows or Mac/Linux ready-FITS option. It downloads the official MAST data temporarily, automatically extracts the SCI image, and leaves you with one simple FITS file per colour channel using friendly target/filter/colour filenames.</p>
               <div class="download-method-chooser" aria-label="Download method help">
-                <button type="button" class="button download-method-button" data-download-help="direct" aria-pressed="true" aria-controls="download-help-direct">Original MAST files (advanced)</button>
-                <button type="button" class="button button-secondary download-method-button" data-download-help="powershell" aria-pressed="false" aria-controls="download-help-powershell">Windows ready FITS</button>
+                <button type="button" class="button download-method-button" data-download-help="powershell" aria-pressed="true" aria-controls="download-help-powershell">Windows ready FITS</button>
                 <button type="button" class="button button-secondary download-method-button" data-download-help="shell" aria-pressed="false" aria-controls="download-help-shell">Mac / Linux ready FITS</button>
+                <button type="button" class="button button-secondary download-method-button" data-download-help="direct" aria-pressed="false" aria-controls="download-help-direct">Original MAST files (advanced)</button>
                 <button type="button" class="button button-secondary download-method-button" data-download-help="links" aria-pressed="false" aria-controls="download-help-links">Original links (advanced)</button>
                 <button type="button" class="button button-secondary download-method-button" data-download-help="mast" aria-pressed="false" aria-controls="download-help-mast">MAST Portal</button>
               </div>
 
-              <div id="download-help-direct" class="download-help-panel" data-download-help-panel="direct">
+              <div id="download-help-direct" class="download-help-panel" data-download-help-panel="direct" hidden>
                 <h4>Individual browser downloads <span class="finder-note">best for a few files</span></h4>
                 <ol class="finder-steps">
                   <li>For the original untouched archive container, use <strong>View products</strong> in the search results and download the file there. This is an advanced/manual route, not the recommended colour workflow.</li>
@@ -264,7 +264,7 @@
                 <p class="finder-note"><strong>If nothing happens:</strong> check the browser's Downloads panel and allow downloads/pop-ups from MAST if your browser blocked them. For a large basket, use one of the script methods instead.</p>
               </div>
 
-              <div id="download-help-powershell" class="download-help-panel" data-download-help-panel="powershell" hidden>
+              <div id="download-help-powershell" class="download-help-panel" data-download-help-panel="powershell">
                 <h4>Windows ready-to-process FITS <span class="finder-note">recommended for Windows</span></h4>
                 <ol class="finder-steps">
                   <li>Click <strong>Create ready FITS with Windows (.ps1)</strong> below. The site creates <span class="finder-mono">oaj-ready-fits.ps1</span>.</li>
