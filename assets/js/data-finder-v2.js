@@ -634,9 +634,19 @@
       '</p>';
     }
 
-    var warning = group.overlapWarning
-      ? '<p class="finder-warning" role="note"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> ' + escapeHtml(group.overlapWarning) + '</p>'
-      : '';
+    var warning = '';
+    if (group.overlapWarning) {
+      if (safePlan && matched) {
+        var spread = Number(group.pointingSpreadArcmin || 0);
+        warning = '<p class="finder-note finder-matched-subset-note" role="note"><i class="fas fa-circle-info" aria-hidden="true"></i> ' +
+          'This dataset also contains observations at other pointings' +
+          (spread > 0 ? ' (up to about ' + escapeHtml(spread.toFixed(1)) + ' arcminutes apart)' : '') +
+          '. The candidate above uses a tightly matched three-filter subset, and the actual products are checked before anything is added to your basket.</p>';
+      } else {
+        warning = '<p class="finder-warning" role="note"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> ' +
+          escapeHtml(group.overlapWarning) + '</p>';
+      }
+    }
 
     var meta = [
       group.instrumentFull ? escapeHtml(group.instrumentFull) : '',
