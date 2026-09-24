@@ -618,7 +618,7 @@
         '</button>' +
         '<button type="button" class="button group-add-recommended" data-group="' + index + '">' +
           '<i class="fas fa-plus" aria-hidden="true"></i> ' +
-          ((safePlan && matched) ? 'Add matched colour set' : 'Add recommended files') +
+          ((safePlan && matched) ? 'Check & add colour set' : 'Add recommended files') +
         '</button>' +
       '</div>' +
       '<div class="group-products" id="group-products-' + index + '" hidden></div>' +
@@ -1026,8 +1026,8 @@
       return;
     }
     addBtn.disabled = true;
-    addBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Loading recommended files…';
-    setStatus('Loading recommended files from the MAST archive…', false);
+    addBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Checking colour products…';
+    setStatus('Checking the candidate filters against the actual MAST image products…', false);
 
     fetchProductResults(obsids, mode)
       .then(function (data) {
