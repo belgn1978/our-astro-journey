@@ -22,7 +22,7 @@
   }
 
   var API_BASE = resolveApiBase();
-  var BASKET_KEY = 'oaj-data-finder-basket-v2';
+  var BASKET_KEY = 'oaj-data-finder-basket-v3';
 
   /* ---------- DOM references ---------- */
 
