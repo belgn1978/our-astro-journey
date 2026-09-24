@@ -243,12 +243,12 @@
             </div>
             <div class="feature-card finder-download-guide" role="region" aria-labelledby="download-guide-heading">
               <h3 id="download-guide-heading">Which download method should I use?</h3>
-              <p>Choose a method below. Only the instructions for that method are shown, so you do not have to pick your way through a wall of commands.</p>
+              <p><strong>Recommended:</strong> use the Windows or Mac/Linux ready-FITS option. It downloads the official MAST data temporarily, automatically extracts the SCI image, and leaves you with one simple FITS file per colour channel using friendly target/filter/colour filenames.</p>
               <div class="download-method-chooser" aria-label="Download method help">
-                <button type="button" class="button download-method-button" data-download-help="direct" aria-pressed="true" aria-controls="download-help-direct">Individual files</button>
-                <button type="button" class="button button-secondary download-method-button" data-download-help="powershell" aria-pressed="false" aria-controls="download-help-powershell">Windows PowerShell</button>
-                <button type="button" class="button button-secondary download-method-button" data-download-help="shell" aria-pressed="false" aria-controls="download-help-shell">Mac / Linux script</button>
-                <button type="button" class="button button-secondary download-method-button" data-download-help="links" aria-pressed="false" aria-controls="download-help-links">Link list / clipboard</button>
+                <button type="button" class="button download-method-button" data-download-help="direct" aria-pressed="true" aria-controls="download-help-direct">Original MAST files (advanced)</button>
+                <button type="button" class="button button-secondary download-method-button" data-download-help="powershell" aria-pressed="false" aria-controls="download-help-powershell">Windows ready FITS</button>
+                <button type="button" class="button button-secondary download-method-button" data-download-help="shell" aria-pressed="false" aria-controls="download-help-shell">Mac / Linux ready FITS</button>
+                <button type="button" class="button button-secondary download-method-button" data-download-help="links" aria-pressed="false" aria-controls="download-help-links">Original links (advanced)</button>
                 <button type="button" class="button button-secondary download-method-button" data-download-help="mast" aria-pressed="false" aria-controls="download-help-mast">MAST Portal</button>
               </div>
 
@@ -265,29 +265,29 @@
               </div>
 
               <div id="download-help-powershell" class="download-help-panel" data-download-help-panel="powershell" hidden>
-                <h4>Windows PowerShell <span class="finder-note">best for a large Windows download</span></h4>
+                <h4>Windows ready-to-process FITS <span class="finder-note">recommended for Windows</span></h4>
                 <ol class="finder-steps">
-                  <li>Click <strong>Download all with Windows PowerShell (.ps1)</strong> below. The site creates <span class="finder-mono">mast-downloads.ps1</span>.</li>
-                  <li>Create a folder for the target, then move the <span class="finder-mono">mast-downloads.ps1</span> file into that folder.</li>
+                  <li>Click <strong>Create ready FITS with Windows (.ps1)</strong> below. The site creates <span class="finder-mono">oaj-ready-fits.ps1</span>.</li>
+                  <li>Create a folder for the target, then move <span class="finder-mono">oaj-ready-fits.ps1</span> into that folder. Siril must be installed on the computer.</li>
                   <li>Open that folder in File Explorer, right-click an empty area and choose <strong>Open in Terminal</strong>. If your version of Windows does not show that option, open PowerShell and use <span class="finder-mono">cd</span> to move into the folder.</li>
-                  <li>Run <span class="finder-mono">powershell -ExecutionPolicy Bypass -File .\mast-downloads.ps1</span>. This bypass applies to that command only; it does not permanently change your Windows execution policy.</li>
-                  <li>Leave the terminal open until it says the downloads are complete. The FITS files will appear in the same folder as the script.</li>
-                  <li>If a download was interrupted, delete that incomplete file and run the script again. Files with the same names will be replaced.</li>
+                  <li>Run <span class="finder-mono">powershell -ExecutionPolicy Bypass -File .\oaj-ready-fits.ps1</span>. This bypass applies to that command only; it does not permanently change your Windows execution policy.</li>
+                  <li>Leave the terminal open until it says the ready-to-process FITS files are complete. The script downloads each MAST container temporarily, uses Siril to save only the SCI image, then removes the temporary source file.</li>
+                  <li>Your finished folder will contain simple files named like <span class="finder-mono">Orion_Nebula_F277W_BLUE.fits</span>, ready to load straight into colour composition.</li>
                 </ol>
-                <p class="finder-note">The generated script contains download commands for the direct STScI MAST URLs currently in your basket. You can open the <span class="finder-mono">.ps1</span> file in Notepad first if you want to inspect it.</p>
+                <p class="finder-note">The original MAST files are used only as temporary source containers. The beginner workflow keeps the extracted SCI images, not the ERR/WHT/VAR extensions.</p>
               </div>
 
               <div id="download-help-shell" class="download-help-panel" data-download-help-panel="shell" hidden>
-                <h4>macOS / Linux curl script <span class="finder-note">also works in WSL or Git Bash</span></h4>
+                <h4>Mac / Linux ready-to-process FITS <span class="finder-note">recommended for macOS/Linux</span></h4>
                 <ol class="finder-steps">
-                  <li>Click <strong>Download all with a Mac/Linux script (.sh)</strong> below. The site creates <span class="finder-mono">mast-downloads.sh</span>.</li>
-                  <li>Create a folder for the target and move the script into it.</li>
+                  <li>Click <strong>Create ready FITS with Mac/Linux (.sh)</strong> below. The site creates <span class="finder-mono">oaj-ready-fits.sh</span>.</li>
+                  <li>Create a folder for the target and move the script into it. Siril must be installed on the computer.</li>
                   <li>Open Terminal in that folder.</li>
-                  <li>Run <span class="finder-mono">bash mast-downloads.sh</span>. You can instead make it executable with <span class="finder-mono">chmod +x mast-downloads.sh</span> and then run <span class="finder-mono">./mast-downloads.sh</span>.</li>
-                  <li>The script uses <span class="finder-mono">curl</span> to download each FITS file directly from STScI MAST. Leave Terminal open until the command returns to the prompt.</li>
+                  <li>Run <span class="finder-mono">bash oaj-ready-fits.sh</span>. You can instead make it executable with <span class="finder-mono">chmod +x oaj-ready-fits.sh</span> and then run <span class="finder-mono">./oaj-ready-fits.sh</span>.</li>
+                  <li>The script uses <span class="finder-mono">curl</span> to fetch each MAST file temporarily, then Siril saves only the SCI image into the friendly target/filter/colour FITS filename.</li>
                   <li>If the connection fails part-way through, remove any incomplete file and run the script again.</li>
                 </ol>
-                <p class="finder-note"><strong>Windows:</strong> this shell script can also be used in WSL or Git Bash, but the PowerShell option above is simpler if you are using normal Windows.</p>
+                <p class="finder-note"><strong>Windows:</strong> use the Windows ready-FITS option above instead. The shell version is intended for macOS/Linux.</p>
               </div>
 
               <div id="download-help-links" class="download-help-panel" data-download-help-panel="links" hidden>
@@ -319,15 +319,15 @@
               <div class="basket-actions">
                 <div>
                   <button type="button" class="button" id="basket-powershell" disabled>
-                    <i class="fas fa-terminal" aria-hidden="true"></i> Download all with Windows PowerShell (.ps1)
+                    <i class="fas fa-terminal" aria-hidden="true"></i> Create ready FITS with Windows (.ps1)
                   </button>
-                  <p class="finder-note"><strong>Windows:</strong> saves a PowerShell script that downloads every basket file directly from MAST.</p>
+                  <p class="finder-note"><strong>Windows:</strong> downloads the official data temporarily, extracts SCI automatically with Siril, and leaves only the simple named FITS files.</p>
                 </div>
                 <div>
                   <button type="button" class="button button-secondary" id="basket-script" disabled>
-                    <i class="fas fa-file-arrow-down" aria-hidden="true"></i> Download all with a Mac/Linux script (.sh)
+                    <i class="fas fa-file-arrow-down" aria-hidden="true"></i> Create ready FITS with Mac/Linux (.sh)
                   </button>
-                  <p class="finder-note"><strong>macOS/Linux:</strong> saves a curl script. It also works in WSL or Git Bash on Windows.</p>
+                  <p class="finder-note"><strong>macOS/Linux:</strong> downloads the official data temporarily, extracts SCI automatically with Siril, and leaves only the simple named FITS files.</p>
                 </div>
                 <div>
                   <button type="button" class="button button-secondary" id="basket-manifest" disabled>
@@ -354,9 +354,9 @@
               <h3 id="after-download-heading">I've downloaded the files. What now?</h3>
               <ol class="finder-steps">
                 <li><strong>Keep each target together.</strong> Put the files for one target in their own folder, ideally with the telescope or dataset name in the folder title.</li>
-                <li><strong>Start with combined products.</strong> For JWST, <span class="finder-mono">i2d</span> files are usually the easiest starting point. For Hubble, look for drizzle-combined <span class="finder-mono">drc</span> or <span class="finder-mono">drz</span> files.</li>
+                <li><strong>Use the friendly SCI files.</strong> The recommended download route has already extracted the image plane you need and named it with the target, filter and colour channel.</li>
                 <li><strong>Expect monochrome data.</strong> Space-telescope colour images are normally built from separate filtered images. One FITS file does not necessarily equal one finished colour photograph.</li>
-                <li><strong>Open the FITS files in processing software.</strong> Siril and PixInsight can read them directly. Do not debayer combined Hubble/JWST products as though they came from a colour camera.</li>
+                <li><strong>Open the FITS files directly in processing software.</strong> Siril and PixInsight should see each one as a normal single monochrome image. Do not debayer them.</li>
                 <li><strong>Stretch and inspect each filter first.</strong> Check that the target overlaps properly and that each file contains useful signal before building a colour combination.</li>
                 <li><strong>Combine filters into colour.</strong> Align the images if necessary, assign filters to colour channels, then balance, stretch and finish the image. The filter suggestions in the search results are a starting point, not a rule.</li>
               </ol>
@@ -501,7 +501,7 @@
     </footer>
 
     <script src="./assets/js/main.js?v=20260917-nav3"></script>
-    <script src="./assets/js/data-finder-v3.js"></script>
+    <script src="./assets/js/data-finder-v4.js"></script>
     <div id="finder-toast" class="finder-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
     <a href="#page-top" id="finder-back-to-top" class="finder-back-to-top" aria-label="Back to top" title="Back to top" style="position:fixed!important;right:18px!important;bottom:18px!important;z-index:99999!important;width:54px!important;height:54px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:50%!important;background:#167dcc!important;border:2px solid #8bd4ff!important;color:#fff!important;text-decoration:none!important;font-size:30px!important;font-weight:800!important;line-height:1!important;box-shadow:0 10px 30px rgba(0,0,0,.55)!important;opacity:1!important;visibility:visible!important;">↑</a>
   </body>
