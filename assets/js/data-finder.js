@@ -306,7 +306,8 @@
     ];
 
     items.forEach(function (item) {
-      lines.push("Write-Host " + powerShellQuote("Downloading " + item.filename));
+      var channelLabel = (item.filters && item.filters.length) ? item.filters.join(', ') + ': ' : '';
+      lines.push("Write-Host " + powerShellQuote("Downloading " + channelLabel + item.filename));
       lines.push("Invoke-WebRequest -Uri " + powerShellQuote(item.downloadUrl) + " -OutFile " + powerShellQuote(item.filename));
       lines.push("");
     });
@@ -397,20 +398,182 @@
     track('dataset_recommendation_view', { groups: data.groupCount, results: data.resultCount });
   }
 
+  function filterWavelengthMicrons(filter, telescope) {
+    var match = /^F(\d{3,4})/.exec(normaliseFilterName(filter));
+    if (!match) return null;
+    var n = Number(match[1]);
+    if (!Number.isFinite(n)) return null;
+    if (String(telescope || '').toUpperCase() === 'HST') {
+      return n / 1000;
+    }
+    return n / 100;
+  }
+
+  function filterIsNarrow(filter) {
+    return /N(?:\d+)?$/.test(normaliseFilterName(filter));
+  }
+
+  function chooseThreeByWavelength(filters, telescope) {
+    var usable = filters.map(function (f) {
+      return { filter: normaliseFilterName(f), wave: filterWavelengthMicrons(f, telescope) };
+    }).filter(function (x) { return x.filter && x.wave; });
+
+    // Prefer wide/medium bands for a general colour set. Narrowband remains
+    // available through View products, but should not silently replace a
+    // continuum channel in the beginner recommendation.
+    var nonNarrow = usable.filter(function (x) { return !filterIsNarrow(x.filter); });
+    if (nonNarrow.length >= 3) usable = nonNarrow;
+    if (usable.length < 3) return null;
+
+    usable.sort(function (a, b) { return a.wave - b.wave; });
+    var blue = usable[0];
+    var red = usable[usable.length - 1];
+    var midpoint = (blue.wave + red.wave) / 2;
+    var middle = usable.slice(1, -1).sort(function (a, b) {
+      return Math.abs(a.wave - midpoint) - Math.abs(b.wave - midpoint);
+    })[0];
+    if (!middle) return null;
+    return [blue.filter, middle.filter, red.filter];
+  }
+
+  function buildSafeColourPlan(group) {
+    var filters = ((group && group.filters) || []).map(normaliseFilterName).filter(Boolean);
+    var telescope = String((group && group.telescope) || '').toUpperCase();
+    var instrument = String((group && group.instrumentFull) || (group && group.instrument) || '').toUpperCase();
+    if (filters.length < 3) return null;
+
+    var chosen = null;
+    var type = 'Matched colour set';
+    var channel = '';
+
+    if (telescope === 'JWST' && instrument.indexOf('NIRCAM') !== -1) {
+      var sw = [];
+      var lw = [];
+      filters.forEach(function (filter) {
+        var wave = filterWavelengthMicrons(filter, telescope);
+        if (!wave) return;
+        if (wave <= 2.3) sw.push(filter);
+        else if (wave <= 5.1) lw.push(filter);
+      });
+
+      var swSet = chooseThreeByWavelength(sw, telescope);
+      var lwSet = chooseThreeByWavelength(lw, telescope);
+
+      // Prefer the long-wave channel when both are viable because one LW
+      // detector covers each module, avoiding the four-detector SW patchwork.
+      if (lwSet) {
+        chosen = lwSet;
+        channel = 'NIRCam long-wavelength';
+      } else if (swSet) {
+        chosen = swSet;
+        channel = 'NIRCam short-wavelength';
+      }
+    }
+
+    if (!chosen) {
+      chosen = chooseThreeByWavelength(filters, telescope);
+    }
+    if (!chosen) return null;
+
+    return {
+      filters: chosen,
+      type: type,
+      channel: channel,
+      mapping: 'Blue: ' + chosen[0] + '  •  Green: ' + chosen[1] + '  •  Red: ' + chosen[2],
+      note: channel
+        ? 'Chosen from the same ' + channel + ' channel to make alignment and field matching easier.'
+        : 'Chosen as three separated wavelengths from the same dataset; field matching is checked before download.'
+    };
+  }
+
+  function angularDistanceDeg(a, b) {
+    var ra1 = Number(a.ra || 0) * Math.PI / 180;
+    var dec1 = Number(a.dec || 0) * Math.PI / 180;
+    var ra2 = Number(b.ra || 0) * Math.PI / 180;
+    var dec2 = Number(b.dec || 0) * Math.PI / 180;
+    var dRa = ra1 - ra2;
+    var dDec = dec1 - dec2;
+    var h = Math.sin(dDec / 2) ** 2 +
+      Math.cos(dec1) * Math.cos(dec2) * Math.sin(dRa / 2) ** 2;
+    return (2 * Math.asin(Math.min(1, Math.sqrt(h)))) * 180 / Math.PI;
+  }
+
+  function matchedColourObservations(group, plan) {
+    var observations = (group && group.observations) || [];
+    if (!plan || !plan.filters || plan.filters.length !== 3 || !observations.length) return null;
+
+    var candidates = observations.filter(function (obs) {
+      var obsFilters = (obs.filters || []).map(normaliseFilterName).filter(Boolean);
+      return plan.filters.some(function (filter) { return obsFilters.indexOf(filter) !== -1; });
+    });
+    if (!candidates.length) return null;
+
+    // 0.01° is ~36 arcsec. This is deliberately much tighter than the broad
+    // dataset grouping radius: colour channels should be the same pointing,
+    // not merely in the same part of a nebula.
+    var maxSepDeg = 0.01;
+    var best = null;
+
+    candidates.forEach(function (anchor) {
+      var selected = [];
+      var totalExposure = 0;
+      var maxSep = 0;
+
+      plan.filters.forEach(function (filter) {
+        var options = observations.filter(function (obs) {
+          var obsFilters = (obs.filters || []).map(normaliseFilterName).filter(Boolean);
+          return obsFilters.indexOf(filter) !== -1 && angularDistanceDeg(anchor, obs) <= maxSepDeg;
+        }).sort(function (a, b) {
+          var da = angularDistanceDeg(anchor, a);
+          var db = angularDistanceDeg(anchor, b);
+          if (da !== db) return da - db;
+          return Number(b.exposureSeconds || 0) - Number(a.exposureSeconds || 0);
+        });
+
+        if (options.length) {
+          selected.push(options[0]);
+          totalExposure += Number(options[0].exposureSeconds || 0);
+          maxSep = Math.max(maxSep, angularDistanceDeg(anchor, options[0]));
+        }
+      });
+
+      var uniqueFilters = {};
+      selected.forEach(function (obs) {
+        (obs.filters || []).map(normaliseFilterName).forEach(function (f) {
+          if (plan.filters.indexOf(f) !== -1) uniqueFilters[f] = true;
+        });
+      });
+
+      if (Object.keys(uniqueFilters).length === 3) {
+        var candidate = { observations: selected, maxSep: maxSep, totalExposure: totalExposure };
+        if (!best || candidate.maxSep < best.maxSep ||
+            (candidate.maxSep === best.maxSep && candidate.totalExposure > best.totalExposure)) {
+          best = candidate;
+        }
+      }
+    });
+
+    return best;
+  }
+
   function renderGroupCard(group, index) {
     var telescopeClass = group.telescope === 'JWST' ? 'badge-jwst' : 'badge-hst';
     var filterChips = group.filters.map(function (f) {
       return '<span class="filter-chip">' + escapeHtml(f) + '</span>';
     }).join('');
 
+    var safePlan = buildSafeColourPlan(group);
+    var matched = safePlan ? matchedColourObservations(group, safePlan) : null;
     var suggestions = '';
-    if (group.colourSuggestions && group.colourSuggestions.length > 0) {
+    if (safePlan && matched) {
       suggestions = '<div class="colour-suggestions">' +
-        group.colourSuggestions.map(function (s) {
-          return '<p><strong>' + escapeHtml(s.type) + ':</strong> ' + escapeHtml(s.mapping) + '</p>';
-        }).join('') +
-        '<p class="finder-note">' + escapeHtml(group.colourSuggestions[0].note) + '</p>' +
+        '<p><strong>' + escapeHtml(safePlan.type) + ':</strong> ' + escapeHtml(safePlan.mapping) + '</p>' +
+        '<p class="finder-note">' + escapeHtml(safePlan.note) + '</p>' +
       '</div>';
+    } else if (safePlan) {
+      suggestions = '<p class="finder-warning" role="note"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> ' +
+        'This dataset has useful filters, but no three-filter set was found on the same pointing. Use View products rather than combining mismatched fields.' +
+      '</p>';
     }
 
     var warning = group.overlapWarning
@@ -440,7 +603,7 @@
         '</button>' +
         '<button type="button" class="button group-add-recommended" data-group="' + index + '">' +
           '<i class="fas fa-plus" aria-hidden="true"></i> ' +
-          ((group.colourSuggestions && group.colourSuggestions.length) ? 'Add colour filter set' : 'Add recommended files') +
+          ((safePlan && matched) ? 'Add matched colour set' : 'Add recommended files') +
         '</button>' +
       '</div>' +
       '<div class="group-products" id="group-products-' + index + '" hidden></div>' +
@@ -529,65 +692,26 @@
     return filter;
   }
 
-  function preferredColourFilters(group) {
-    var filters = [];
-    var suggestions = (group && group.colourSuggestions) || [];
-    suggestions.forEach(function (suggestion) {
-      var matches = String(suggestion.mapping || '').match(/F\d{3,4}[A-Z][A-Z0-9]*/g) || [];
-      matches.forEach(function (filter) {
-        filter = normaliseFilterName(filter);
-        if (filter && filters.indexOf(filter) === -1) filters.push(filter);
-      });
-    });
-
-    ((group && group.filters) || []).forEach(function (filter) {
-      filter = normaliseFilterName(filter);
-      if (filter && filters.indexOf(filter) === -1) filters.push(filter);
-    });
-    return filters;
-  }
-
   function selectColourObsids(group) {
-    var observations = (group && group.observations) || [];
-    if (!observations.length) {
-      return ((group && group.obsids) || []).slice(0, 4);
-    }
+    var plan = buildSafeColourPlan(group);
+    var matched = plan ? matchedColourObservations(group, plan) : null;
+    if (!matched) return [];
 
-    var preferred = preferredColourFilters(group);
     var selected = [];
-
-    preferred.forEach(function (filter) {
-      var best = null;
-      observations.forEach(function (obs) {
-        var obsFilters = (obs.filters || []).map(normaliseFilterName).filter(Boolean);
-        if (obsFilters.indexOf(filter) === -1) return;
-        if (!best || Number(obs.exposureSeconds || 0) > Number(best.exposureSeconds || 0)) {
-          best = obs;
-        }
+    plan.filters.forEach(function (filter) {
+      var best = matched.observations.find(function (obs) {
+        return (obs.filters || []).map(normaliseFilterName).indexOf(filter) !== -1;
       });
       if (best && selected.indexOf(String(best.obsid)) === -1) {
         selected.push(String(best.obsid));
       }
     });
-
-    // A colour image needs distinct filters. Prefer three representative
-    // channels, then use a fourth only when no colour suggestion was possible.
-    var targetCount = preferred.length >= 3 ? 3 : Math.min(4, Math.max(1, preferred.length));
-    if (selected.length > targetCount) selected = selected.slice(0, targetCount);
-
-    if (selected.length < targetCount) {
-      observations.slice().sort(function (a, b) {
-        return Number(b.exposureSeconds || 0) - Number(a.exposureSeconds || 0);
-      }).forEach(function (obs) {
-        var id = String(obs.obsid || '');
-        if (id && selected.indexOf(id) === -1 && selected.length < targetCount) selected.push(id);
-      });
-    }
-
-    if (!selected.length) {
-      selected = ((group && group.obsids) || []).slice(0, 4).map(String);
-    }
     return selected;
+  }
+
+  function nircamModuleFromFilename(filename) {
+    var match = /_nrc([ab])(?:long|[1-4])_/i.exec(String(filename || ''));
+    return match ? match[1].toUpperCase() : '';
   }
 
   function productPreferenceScore(product) {
@@ -628,20 +752,53 @@
 
     // The site recommendation is a colour-processing set, not simply the
     // highest-level science products. Pick one strong image product for each
-    // selected observation/filter.
-    String(obsids || '').split(',').map(function (id) { return id.trim(); }).filter(Boolean).forEach(function (id) {
-      var candidates = merged.filter(function (p) { return String(p._obsid) === id; });
-      candidates.sort(function (a, b) {
+    // selected observation/filter, and for NIRCam keep every channel on the
+    // same module (A or B) so the sky footprint is coherent.
+    var selectedIds = String(obsids || '').split(',').map(function (id) { return id.trim(); }).filter(Boolean);
+    var perId = {};
+    selectedIds.forEach(function (id) {
+      perId[id] = merged.filter(function (p) {
+        return String(p._obsid) === id && productPreferenceScore(p) > 0;
+      }).sort(function (a, b) {
         var scoreDiff = productPreferenceScore(b) - productPreferenceScore(a);
         if (scoreDiff) return scoreDiff;
         return Number(b.sizeBytes || 0) - Number(a.sizeBytes || 0);
       });
-      if (candidates.length && productPreferenceScore(candidates[0]) > 0) {
-        candidates[0].recommended = true;
-        var filterText = (candidates[0].filters || []).join(', ');
-        candidates[0].recommendReasons = [
+    });
+
+    var commonModule = '';
+    ['A', 'B'].some(function (moduleName) {
+      var availableForAll = selectedIds.length > 0 && selectedIds.every(function (id) {
+        return (perId[id] || []).some(function (p) {
+          return nircamModuleFromFilename(p.filename) === moduleName;
+        });
+      });
+      if (availableForAll) {
+        commonModule = moduleName;
+        return true;
+      }
+      return false;
+    });
+
+    selectedIds.forEach(function (id) {
+      var candidates = perId[id] || [];
+      var chosen = null;
+      if (commonModule) {
+        chosen = candidates.find(function (p) {
+          return nircamModuleFromFilename(p.filename) === commonModule;
+        }) || null;
+      } else {
+        // HST and non-NIRCam products do not use NIRCam A/B module names.
+        var hasNircamModules = candidates.some(function (p) { return nircamModuleFromFilename(p.filename); });
+        if (!hasNircamModules) chosen = candidates[0] || null;
+      }
+
+      if (chosen) {
+        chosen.recommended = true;
+        var filterText = (chosen.filters || []).join(', ');
+        chosen.recommendReasons = [
           filterText ? 'Selected colour channel: ' + filterText : 'Selected as one channel of the colour set',
-          'One image product is chosen per filter instead of several arbitrary science files'
+          commonModule ? 'Matched NIRCam module ' + commonModule + ' across all colour channels' : 'Matched pointing colour product'
         ];
       }
     });
@@ -697,6 +854,9 @@
     if (!group) return Promise.reject(new Error('That dataset is no longer available.'));
     var mode = modeSelect.value;
     var obsids = selectColourObsids(group).join(',');
+    if (!obsids) {
+      return Promise.reject(new Error('No three-filter colour set with a matching sky pointing was found in this dataset.'));
+    }
 
     button.disabled = true;
     container.hidden = false;
@@ -773,6 +933,11 @@
     var originalHtml = addBtn.innerHTML;
     var mode = modeSelect.value;
     var obsids = selectColourObsids(group).join(',');
+    if (!obsids) {
+      setStatus('No three-filter colour set with a matching sky pointing was found in this dataset. Use View products to inspect it manually.', true);
+      showToast('No matched colour set found');
+      return;
+    }
     addBtn.disabled = true;
     addBtn.innerHTML = '<i class="fas fa-spinner fa-spin" aria-hidden="true"></i> Loading recommended files…';
     setStatus('Loading recommended files from the MAST archive…', false);
