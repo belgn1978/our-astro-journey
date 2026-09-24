@@ -204,7 +204,7 @@
       basketSummary.textContent = items.length + (items.length === 1 ? ' file' : ' files') +
         ' · about ' + formatBytes(totalBytes) + ' total';
       basketList.innerHTML = items.map(function (item, index) {
-        var meta = [item.telescope, item.instrument, (item.filters || []).join(', ')]
+        var meta = [item.telescope, item.instrument, (item.filters || []).join(', '), item.hasPolarizer ? 'polarised exposure' : '']
           .filter(Boolean).join(' · ');
         return '<li class="basket-item">' +
           '<div class="basket-item-info">' +
@@ -261,7 +261,8 @@
         telescope: context.telescope || '',
         instrument: context.instrument || '',
         filters: p.filters || [],
-        categoryLabel: p.categoryLabel || ''
+        categoryLabel: p.categoryLabel || '',
+        hasPolarizer: !!p.hasPolarizer
       });
       added++;
     });
@@ -532,6 +533,12 @@
           var obsFilters = effectiveFiltersForGroup(group, obs.filters || []);
           return obsFilters.indexOf(filter) !== -1 && angularDistanceDeg(anchor, obs) <= maxSepDeg;
         }).sort(function (a, b) {
+          var telescope = String((group && group.telescope) || '').toUpperCase();
+          if (telescope === 'HST') {
+            var aPol = observationHasPolarizer(a) ? 1 : 0;
+            var bPol = observationHasPolarizer(b) ? 1 : 0;
+            if (aPol !== bPol) return aPol - bPol;
+          }
           var da = angularDistanceDeg(anchor, a);
           var db = angularDistanceDeg(anchor, b);
           if (da !== db) return da - db;
@@ -652,6 +659,7 @@
           '<span class="product-name">' + escapeHtml(p.filename) + '</span>' +
           '<span class="product-meta">' + escapeHtml(p.categoryLabel) +
             (p.filters && p.filters.length ? ' · ' + escapeHtml(p.filters.join(', ')) : '') +
+            (p.hasPolarizer ? ' · polarised exposure' : '') +
             ' · ' + escapeHtml(p.sizeLabel) + '</span>' +
           reasons + advanced +
         '</div>' +
@@ -669,7 +677,8 @@
       return {
         filename: p.filename, dataUri: p.dataUri, downloadUrl: p.downloadUrl,
         sizeBytes: p.sizeBytes, sizeLabel: p.sizeLabel, filters: p.filters,
-        categoryLabel: p.categoryLabel, recommended: p.recommended
+        categoryLabel: p.categoryLabel, recommended: p.recommended,
+        hasPolarizer: !!p.hasPolarizer
       };
     }));
   }
@@ -727,12 +736,28 @@
     return list;
   }
 
+  function isHstPolarizer(filter) {
+    return /^POL(?:0|60|120|[A-Z0-9]+)$/i.test(normaliseFilterName(filter));
+  }
+
+  function effectiveHstFilters(filters) {
+    return (filters || []).map(normaliseFilterName).filter(function (filter) {
+      return filter && !isHstPolarizer(filter);
+    });
+  }
+
+  function observationHasPolarizer(observation) {
+    return ((observation && observation.filters) || []).some(isHstPolarizer);
+  }
+
   function effectiveFiltersForGroup(group, filters) {
     var telescope = String((group && group.telescope) || '').toUpperCase();
     var instrument = String((group && group.instrumentFull) || (group && group.instrument) || '').toUpperCase();
     var list = (filters || []).map(normaliseFilterName).filter(Boolean);
     if (telescope === 'JWST' && instrument.indexOf('NIRCAM') !== -1) {
       list = effectiveNircamFilters(list);
+    } else if (telescope === 'HST') {
+      list = effectiveHstFilters(list);
     }
     return Array.from(new Set(list));
   }
@@ -811,6 +836,7 @@
       (result.products || []).forEach(function (p) {
         p._obsid = String(result.obsid);
         var obs = obsById[p._obsid];
+        p.hasPolarizer = observationHasPolarizer(obs);
         p.filters = effectiveFiltersForProduct(group, obs, p);
         p.recommended = false;
         p.recommendReasons = [];
@@ -857,6 +883,11 @@
           var effective = (p.filters || []).map(normaliseFilterName).filter(Boolean);
           return effective.length === 1 && effective[0] === intendedFilter;
         });
+        var telescope = String((group && group.telescope) || '').toUpperCase();
+        if (telescope === 'HST') {
+          var clean = candidates.filter(function (p) { return !p.hasPolarizer; });
+          if (clean.length) candidates = clean;
+        }
       }
       var chosen = null;
       if (commonModule) {
