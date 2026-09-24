@@ -4856,3 +4856,103 @@ footer {
     width: 100%;
   }
 }
+
+
+/* Hubble/JWST data finder navigation */
+.finder-results-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  margin: 1.25rem 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(126, 196, 255, 0.18);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.finder-results-pager .button {
+  min-width: 8.25rem;
+}
+
+.finder-results-pager .button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.finder-results-page-label {
+  min-width: 7.5rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 700;
+}
+
+.finder-page-range {
+  margin: -0.25rem 0 1rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.92rem;
+}
+
+.finder-back-to-top {
+  position: fixed;
+  right: 1.2rem;
+  bottom: 1.2rem;
+  z-index: 2600;
+  width: 3.25rem;
+  height: 3.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(126, 196, 255, 0.72);
+  border-radius: 999px;
+  background: rgba(13, 30, 58, 0.96);
+  color: #fff;
+  font: inherit;
+  font-size: 1.7rem;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.42);
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: transform 0.18s ease, background-color 0.18s ease, opacity 0.18s ease;
+}
+
+.finder-back-to-top:hover,
+.finder-back-to-top:focus-visible {
+  background: rgba(30, 116, 202, 0.98);
+  transform: translateY(-2px);
+}
+
+.finder-back-to-top:focus-visible {
+  outline: 3px solid rgba(126, 196, 255, 0.95);
+  outline-offset: 3px;
+}
+
+.finder-back-to-top[hidden] {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .finder-results-pager {
+    gap: 0.6rem;
+  }
+
+  .finder-results-pager .button {
+    min-width: 7rem;
+    flex: 1 1 0;
+  }
+
+  .finder-results-page-label {
+    order: -1;
+    flex: 0 0 100%;
+  }
+
+  .finder-back-to-top {
+    right: 0.9rem;
+    bottom: 0.9rem;
+    width: 3rem;
+    height: 3rem;
+  }
+}
