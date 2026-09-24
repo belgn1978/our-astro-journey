@@ -356,13 +356,13 @@
       lines.push("Write-Host " + powerShellQuote("Creating " + finalName + " (" + filterLabel + colourLabel + ")"));
       lines.push("$source = Join-Path $workDir " + powerShellQuote(tempName));
       lines.push("Invoke-WebRequest -Uri " + powerShellQuote(item.downloadUrl) + " -OutFile $source");
-      lines.push("$sirilScript = @'");
+      lines.push('$sirilScript = @"');
       lines.push("setext fits");
       lines.push("cd \"$workDir\"");
       lines.push("load \"" + tempName + "\"");
       lines.push("save \"" + finalStem + "\"");
       lines.push("close");
-      lines.push("'@");
+      lines.push('"@');
       lines.push("$sirilScript | & $siril -s -");
       lines.push("if ($LASTEXITCODE -ne 0 -or -not (Test-Path (Join-Path $workDir " + powerShellQuote(finalName) + "))) { throw " + powerShellQuote("Could not create " + finalName) + " }");
       lines.push("Remove-Item $source -Force -ErrorAction SilentlyContinue");
@@ -406,7 +406,7 @@
         var tempName = '.oaj_source_' + (index + 1) + '.fits';
         lines.push('echo ' + JSON.stringify('Creating ' + finalName));
         lines.push('curl -fL --retry 2 -o ' + JSON.stringify(tempName) + ' ' + JSON.stringify(item.downloadUrl));
-        lines.push("cat <<'OAJ_SIRIL' | \"$siril\" -s -");
+        lines.push("cat <<OAJ_SIRIL | \"$siril\" -s -");
         lines.push('setext fits');
         lines.push('cd "$workdir"');
         lines.push('load "' + tempName + '"');
