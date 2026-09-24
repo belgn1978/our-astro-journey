@@ -30,7 +30,7 @@
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="./assets/css/reset.css" />
-    <link rel="stylesheet" href="./assets/css/styles.css?v=20260917-nav4" />
+    <link rel="stylesheet" href="./assets/css/styles.css?v=20260924-download-help1" />
     <script src="/assets/js/analytics-control.js"></script>
     <script type="application/ld+json">
     {
@@ -157,9 +157,10 @@
                 <li><strong>Choose what you need.</strong> For most people, &ldquo;Recommended data for image processing&rdquo; is the best starting point.</li>
                 <li><strong>Review the recommended datasets.</strong> The tool groups observations, filters and instruments, and explains which combinations may be useful for colour processing.</li>
                 <li><strong>Add files to your download basket.</strong> Select individual files or use <em>Add recommended files</em> to let the tool choose the best starting files for that dataset.</li>
-                <li><strong>Open the download basket.</strong> Each file in the basket has its own direct MAST download link. Tapping or clicking <em>Download</em> starts the download for that one FITS file. If your basket contains three files, you have three separate direct file downloads.</li>
-                <li><strong>Use the bulk options only if you want them.</strong> <em>Save all download links (.txt)</em> creates a text file containing one direct FITS-file link per line. <em>Copy all download links</em> copies those same direct links to your clipboard. <em>Download all with a script (.sh)</em> creates a small script that follows every link and downloads the whole basket automatically.</li>
-                <li><strong>Process the FITS files on a computer.</strong> Keep the files for the same target together, then open them in software such as Siril or PixInsight. Phones are fine for searching and building the basket, but the actual FITS files can be very large.</li>
+                <li><strong>Open the download basket.</strong> Each file has its own direct MAST download link. For a small set, the individual <em>Download</em> buttons are the easiest option.</li>
+                <li><strong>Choose a bulk method for larger sets.</strong> Windows users can generate a PowerShell script; macOS/Linux users can generate a curl shell script; you can also save or copy the direct links.</li>
+                <li><strong>Follow the on-page instructions.</strong> The basket now shows one complete walkthrough at a time for the method you choose, including exactly how to run downloaded scripts.</li>
+                <li><strong>Process the FITS files on a computer.</strong> Keep files for the same target together, then open them in software such as Siril or PixInsight. Phones are fine for searching and building the basket, but the science files can be very large.</li>
               </ol>
               <p>The files do <strong>not</strong> come from Our Astro Journey and are not hosted by us. Every download comes from the official MAST archive — this tool simply helps you locate and organise the correct public datasets.</p>
             </article>
@@ -226,49 +227,128 @@
               <p class="basket-summary" id="basket-summary">No files yet. Add files from the search results below.</p>
               <p class="basket-size-note" id="basket-size-note" hidden></p>
             </div>
-            <div class="feature-card" role="note" aria-label="What to do with your download basket">
-              <h3>What do I do now?</h3>
-              <p><strong>Each item in this basket is one individual FITS file.</strong> The <em>Download</em> button beside it uses that file's direct MAST link and starts that single file download. So three basket items means three separate FITS downloads.</p>
-              <ul class="resource-list">
-                <li><strong>Just want the files:</strong> use the individual <em>Download</em> button beside each basket item. This is the simplest route.</li>
-                <li><strong>Want a list of the links:</strong> <em>Save all download links (.txt)</em> gives you a text file with one direct FITS download link per line.</li>
-                <li><strong>Want to paste the links elsewhere:</strong> <em>Copy all download links</em> copies those same direct file links to your clipboard.</li>
-                <li><strong>Want everything downloaded automatically:</strong> <em>Download all with a script (.sh)</em> creates a small script that follows every direct link and downloads all basket files for you.</li>
-                <li><strong>After downloading:</strong> keep the FITS files together in a folder for that target and open them in Siril, PixInsight or other FITS-compatible software.</li>
-              </ul>
+            <div class="feature-card finder-download-guide" role="region" aria-labelledby="download-guide-heading">
+              <h3 id="download-guide-heading">Which download method should I use?</h3>
+              <p>Choose a method below. Only the instructions for that method are shown, so you do not have to pick your way through a wall of commands.</p>
+              <div class="download-method-chooser" aria-label="Download method help">
+                <button type="button" class="button download-method-button" data-download-help="direct" aria-pressed="true" aria-controls="download-help-direct">Individual files</button>
+                <button type="button" class="button button-secondary download-method-button" data-download-help="powershell" aria-pressed="false" aria-controls="download-help-powershell">Windows PowerShell</button>
+                <button type="button" class="button button-secondary download-method-button" data-download-help="shell" aria-pressed="false" aria-controls="download-help-shell">Mac / Linux script</button>
+                <button type="button" class="button button-secondary download-method-button" data-download-help="links" aria-pressed="false" aria-controls="download-help-links">Link list / clipboard</button>
+                <button type="button" class="button button-secondary download-method-button" data-download-help="mast" aria-pressed="false" aria-controls="download-help-mast">MAST Portal</button>
+              </div>
+
+              <div id="download-help-direct" class="download-help-panel" data-download-help-panel="direct">
+                <h4>Individual browser downloads <span class="finder-note">best for a few files</span></h4>
+                <ol class="finder-steps">
+                  <li>Use the <strong>Download</strong> button beside a file in the basket.</li>
+                  <li>Your browser opens the official STScI MAST download. Depending on your browser settings, it may download immediately or ask where to save the file.</li>
+                  <li>Wait for the download to finish before closing the tab. Large FITS files can appear to do very little for a while.</li>
+                  <li>Repeat for each file you want. Three basket items means three individual downloads.</li>
+                  <li>Keep all files for the same target in one folder. Do not convert them to JPG or PNG before processing.</li>
+                </ol>
+                <p class="finder-note"><strong>If nothing happens:</strong> check the browser's Downloads panel and allow downloads/pop-ups from MAST if your browser blocked them. For a large basket, use one of the script methods instead.</p>
+              </div>
+
+              <div id="download-help-powershell" class="download-help-panel" data-download-help-panel="powershell" hidden>
+                <h4>Windows PowerShell <span class="finder-note">best for a large Windows download</span></h4>
+                <ol class="finder-steps">
+                  <li>Click <strong>Download all with Windows PowerShell (.ps1)</strong> below. The site creates <span class="finder-mono">mast-downloads.ps1</span>.</li>
+                  <li>Create a folder for the target, then move the <span class="finder-mono">mast-downloads.ps1</span> file into that folder.</li>
+                  <li>Open that folder in File Explorer, right-click an empty area and choose <strong>Open in Terminal</strong>. If your version of Windows does not show that option, open PowerShell and use <span class="finder-mono">cd</span> to move into the folder.</li>
+                  <li>Run <span class="finder-mono">powershell -ExecutionPolicy Bypass -File .\mast-downloads.ps1</span>. This bypass applies to that command only; it does not permanently change your Windows execution policy.</li>
+                  <li>Leave the terminal open until it says the downloads are complete. The FITS files will appear in the same folder as the script.</li>
+                  <li>If a download was interrupted, delete that incomplete file and run the script again. Files with the same names will be replaced.</li>
+                </ol>
+                <p class="finder-note">The generated script contains download commands for the direct STScI MAST URLs currently in your basket. You can open the <span class="finder-mono">.ps1</span> file in Notepad first if you want to inspect it.</p>
+              </div>
+
+              <div id="download-help-shell" class="download-help-panel" data-download-help-panel="shell" hidden>
+                <h4>macOS / Linux curl script <span class="finder-note">also works in WSL or Git Bash</span></h4>
+                <ol class="finder-steps">
+                  <li>Click <strong>Download all with a Mac/Linux script (.sh)</strong> below. The site creates <span class="finder-mono">mast-downloads.sh</span>.</li>
+                  <li>Create a folder for the target and move the script into it.</li>
+                  <li>Open Terminal in that folder.</li>
+                  <li>Run <span class="finder-mono">bash mast-downloads.sh</span>. You can instead make it executable with <span class="finder-mono">chmod +x mast-downloads.sh</span> and then run <span class="finder-mono">./mast-downloads.sh</span>.</li>
+                  <li>The script uses <span class="finder-mono">curl</span> to download each FITS file directly from STScI MAST. Leave Terminal open until the command returns to the prompt.</li>
+                  <li>If the connection fails part-way through, remove any incomplete file and run the script again.</li>
+                </ol>
+                <p class="finder-note"><strong>Windows:</strong> this shell script can also be used in WSL or Git Bash, but the PowerShell option above is simpler if you are using normal Windows.</p>
+              </div>
+
+              <div id="download-help-links" class="download-help-panel" data-download-help-panel="links" hidden>
+                <h4>Save or copy the direct links <span class="finder-note">useful for download managers or your own commands</span></h4>
+                <ol class="finder-steps">
+                  <li><strong>Save all download links (.txt)</strong> creates a plain text file containing the MAST links for your basket.</li>
+                  <li><strong>Copy all download links</strong> puts the same set of direct URLs on your clipboard.</li>
+                  <li>For a single file, paste its URL into a browser. For many files, paste the list into a download manager or use it as input for your own script.</li>
+                  <li>Keep the list until you have checked that every FITS file downloaded successfully. It is a handy recovery list if one file fails.</li>
+                </ol>
+                <p class="finder-note">The link list itself is not the science data. It is simply a set of direct STScI MAST addresses pointing to the files you selected.</p>
+              </div>
+
+              <div id="download-help-mast" class="download-help-panel" data-download-help-panel="mast" hidden>
+                <h4>Use the official MAST Portal directly <span class="finder-note">advanced / manual route</span></h4>
+                <ol class="finder-steps">
+                  <li>Open the <a href="https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html" target="_blank" rel="noopener noreferrer">MAST Portal</a> in a new tab.</li>
+                  <li>Search the same target name or coordinates you used here, then narrow the results to HST or JWST if necessary.</li>
+                  <li>Select the observation or observations you want and add them to the MAST Download Basket.</li>
+                  <li>In MAST's Download Manager, expand the observations and select the actual products you need. For beginner image processing, look for the most highly calibrated combined products rather than downloading every raw exposure.</li>
+                  <li>Use MAST's browser download for smaller selections. For larger sets, choose its <strong>Curl</strong> download option and run the generated script on your computer.</li>
+                </ol>
+                <p class="finder-note">Our Astro Journey does not transfer your basket into MAST's own basket, so this route means selecting the observations again. See STScI's <a href="https://archive.stsci.edu/datadownloads.html" target="_blank" rel="noopener noreferrer">MAST data download guide</a> for the archive's current retrieval options.</p>
+              </div>
             </div>
-            <ul id="basket-list" class="basket-list"></ul>
+            <ul id="basket-list" class="basket-list"></ul>            <ul id="basket-list" class="basket-list"></ul>
             <div class="feature-card" role="note" aria-label="Bulk download options">
-              <h3>Bulk download options <span class="finder-note">(optional)</span></h3>
-              <p>You can ignore these if you are only downloading a few files. Use the individual <em>Download</em> button beside each FITS file instead.</p>
+              <h3>Download options <span class="finder-note">(choose what suits the size of your basket)</span></h3>
               <div class="basket-actions">
                 <div>
-                  <button type="button" class="button" id="basket-script" disabled>
-                    <i class="fas fa-file-arrow-down" aria-hidden="true"></i> Download all with a script (.sh)
+                  <button type="button" class="button" id="basket-powershell" disabled>
+                    <i class="fas fa-terminal" aria-hidden="true"></i> Download all with Windows PowerShell (.ps1)
                   </button>
-                  <p class="finder-note"><strong>What it does:</strong> saves a small script that downloads every file in the basket for you. Best for macOS/Linux, or Windows with WSL/Git Bash. You then run the script on your computer.</p>
+                  <p class="finder-note"><strong>Windows:</strong> saves a PowerShell script that downloads every basket file directly from MAST.</p>
+                </div>
+                <div>
+                  <button type="button" class="button button-secondary" id="basket-script" disabled>
+                    <i class="fas fa-file-arrow-down" aria-hidden="true"></i> Download all with a Mac/Linux script (.sh)
+                  </button>
+                  <p class="finder-note"><strong>macOS/Linux:</strong> saves a curl script. It also works in WSL or Git Bash on Windows.</p>
                 </div>
                 <div>
                   <button type="button" class="button button-secondary" id="basket-manifest" disabled>
                     <i class="fas fa-list" aria-hidden="true"></i> Save all download links (.txt)
                   </button>
-                  <p class="finder-note"><strong>What it does:</strong> saves a text file containing one direct MAST FITS-file link per line. Opening one of those links downloads that individual FITS file. The text file itself does not download anything.</p>
+                  <p class="finder-note"><strong>Link list:</strong> keeps the direct MAST addresses in a small text file for manual use or a download manager.</p>
                 </div>
                 <div>
                   <button type="button" class="button button-secondary" id="basket-copy" disabled>
                     <i class="fas fa-copy" aria-hidden="true"></i> Copy all download links
                   </button>
-                  <p class="finder-note"><strong>What it does:</strong> copies the same direct FITS-file links to your clipboard. Paste one into a browser to download that individual file, or paste the whole set into a download manager or terminal.</p>
+                  <p class="finder-note"><strong>Clipboard:</strong> copies every direct MAST URL so you can paste the list elsewhere.</p>
                 </div>
                 <div>
                   <button type="button" class="button button-secondary basket-clear" id="basket-clear" disabled>
                     <i class="fas fa-trash" aria-hidden="true"></i> Remove everything from basket
                   </button>
-                  <p class="finder-note"><strong>What it does:</strong> empties your basket only. It does not delete anything you have already downloaded.</p>
+                  <p class="finder-note"><strong>Clear basket:</strong> removes selections from this page only. It never deletes files you already downloaded.</p>
                 </div>
               </div>
             </div>
-            <p class="basket-note">Files download directly from the official STScI MAST archive — nothing is uploaded to or proxied through Our Astro Journey. Browsers limit automatic multi-file downloads, which is why larger sets are offered as a URL list or download script.</p>
+
+            <div class="feature-card finder-after-download" role="region" aria-labelledby="after-download-heading">
+              <h3 id="after-download-heading">I've downloaded the files. What now?</h3>
+              <ol class="finder-steps">
+                <li><strong>Keep each target together.</strong> Put the files for one target in their own folder, ideally with the telescope or dataset name in the folder title.</li>
+                <li><strong>Start with combined products.</strong> For JWST, <span class="finder-mono">i2d</span> files are usually the easiest starting point. For Hubble, look for drizzle-combined <span class="finder-mono">drc</span> or <span class="finder-mono">drz</span> files.</li>
+                <li><strong>Expect monochrome data.</strong> Space-telescope colour images are normally built from separate filtered images. One FITS file does not necessarily equal one finished colour photograph.</li>
+                <li><strong>Open the FITS files in processing software.</strong> Siril and PixInsight can read them directly. Do not debayer combined Hubble/JWST products as though they came from a colour camera.</li>
+                <li><strong>Stretch and inspect each filter first.</strong> Check that the target overlaps properly and that each file contains useful signal before building a colour combination.</li>
+                <li><strong>Combine filters into colour.</strong> Align the images if necessary, assign filters to colour channels, then balance, stretch and finish the image. The filter suggestions in the search results are a starting point, not a rule.</li>
+              </ol>
+              <p class="finder-note">If you deliberately chose <strong>Individual exposures</strong> or <strong>Advanced / manual</strong>, you may have files that need additional calibration, alignment or instrument-specific processing before they are ready for a normal colour workflow.</p>
+            </div>
+            <p class="basket-note">Files download directly from the official STScI MAST archive            <p class="basket-note">Files download directly from the official STScI MAST archive — nothing is uploaded to or proxied through Our Astro Journey. Browsers limit automatic multi-file downloads, which is why larger sets are offered as a URL list or download script.</p>
           </div>
 
           <div id="finder-results" class="finder-results" aria-live="polite"></div>
@@ -407,7 +487,7 @@
     </footer>
 
     <script src="./assets/js/main.js?v=20260917-nav3"></script>
-    <script src="./assets/js/data-finder.js"></script>
+    <script src="./assets/js/data-finder.js?v=20260924-download-help1"></script>
     <div id="finder-toast" class="finder-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
   </body>
 </html>
