@@ -4,7 +4,7 @@ const siteUpdates = [
     badge: 'New tool',
     title: 'Hubble & JWST Image Data Downloader is live',
     summary: 'Search and download public Hubble and JWST FITS data from the official MAST archive, with beginner-friendly dataset and filter recommendations for image processing.',
-    url: './hubble-jwst-fits-downloader.html',
+    url: './hubble-jwst-fits-downloader.html?build=20260924b',
     cta: 'Open the downloader',
     featured: true,
     socialTitle: 'New tool: Hubble & JWST Image Data Downloader',
