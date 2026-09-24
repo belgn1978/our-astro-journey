@@ -45,6 +45,7 @@
   var downloadHelpButtons = Array.prototype.slice.call(document.querySelectorAll('[data-download-help]'));
   var downloadHelpPanels = Array.prototype.slice.call(document.querySelectorAll('[data-download-help-panel]'));
   var toastEl = document.getElementById('finder-toast');
+  var backToTopBtn = document.getElementById('finder-back-to-top');
 
   /* ---------- Analytics ---------- */
 
@@ -368,7 +369,25 @@
 
   /* ---------- Results rendering ---------- */
 
-  function renderSearchResults(data) {
+  var RESULTS_PER_PAGE = 10;
+  var currentResultsPage = 1;
+
+  function resultsPagerHtml(totalPages, currentPage) {
+    if (totalPages <= 1) return '';
+    var previousDisabled = currentPage <= 1 ? ' disabled aria-disabled="true"' : '';
+    var nextDisabled = currentPage >= totalPages ? ' disabled aria-disabled="true"' : '';
+    return '<nav class="finder-results-pager" aria-label="Search result pages">' +
+      '<button type="button" class="button button-secondary results-page-btn" data-results-page="' + (currentPage - 1) + '"' + previousDisabled + '>' +
+        '<span aria-hidden="true">←</span> Previous' +
+      '</button>' +
+      '<span class="finder-results-page-label">Page ' + currentPage + ' of ' + totalPages + '</span>' +
+      '<button type="button" class="button button-secondary results-page-btn" data-results-page="' + (currentPage + 1) + '"' + nextDisabled + '>' +
+        'Next <span aria-hidden="true">→</span>' +
+      '</button>' +
+    '</nav>';
+  }
+
+  function renderSearchResults(data, page) {
     var html = '';
     html += '<div class="finder-summary feature-card">';
     html += '<h2>Search results</h2>';
@@ -390,13 +409,30 @@
       return;
     }
 
+    var totalPages = Math.max(1, Math.ceil(data.groups.length / RESULTS_PER_PAGE));
+    var requestedPage = Number(page || currentResultsPage || 1);
+    currentResultsPage = Math.min(totalPages, Math.max(1, requestedPage));
+
+    var startIndex = (currentResultsPage - 1) * RESULTS_PER_PAGE;
+    var pageGroups = data.groups.slice(startIndex, startIndex + RESULTS_PER_PAGE);
+
+    html += resultsPagerHtml(totalPages, currentResultsPage);
+    html += '<p class="finder-page-range">Showing datasets ' + (startIndex + 1) + '–' +
+      (startIndex + pageGroups.length) + ' of ' + data.groups.length + '</p>';
     html += '<div class="finder-group-list">';
-    data.groups.forEach(function (group, index) {
-      html += renderGroupCard(group, index);
+    pageGroups.forEach(function (group, localIndex) {
+      html += renderGroupCard(group, startIndex + localIndex);
     });
     html += '</div>';
+    html += resultsPagerHtml(totalPages, currentResultsPage);
+
     resultsEl.innerHTML = html;
-    track('dataset_recommendation_view', { groups: data.groupCount, results: data.resultCount });
+    track('dataset_recommendation_view', {
+      groups: data.groupCount,
+      results: data.resultCount,
+      page: currentResultsPage,
+      groups_on_page: pageGroups.length
+    });
   }
 
   function filterWavelengthMicrons(filter, telescope) {
@@ -452,7 +488,7 @@
     if (filters.length < 3) return null;
 
     var chosen = null;
-    var type = 'Matched colour set';
+    var type = 'Candidate colour set';
     var channel = '';
 
     if (telescope === 'JWST' && instrument.indexOf('NIRCAM') !== -1) {
@@ -697,7 +733,8 @@
 
     apiFetch('/search.php' + query).then(function (data) {
       currentSearch = data;
-      renderSearchResults(data);
+      currentResultsPage = 1;
+      renderSearchResults(data, 1);
       setStatus('Search complete: ' + data.groupCount + ' dataset' + (data.groupCount === 1 ? '' : 's') + ' found.', false);
       track('archive_search', { target: data.resolved.label, telescope: telescope, mode: mode, results: data.resultCount });
       var url = new URL(window.location.href);
@@ -1096,6 +1133,16 @@
   });
 
   resultsEl.addEventListener('click', function (event) {
+    var pageBtn = event.target.closest('.results-page-btn');
+    if (pageBtn && !pageBtn.disabled && currentSearch) {
+      var page = Number(pageBtn.dataset.resultsPage || 1);
+      renderSearchResults(currentSearch, page);
+      if (typeof resultsEl.scrollIntoView === 'function') {
+        resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      return;
+    }
+
     var productsBtn = event.target.closest('.group-products-btn');
     if (productsBtn) {
       var index = parseInt(productsBtn.dataset.group, 10);
@@ -1228,6 +1275,21 @@
     try { document.execCommand('copy'); } catch (e) { /* ignore */ }
     document.body.removeChild(area);
     done();
+  }
+
+  /* ---------- Back to top ---------- */
+
+  function updateBackToTopVisibility() {
+    if (!backToTopBtn) return;
+    backToTopBtn.hidden = window.scrollY < 650;
+  }
+
+  if (backToTopBtn) {
+    backToTopBtn.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    window.addEventListener('scroll', updateBackToTopVisibility, { passive: true });
+    updateBackToTopVisibility();
   }
 
   /* ---------- Init: restore basket, support shareable URLs ---------- */
