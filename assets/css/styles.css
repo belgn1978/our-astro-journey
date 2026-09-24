@@ -3955,6 +3955,29 @@ footer {
    HUBBLE & JWST DATA FINDER
    ============================================================ */
 
+/* Keep this tool visually consistent even when the visitor's OS is in light mode. */
+.finder-page #page-main {
+  background: var(--section-bg);
+  color: var(--section-text);
+}
+
+.finder-page #page-main > .content-wrapper {
+  max-width: none;
+  padding: 0 2rem;
+  background: var(--section-bg);
+}
+
+.finder-page #page-main > .content-wrapper .section-subnav {
+  max-width: 1200px;
+}
+
+@media (max-width: 900px) {
+  .finder-page #page-main > .content-wrapper {
+    padding: 0 1.5rem;
+  }
+}
+
+
 .finder-panel {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -4022,25 +4045,55 @@ footer {
 }
 
 .finder-choice {
+  position: relative;
   display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.6rem 1rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.06);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: var(--section-text);
   cursor: pointer;
-  font-weight: 600;
 }
 
 .finder-choice input {
-  accent-color: var(--color-accent);
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
-.finder-choice:has(input:checked) {
-  background: rgba(74, 158, 255, 0.22);
-  border-color: var(--color-accent);
+.finder-choice span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.58rem 1.05rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.055);
+  color: rgba(255, 255, 255, 0.88);
+  font-weight: 700;
+  line-height: 1;
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.finder-choice:hover span {
+  background: rgba(74, 158, 255, 0.12);
+  border-color: rgba(126, 196, 255, 0.65);
+}
+
+.finder-choice input:checked + span {
+  background: linear-gradient(135deg, rgba(25, 151, 236, 0.95), rgba(36, 112, 218, 0.95));
+  border-color: #75c8ff;
+  color: #fff;
+  box-shadow: 0 0 0 1px rgba(117, 200, 255, 0.18), 0 7px 20px rgba(0, 95, 190, 0.22);
+}
+
+.finder-choice input:focus-visible + span {
+  outline: 3px solid rgba(126, 196, 255, 0.95);
+  outline-offset: 3px;
 }
 
 .finder-actions {
