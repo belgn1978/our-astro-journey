@@ -22,7 +22,7 @@
   }
 
   var API_BASE = resolveApiBase();
-  var BASKET_KEY = 'oaj-data-finder-basket';
+  var BASKET_KEY = 'oaj-data-finder-basket-v2';
 
   /* ---------- DOM references ---------- */
 
@@ -854,7 +854,8 @@
       intendedFilter = intendedFilter[idIndex] || '';
       if (intendedFilter) {
         candidates = candidates.filter(function (p) {
-          return (p.filters || []).indexOf(intendedFilter) !== -1;
+          var effective = (p.filters || []).map(normaliseFilterName).filter(Boolean);
+          return effective.length === 1 && effective[0] === intendedFilter;
         });
       }
       var chosen = null;
@@ -877,6 +878,17 @@
         ];
       }
     });
+
+
+    var selectedRecommended = merged.filter(function (p) { return p.recommended; });
+    if (selectedRecommended.length !== selectedIds.length) {
+      merged.forEach(function (p) {
+        p.recommended = false;
+        if (p.recommendReasons && p.recommendReasons.length) {
+          p.recommendReasons = ['Not recommended automatically because a clean one-filter colour set could not be verified'];
+        }
+      });
+    }
 
     var recommended = merged.filter(function (p) { return p.recommended; });
     return {
