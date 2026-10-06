@@ -1,0 +1,5 @@
+/* Affiliate conversion helpers */
+.affiliate-highlight{border:1px solid rgba(126,196,255,.35);background:linear-gradient(135deg,rgba(74,158,255,.12),rgba(139,92,246,.10));}
+.affiliate-code{display:inline-block;padding:.18rem .55rem;border:1px solid rgba(255,255,255,.25);border-radius:.45rem;font-size:1.1em;letter-spacing:.06em;}
+.affiliate-actions{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;margin:1rem 0;}
+.affiliate-fineprint{font-size:.86rem;opacity:.78;}
