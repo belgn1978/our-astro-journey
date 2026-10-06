@@ -1,0 +1,20 @@
+/* Our Astro Journey support panel */
+.oaj-support-section {
+  padding: 3rem 1.25rem;
+  background: radial-gradient(circle at 80% 20%, rgba(139,92,246,.18), transparent 34%), var(--section-bg);
+  color: var(--section-text);
+}
+.oaj-support-card {
+  width: min(920px, 100%);
+  margin: 0 auto;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  border: 1px solid rgba(126,196,255,.28);
+  border-radius: 1.25rem;
+  background: linear-gradient(135deg, rgba(74,158,255,.10), rgba(139,92,246,.10));
+  box-shadow: 0 22px 55px var(--shadow);
+  text-align: center;
+}
+.oaj-support-card h2 { margin: 0 0 .65rem; }
+.oaj-support-card p { max-width: 720px; margin: 0 auto 1.25rem; color: rgba(244,244,244,.82); }
+.oaj-support-card .button { min-width: 190px; }
+.oaj-support-note { display:block; margin-top:.8rem; font-size:.78rem; color:rgba(244,244,244,.62); }
