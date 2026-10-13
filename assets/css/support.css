@@ -25,3 +25,23 @@
 .oaj-support-hero { background: rgba(74,158,255,.18); border: 1px solid rgba(180,222,255,.6); }
 .oaj-support-hero:hover, .oaj-support-hero:focus-visible { background: rgba(74,158,255,.35); }
 #support-oaj { scroll-margin-top: 6rem; }
+
+/* Homepage heading: comfortable measure and balanced mobile wrapping. */
+#section-cta .cta-container #cta-heading {
+  max-width: 24ch;
+  width: min(100%, 850px);
+  margin-inline: auto;
+  padding-inline: .5rem;
+  font-size: clamp(1.9rem, 4.5vw, 3.5rem);
+  line-height: 1.16;
+  letter-spacing: -.025em;
+  text-wrap: balance;
+}
+@media (max-width: 700px) {
+  #section-cta .cta-container #cta-heading {
+    max-width: 19ch;
+    font-size: clamp(1.8rem, 7vw, 2.35rem);
+    line-height: 1.2;
+    padding-inline: .25rem;
+  }
+}
