@@ -18,3 +18,10 @@
 .oaj-support-card p { max-width: 720px; margin: 0 auto 1.25rem; color: rgba(244,244,244,.82); }
 .oaj-support-card .button { min-width: 190px; }
 .oaj-support-note { display:block; margin-top:.8rem; font-size:.78rem; color:rgba(244,244,244,.62); }
+
+/* Make voluntary support discoverable without interrupting browsing. */
+.oaj-support-nav { color: #c4e6ff; }
+.oaj-support-nav i, .oaj-support-hero i { margin-right: .35em; }
+.oaj-support-hero { background: rgba(74,158,255,.18); border: 1px solid rgba(180,222,255,.6); }
+.oaj-support-hero:hover, .oaj-support-hero:focus-visible { background: rgba(74,158,255,.35); }
+#support-oaj { scroll-margin-top: 6rem; }
