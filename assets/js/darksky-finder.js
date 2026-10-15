@@ -23,12 +23,22 @@
   // Public Nominatim permits low-volume reverse lookups (maximum 1 request/second).
   // Cache results locally to avoid repeating lookups during subsequent searches.
   const placeCache = new Map();
+  const PLACE_CACHE_PREFIX = 'oaj_place_v1_';
+  const PLACE_CACHE_TTL = 30 * 24 * 60 * 60 * 1000;
+  const AUTO_LOOKUP_LIMIT = 3;
   let lookupQueue = Promise.resolve();
   let lastLookupAt = 0;
   const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
   function nearbyName(lat, lon) {
     const key = lat.toFixed(4) + ',' + lon.toFixed(4);
     if (placeCache.has(key)) return Promise.resolve(placeCache.get(key));
+    try {
+      const cached = JSON.parse(localStorage.getItem(PLACE_CACHE_PREFIX + key) || 'null');
+      if (cached && cached.expires > Date.now() && cached.label) {
+        placeCache.set(key, cached.label);
+        return Promise.resolve(cached.label);
+      }
+    } catch (_) { /* Storage can be unavailable. */ }
     const task = lookupQueue.catch(() => {}).then(async () => {
       if (placeCache.has(key)) return placeCache.get(key);
       await delay(Math.max(0, 1100 - (Date.now() - lastLookupAt)));
@@ -43,6 +53,7 @@
         a.county, a.state].filter((part, i, parts) => part && parts.indexOf(part) === i).slice(0, 2).join(', ');
       const label = name || data.name || 'Remote or unnamed area';
       placeCache.set(key, label);
+      try { localStorage.setItem(PLACE_CACHE_PREFIX + key, JSON.stringify({ label, expires: Date.now() + PLACE_CACHE_TTL })); } catch (_) { /* Storage optional. */ }
       return label;
     });
     lookupQueue = task.catch(() => {});
@@ -95,7 +106,7 @@
           empty.textContent = 'No sampled points matched that Bortle level. Try a wider radius or another level.';
           host.appendChild(empty);
         }
-        results.forEach(p => {
+        results.forEach((p, index) => {
           const article = document.createElement('article');
           article.className = 'darksky-site';
           const lat = Number(p.latitude), lon = Number(p.longitude);
@@ -109,7 +120,8 @@
             '<span class="darksky-result-subtitle">Modeled light pollution level</span></div>' +
             '<div class="darksky-sqm-display"><strong>' + escapeHtml(sqm) + '</strong>' +
             '<span>mag/arcsec² · SQM</span><small>Higher = darker</small></div></div>' +
-            '<div class="darksky-nearby-place"><span>Nearby named area</span><strong class="darksky-place-name">Looking up nearby place…</strong><small>Approximate place name, not the exact sampling point</small></div>' +
+            '<div class="darksky-nearby-place"><span>Nearby named area</span><strong class="darksky-place-name">' + (index < AUTO_LOOKUP_LIMIT ? 'Looking up nearby place…' : 'Place name available on request') + '</strong><small>Approximate place name, not the exact sampling point</small>' +
+            (index < AUTO_LOOKUP_LIMIT ? '' : '<button class="darksky-name-button" type="button">Find nearby place name</button>') + '</div>' +
             '<div class="darksky-result-details">' +
             '<span><strong>Distance from search centre</strong><b>' + escapeHtml((p.distance / KM_PER_MILE).toFixed(1)) + ' miles</b></span>' +
             '<span><strong>Sample coordinates</strong><b>' + escapeHtml(lat.toFixed(4)) + ', ' + escapeHtml(lon.toFixed(4)) + '</b></span></div>' +
@@ -141,11 +153,21 @@
             }
           });
           host.appendChild(article);
-          nearbyName(lat, lon).then(name => {
-            if (article.isConnected) article.querySelector('.darksky-place-name').textContent = name;
+          const nameNode = article.querySelector('.darksky-place-name');
+          const loadName = () => nearbyName(lat, lon).then(name => {
+            if (article.isConnected) nameNode.textContent = name;
           }).catch(() => {
-            if (article.isConnected) article.querySelector('.darksky-place-name').textContent = 'Place name unavailable · view map';
+            if (article.isConnected) nameNode.textContent = 'Place name unavailable · view map';
           });
+          if (index < AUTO_LOOKUP_LIMIT) {
+            loadName();
+          } else {
+            article.querySelector('.darksky-name-button')?.addEventListener('click', event => {
+              event.currentTarget.disabled = true;
+              event.currentTarget.textContent = 'Looking up…';
+              loadName().finally(() => event.currentTarget.remove());
+            }, { once: true });
+          }
         });
       }
       status('Found ' + results.length + ' matching sampled estimates near ' + label +
