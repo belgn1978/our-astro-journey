@@ -6,7 +6,7 @@ Last updated: 2026-10-15 (Europe/London)
 
 Migrate Our Astro Journey from the existing static HTML/CSS/JavaScript site to Next.js, React and TypeScript, preferably with the App Router and static export, while preserving its public URLs, content, SEO, styling, interactive tools and current production availability.
 
-**Status: Phase 1 audit and safe preparation in progress.** The public GitHub Pages branch `main` has not been modified. A dedicated development branch was created. The initial repository tree and all current HTML page metadata/script references were inventoried. Source-level behavior, API dependencies, hosting workflow, credentials handling and full regression baseline still need review. No Next.js files have been added yet.
+**Status: Phase 1 audit completed; Next.js foundation is next.** The public GitHub Pages branch `main` has not been modified. A dedicated development branch was created. The repository tree, all current HTML metadata/script references, key tool code paths, PHP API documentation and IONOS workflow have been reviewed. No Next.js files have been added yet.
 
 ## 2. Repository and development branch
 
@@ -21,7 +21,7 @@ Migrate Our Astro Journey from the existing static HTML/CSS/JavaScript site to N
 
 - Static multi-page site: 29 HTML files (including two review directory index pages), shared CSS and browser JavaScript under `assets/`.
 - GitHub Pages is enabled and `main` currently represents production.
-- Root includes `.htaccess`, `CNAME`, `robots.txt`, `sitemap.xml`, and `.github/workflows/deploy-ionos.yml`. The workflow and deploy guide must be inspected to reconcile current production deployment configuration and any IONOS staging/deployment work.
+- Root includes `.htaccess`, `CNAME`, `robots.txt`, `sitemap.xml`, and `.github/workflows/deploy-ionos.yml`. The workflow is manual-only (workflow_dispatch), checks out Node 18, expects next-app, runs npm ci, then deletes all files in the configured remote target and uploads next-app/out/*. The workflow comments and DEPLOY.md conflict about push-to-main behavior; the YAML controls and currently has no push trigger. Its target directory is unresolved and destructive, so do not run it until an isolated staging directory is confirmed.
 - Root also contains `backend-ionos/` PHP endpoints and configuration. This is an existing service boundary and may be used by tools. It must not be moved, modified or exposed during this migration without a reviewed dependency map. A tracked `backend-ionos/config.php` exists; its contents have not been reproduced in this handover. Secret handling must be checked before any commit/archive.
 - No Node/Next package manifest appeared in the repository tree at the audited `main` head.
 
@@ -151,7 +151,7 @@ All root pages currently resolve at `https://ourastrojourney.co.uk/<filename>`; 
 
 - URL changes can affect search indexing and inbound links; preserve paths and metadata, inspect full sitemap, and use verified permanent redirects only where needed.
 - Client-only rendering can make important content harder to crawl; pre-render page content and target listings.
-- Existing PHP back-end may be required for catalogue, downloads or search. Static export cannot replace those endpoints by itself.
+- Existing PHP back-end provides the MAST Hubble/JWST Data Finder API at https://api.ourastrojourney.co.uk; no API key or database is required per its README. Static export can call this separate API but cannot replace its PHP endpoints.
 - Current `main`/GitHub Pages is the rollback source and must remain deployable until cutover is explicitly approved.
 - Do not overwrite shared IONOS directories or Astra subdomains/configuration; staging requires an isolated directory/subdomain.
 - Never include API secrets in browser bundles, commits, handover text, or generated deployment archives.
@@ -161,12 +161,43 @@ All root pages currently resolve at `https://ourastrojourney.co.uk/<filename>`; 
 1. Inspect `.github/workflows/deploy-ionos.yml`, `DEPLOY.md`, `.htaccess`, full sitemap and navigation/footer code.
 2. Read tool-specific JS and PHP endpoint call sites to map APIs, location permission flows, query parameters, affiliate/donation interactions and analytics exclusions.
 3. Record each URL, feature, API/service, metadata and deployment finding in this handover; update audit statuses.
-4. Inspect available local authoring/testing access. Obtain a repository checkout or set up the local branch before implementing the build.
-5. Add the Next.js + TypeScript App Router foundation and preserve existing design/assets; configure static export only after backend decisions.
+4. Inspect available local authoring/testing access. Obtain a repository checkout or set up the local branch before claiming any build/typecheck/browser test.
+5. Add the Next.js + TypeScript App Router foundation in next-app/ (the existing manual workflow expects that path), preserve existing design/assets, and pin a supported Node version in CI. Configure static export only after backend decisions.
 6. Add shared layout/navigation/footer (including Instagram, TikTok, Threads and YouTube) and migrate one representative informational page; test before continuing.
 7. Update this handover after each verified milestone and commit it regularly on `nextjs-migration-2026-10`.
 
 ## 15. Last completed task and current work in progress
 
-- Last completed: repository tree and current page metadata/source references inventoried; development branch created.
-- Current work in progress: detailed source audit of tools, deployment configuration and service/API boundaries before choosing a static-export implementation.
+- Last completed: repository tree and all page metadata/source references inventoried; detailed audit of dark-skies, target catalogue, analytics, MAST API, contact form, workflow, deployment guide and rewrite rules; initial handover committed.
+- Current work in progress: implement an isolated Next.js foundation under next-app/, then obtain a local build/test environment.
+
+
+## Audit update — 2026-10-15
+
+### Verified service and behavior findings
+
+- Dark Skies Finder: assets/js/darksky-finder.js calls the existing Cloudflare Worker at https://oaj-darksky-proxy.matt-f77.workers.dev/ for modeled sky-quality points (Bortle/SQM). It reverse-geocodes points with OpenStreetMap Nominatim, caches place lookups locally, and shows curated astronomy sites from darksky-known-sites.js with Google Maps links. The current tool includes Bortle filtering and nearby site search. No API key appears in the reviewed client file.
+- Target Catalogue: assets/js/target-catalogue.js computes visibility, altitude, transit, best months and approximate integration guidance from local target data and local sidereal calculations. Saved location and equipment profiles use localStorage. The default observing profile is a broad northern-sky view (53° N, 2° W, Bortle 6). Preserve user-controlled location/equipment features and query-driven target/category page behavior. Data are in four target-data*.js files.
+- Hubble/JWST: the active downloader page currently shows a maintenance message, while the legacy data finder implementation and PHP service remain present. Backend documentation identifies API host api.ourastrojourney.co.uk, PHP 8+, cURL and SimpleXML, and anonymous official STScI MAST calls. Front-end scripts have API-base overrides for localhost and query param ?api=; basket state is in localStorage. No database, credential or paid API is documented.
+- ISS Transit Planner: the page directs users to the free external Transit-Finder service and includes location/coordinate assistance. It is not evidence of a local orbital prediction API; detailed location interaction still needs full source inspection.
+- Weather: the page links to Clear Outside and provides an external fallback; exact current data-loading behavior remains to inspect.
+- Contact: HTML form POSTs to Formspree endpoint https://formspree.io/f/xnjlekvb. Preserve behavior and privacy notice; never replace with a dead static form.
+- News/launch API: assets/js/main.js calls Launch Library 2 at ll.thespacedevs.com/2.2.0/launch/upcoming/ without a key and retains celestial events when API fetch fails.
+- Analytics: analytics-control.js uses GA4 measurement ID G-J4NC85BT9H, consent state, persistent owner opt-out (oaj_owner=1 / oaj_owner=0) and session test opt-out (oaj_test=1 / oaj_test=0). Query flags are removed from the visible URL after being stored. Automated browsers are also excluded. Preserve these semantics.
+- Affiliate/donation: affiliate clicks are sent to GA only when analytics is enabled. Homepage support links have event tracking and existing support styling; preserve payment/link destinations and disclosure after source audit.
+- SEO/URLs: .htaccess canonicalizes www to apex, redirects index.html to root, and handles duplicate review paths. Legacy catalogue detail/category pages have no canonical in sampled source. Full sitemap validation remains required.
+- IONOS hosting: Next.js official docs confirm output: export emits static HTML/CSS/JS that can be served on a static web server; runtime-dependent features are unsupported. IONOS documents SFTP/SSH access for Web Hosting. The exact current Web Hosting Plus contract's directory, staging capability, rewrite behavior and security settings have not been verified. No DNS or IONOS configuration was changed.
+- Node/CI: official Next.js v16 docs require Node.js 20.9 or later. Existing manual IONOS workflow uses Node 18; this must be updated before it can build a Next 16 app, but not until the deployment target is confirmed safe.
+
+### Audit classification
+
+- URLs and page metadata: completed for all 29 HTML files; complete sitemap parity/redirect reconciliation: in progress.
+- Tool/service inventory: partially completed; details above verified from source/docs. Remaining: exact weather.html fetch behavior, ISS location helper behavior, all catalogue query variants, browser/API limits, gallery/review data sources and full interactive links.
+- Secrets: no secret value was copied or printed. backend-ionos/config.php exists as a tracked file and was deliberately not read. Reviewed backend README says no secrets are required; still verify the file only with a redacted/secret-safe scan before deciding whether its presence is an issue.
+- Deployment plan: in progress; existing workflow is manual and destructive at its configured remote path. Do not dispatch until a separate staging target is established and confirmed to contain no live/Astra data.
+
+### Official references checked
+
+- Next.js static export: https://nextjs.org/docs/app/guides/static-exports
+- Next.js v16 requirements: https://nextjs.org/docs/app/guides/upgrading/version-16
+- IONOS SFTP/SSH account guide: https://www.ionos.co.uk/help/hosting/setting-up-and-managing-ftp-access/creating-an-sftp/ssh-account/
