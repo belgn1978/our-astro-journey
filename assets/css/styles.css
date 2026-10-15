@@ -4985,3 +4985,81 @@ footer {
     padding-right: 1rem;
   }
 }
+
+/* Dark Sky Finder: responsive controls and sky-quality estimate cards */
+.darksky-filters { display:flex; flex-wrap:wrap; gap:1rem; margin:1.25rem 0; }
+.darksky-filters label { display:flex; flex-direction:column; gap:.45rem; flex:1 1 190px; font-weight:700; color:var(--section-text); }
+.darksky-filters select { width:100%; min-height:46px; padding:.65rem .85rem; border:1px solid rgba(126,196,255,.42); border-radius:12px; background:#111a2a; color:#fff; font:inherit; }
+.darksky-filters select:focus-visible { outline:3px solid #7ec4ff; outline-offset:2px; }
+.darksky-summary { margin:1rem 0; padding:.9rem 1rem; background:rgba(74,158,255,.1); border:1px solid rgba(126,196,255,.25); border-radius:12px; color:var(--section-text); }
+.darksky-summary[hidden] { display:none; }
+#darksky-list { display:grid; gap:1rem; margin-top:1rem; }
+#darksky-list .darksky-site { display:flex; flex-direction:column; gap:1rem; padding:1.2rem; border-radius:16px; border:1px solid rgba(126,196,255,.2); background:rgba(255,255,255,.065); }
+.darksky-result-heading { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:.75rem; }
+.darksky-result-eyebrow { display:block; font-size:.82rem; color:#a7c8ef; margin-bottom:.3rem; }
+.darksky-result-heading h3 { margin:0; font-size:1.3rem; color:#fff; }
+.darksky-sqm-badge { display:inline-flex; padding:.5rem .85rem; border:1px solid rgba(126,196,255,.45); border-radius:999px; background:rgba(74,158,255,.16); font-weight:800; color:#d6ebff; white-space:nowrap; }
+.darksky-result-details { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.8rem; }
+.darksky-result-details span { display:flex; flex-direction:column; gap:.2rem; color:#d5e1f3; overflow-wrap:anywhere; }
+.darksky-result-details strong { color:#9bb9d9; font-size:.82rem; }
+#darksky-list .darksky-map-button { align-self:flex-start; display:inline-flex; align-items:center; justify-content:center; min-height:44px; text-decoration:none; }
+#darksky-location-btn { min-height:44px; }
+@media(max-width:640px) { .darksky-result-details { grid-template-columns:1fr; } .darksky-filters { gap:.8rem; } #darksky-list .darksky-map-button { align-self:stretch; } }
+
+/* Dark Sky Finder: readable sky-quality cards and optional mini maps */
+#darksky-list .darksky-site { gap:1.15rem; padding:clamp(1.1rem,2.5vw,1.6rem); }
+.darksky-result-title h3 { font-size:clamp(1.55rem,3vw,2rem); line-height:1.15; letter-spacing:-.02em; margin:.25rem 0; }
+.darksky-result-subtitle { font-size:.9rem; color:#bbcadc; }
+.darksky-sqm-display { display:flex; flex-direction:column; align-items:flex-end; gap:.12rem; padding:.8rem 1rem; border:1px solid rgba(126,196,255,.38); border-radius:14px; background:rgba(74,158,255,.11); color:#fff; }
+.darksky-sqm-display strong { font-size:clamp(1.4rem,2.6vw,1.9rem); line-height:1.1; font-variant-numeric:tabular-nums; }
+.darksky-sqm-display span { font-size:.85rem; color:#d2e4fa; }
+.darksky-sqm-display small { color:#a7c9f3; font-size:.78rem; }
+.darksky-result-details { padding:1rem 0; border-top:1px solid rgba(255,255,255,.12); border-bottom:1px solid rgba(255,255,255,.12); }
+.darksky-result-details span { gap:.45rem; }
+.darksky-result-details strong { font-size:.86rem; }
+.darksky-result-details b { font-size:1.08rem; color:#fff; font-weight:700; }
+.darksky-card-actions { display:flex; flex-wrap:wrap; gap:.75rem; }
+#darksky-list .darksky-card-actions .button { margin:0; min-height:46px; padding:.7rem 1.1rem; border-radius:12px; cursor:pointer; }
+#darksky-list .darksky-preview-button { background:rgba(126,196,255,.12); border:1px solid rgba(126,196,255,.5); color:#e2f1ff; }
+.darksky-mini-map[hidden] { display:none; }
+.darksky-mini-map { overflow:hidden; border:1px solid rgba(126,196,255,.24); border-radius:14px; background:#111827; }
+.darksky-mini-map iframe { display:block; width:100%; height:300px; border:0; }
+.darksky-map-credit { margin:0; padding:.65rem .8rem; font-size:.78rem; color:#cbd8e7; }
+@media(max-width:640px) {
+  .darksky-result-heading { align-items:flex-start; }
+  .darksky-sqm-display { align-items:flex-start; width:100%; }
+  .darksky-card-actions { flex-direction:column; }
+  #darksky-list .darksky-card-actions .button { width:100%; text-align:center; }
+  .darksky-mini-map iframe { height:240px; }
+}
+
+/* Nearby place name is the primary geographic label, not raw coordinates. */
+.darksky-nearby-place { display:flex; flex-direction:column; gap:.3rem; padding:1rem 1.1rem; background:rgba(126,196,255,.075); border:1px solid rgba(126,196,255,.2); border-radius:12px; }
+.darksky-nearby-place > span { color:#b6cce7; font-size:.88rem; font-weight:700; }
+.darksky-nearby-place > strong { color:#fff; font-size:clamp(1.15rem,2vw,1.4rem); line-height:1.3; }
+.darksky-nearby-place > small { color:#b5c6da; font-size:.8rem; }
+
+.darksky-name-button { align-self:flex-start; margin-top:.4rem; padding:.45rem .75rem; border-radius:9px; border:1px solid rgba(126,196,255,.5); background:rgba(126,196,255,.1); color:#d9eeff; font:inherit; font-size:.85rem; cursor:pointer; }
+.darksky-name-button:focus-visible { outline:3px solid #7ec4ff; outline-offset:2px; }
+
+/* Named astronomy sites remain distinct from sampled sky-quality points. */
+.darksky-known-section,.darksky-modeled-section { margin-top:1.8rem; }
+.darksky-known-section h2,.darksky-modeled-section h2 { margin-bottom:.6rem; }
+#darksky-known-sites { display:grid; gap:1rem; margin-top:1rem; }
+#darksky-known-sites .darksky-known-card { padding:1.2rem; border:1px solid rgba(126,196,255,.3); border-radius:16px; background:rgba(126,196,255,.08); color:var(--section-text); }
+#darksky-known-sites .darksky-known-card h3 { font-size:1.35rem; margin:.3rem 0 .6rem; }
+#darksky-known-sites .darksky-known-card p { margin:.35rem 0; }
+.darksky-site-note { opacity:.8; font-size:.88rem; }
+
+/* Dark Sky Finder layout: each results section spans the full panel width. */
+.darkskies-page .darksky-panel { display:block; width:100%; min-width:0; }
+.darkskies-page .darksky-panel > .darksky-known-section,
+.darkskies-page .darksky-panel > .darksky-modeled-section { display:block; width:100%; min-width:0; clear:both; margin:2rem 0 0; padding:0; }
+.darkskies-page .darksky-panel > .darksky-known-section > h2,
+.darkskies-page .darksky-panel > .darksky-modeled-section > h2 { display:block; width:100%; margin:0 0 .65rem; font-size:clamp(1.3rem,2.4vw,1.7rem); }
+.darkskies-page #darksky-known-summary { display:block; width:100%; margin:0 0 1rem; color:#c9d9ed; }
+.darkskies-page #darksky-known-sites,
+.darkskies-page #darksky-list { display:grid; grid-template-columns:minmax(0,1fr); width:100%; min-width:0; gap:1rem; }
+.darkskies-page #darksky-known-sites .darksky-known-card { display:flex; flex-direction:column; gap:.45rem; width:100%; min-width:0; box-sizing:border-box; }
+.darkskies-page #darksky-known-sites .darksky-known-card strong { display:inline; margin:0; }
+.darkskies-page #darksky-known-sites .darksky-known-card .darksky-card-actions { margin-top:.75rem; }
