@@ -140,7 +140,7 @@
                 <button id="darksky-search-btn" class="button" type="button">Search</button>
                 <button id="darksky-location-btn" class="button button-secondary" type="button">Use my location</button>
               </div>
-              <div class="darksky-filters" style="display:flex;flex-wrap:wrap;gap:1rem;margin:1rem 0;">
+              <div class="darksky-filters">
                 <label for="darksky-radius">Search radius
                   <select id="darksky-radius">
                     <option value="10">10 miles</option>
@@ -166,7 +166,8 @@
                 </label>
               </div>
               <p class="form-note">Results are up to 37 sampled, modeled sky-brightness estimates, not a complete map of dark areas or confirmed accessible observing sites. Check public access, safety and local conditions before travelling.</p>
-              <p id="darksky-status" class="darksky-status">Search for a location to see nearby dark sky sites.</p>
+              <p id="darksky-status" class="darksky-status" role="status" aria-live="polite">Search for a location to see modeled sky-quality estimates.</p>
+              <p id="darksky-summary" class="darksky-summary" hidden></p>
             </div>
             <div id="darksky-list" class="darksky-list"></div>
           </div>
@@ -201,6 +202,6 @@
     </footer>
 
     <script src="./assets/js/main.js?v=20261015-darksky1"></script>
-    <script src="./assets/js/darksky-finder.js?v=20261015-1"></script>
+    <script src="./assets/js/darksky-finder.js?v=20261015-2"></script>
   </body>
 </html>
