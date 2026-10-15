@@ -25,7 +25,6 @@
   const placeCache = new Map();
   const PLACE_CACHE_PREFIX = 'oaj_place_v1_';
   const PLACE_CACHE_TTL = 30 * 24 * 60 * 60 * 1000;
-  const AUTO_LOOKUP_LIMIT = 3;
   let lookupQueue = Promise.resolve();
   let lastLookupAt = 0;
   const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -106,7 +105,7 @@
           empty.textContent = 'No sampled points matched that Bortle level. Try a wider radius or another level.';
           host.appendChild(empty);
         }
-        results.forEach((p, index) => {
+        results.forEach(p => {
           const article = document.createElement('article');
           article.className = 'darksky-site';
           const lat = Number(p.latitude), lon = Number(p.longitude);
@@ -120,8 +119,7 @@
             '<span class="darksky-result-subtitle">Modeled light pollution level</span></div>' +
             '<div class="darksky-sqm-display"><strong>' + escapeHtml(sqm) + '</strong>' +
             '<span>mag/arcsec² · SQM</span><small>Higher = darker</small></div></div>' +
-            '<div class="darksky-nearby-place"><span>Nearby named area</span><strong class="darksky-place-name">' + (index < AUTO_LOOKUP_LIMIT ? 'Looking up nearby place…' : 'Place name available on request') + '</strong><small>Approximate place name, not the exact sampling point</small>' +
-            (index < AUTO_LOOKUP_LIMIT ? '' : '<button class="darksky-name-button" type="button">Find nearby place name</button>') + '</div>' +
+            '<div class="darksky-nearby-place"><span>Nearby named area</span><strong class="darksky-place-name">Looking up nearby place…</strong><small>Approximate place name, not the exact sampling point</small></div>' +
             '<div class="darksky-result-details">' +
             '<span><strong>Distance from search centre</strong><b>' + escapeHtml((p.distance / KM_PER_MILE).toFixed(1)) + ' miles</b></span>' +
             '<span><strong>Sample coordinates</strong><b>' + escapeHtml(lat.toFixed(4)) + ', ' + escapeHtml(lon.toFixed(4)) + '</b></span></div>' +
@@ -159,15 +157,7 @@
           }).catch(() => {
             if (article.isConnected) nameNode.textContent = 'Place name unavailable · view map';
           });
-          if (index < AUTO_LOOKUP_LIMIT) {
-            loadName();
-          } else {
-            article.querySelector('.darksky-name-button')?.addEventListener('click', event => {
-              event.currentTarget.disabled = true;
-              event.currentTarget.textContent = 'Looking up…';
-              loadName().finally(() => event.currentTarget.remove());
-            }, { once: true });
-          }
+          loadName();
         });
       }
       status('Found ' + results.length + ' matching sampled estimates near ' + label +
