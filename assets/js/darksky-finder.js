@@ -108,7 +108,7 @@
       const qualityNode = card.querySelector('.darksky-known-quality');
       getKnownSiteQuality(site).then(q => {
         if (card.isConnected) qualityNode.textContent = 'Estimated Bortle ' + q.bortle +
-          ' · SQM ' + q.sqm + ' mag/arcsec² (modeled sample ' + Math.round(q.distance * 1000) + ' m away)';
+          ' · SQM ' + q.sqm + ' mag/arcsec² (modeled estimate at this location)';
       }).catch(() => {
         if (card.isConnected) qualityNode.textContent = 'Estimated Bortle unavailable for this location';
       });
