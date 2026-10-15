@@ -1,3 +1,5 @@
+import { LEGACY_SUPPORT_URL } from "../lib/site";
+
 export function DonationSection() {
   return (
     <section id="support-oaj" className="oaj-support-section" aria-labelledby="support-oaj-heading">
@@ -8,7 +10,7 @@ export function DonationSection() {
           and you would like to support what we are building, you can leave a small tip to help us keep
           creating and exploring.
         </p>
-        <a className="button" href="https://ko-fi.com/urastrojourney" target="_blank" rel="noopener noreferrer" data-oaj-support>
+        <a className="button" href={LEGACY_SUPPORT_URL} target="_blank" rel="noopener noreferrer" data-oaj-support>
           Support OAJ
         </a>
         <span className="oaj-support-note">Optional one-time support via Ko-fi.</span>

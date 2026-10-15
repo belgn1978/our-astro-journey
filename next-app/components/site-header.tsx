@@ -1,16 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-const links = [
-  ["Tools", "/tools.html"],
-  ["Gallery", "/gallery.html"],
-  ["Reviews", "/reviews.html"],
-  ["Resources", "/useful-resources.html"],
-  ["News", "/news.html"],
-  ["About", "/about.html"],
-  ["Contact", "/contact.html"],
-] as const;
+import { primaryNavigation } from "../lib/site";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -40,7 +31,7 @@ export function SiteHeader() {
           <span aria-hidden="true">{open ? "×" : "☰"}</span>
         </button>
         <nav id="navigation-main" aria-label="Primary navigation">
-          {links.map(([label, href]) => <a href={href} className="nav-link" key={href}>{label}</a>)}
+          {primaryNavigation.map(({ label, href }) => <a href={href} className="nav-link" key={href}>{label}</a>)}
           <a href="/#support-oaj" className="nav-link oaj-support-nav">Support us</a>
         </nav>
         <nav
@@ -53,7 +44,7 @@ export function SiteHeader() {
           <button type="button" id="mobile-menu-close" className="mobile-menu-close" aria-label="Close navigation menu" onClick={() => setOpen(false)}>
             <span aria-hidden="true">×</span>
           </button>
-          {links.map(([label, href]) => (
+          {primaryNavigation.map(({ label, href }) => (
             <a href={href} className="nav-link mobile-nav-link" key={href} onClick={() => setOpen(false)}>{label}</a>
           ))}
           <a href="/#support-oaj" className="nav-link mobile-nav-link oaj-support-nav" onClick={() => setOpen(false)}>Support us</a>
