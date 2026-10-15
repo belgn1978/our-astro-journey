@@ -14,7 +14,7 @@ Migrate Our Astro Journey from the existing static HTML/CSS/JavaScript site to N
 - Default/production branch: `main`
 - Development branch: `nextjs-migration-2026-10`
 - Development branch base: `main` at `9267704fc2797436a96ba5c0c2028ae0648d4d52` (2026-10-15, “Add YouTube channel to social footer”).
-- Latest development branch commit before this handover update: `356fa0e712daebd3547d33a6b6c983ed8da75f48` (centralize site links and SEO metadata).
+- Latest implementation commit: `356fa0e712daebd3547d33a6b6c983ed8da75f48` (centralize site links and SEO metadata); later commits record audit and handover updates.
 - Repo is public; GitHub Pages is enabled. No local checkout was available in this work session, so repository reads/writes used the GitHub connector. Local install/build/browser tests are not yet possible from this workspace.
 - Latest observed commit: `9267704fc2797436a96ba5c0c2028ae0648d4d52`.
 
