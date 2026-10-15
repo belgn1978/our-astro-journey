@@ -138,7 +138,34 @@
                 <label for="darksky-location-input" class="visually-hidden">Enter a place or postcode</label>
                 <input id="darksky-location-input" name="darksky-location" type="search" autocomplete="on" placeholder="Enter a place, postcode, or zip code" aria-label="Enter a place, postcode, or zip code">
                 <button id="darksky-search-btn" class="button" type="button">Search</button>
+                <button id="darksky-location-btn" class="button button-secondary" type="button">Use my location</button>
               </div>
+              <div class="darksky-filters" style="display:flex;flex-wrap:wrap;gap:1rem;margin:1rem 0;">
+                <label for="darksky-radius">Search radius
+                  <select id="darksky-radius">
+                    <option value="10">10 miles</option>
+                    <option value="25" selected>25 miles</option>
+                    <option value="50">50 miles</option>
+                    <option value="100">100 miles</option>
+                    <option value="200">200 miles</option>
+                  </select>
+                </label>
+                <label for="darksky-bortle">Bortle level
+                  <select id="darksky-bortle">
+                    <option value="any">Any level</option>
+                    <option value="1">Bortle 1</option>
+                    <option value="2">Bortle 2</option>
+                    <option value="3">Bortle 3</option>
+                    <option value="4">Bortle 4</option>
+                    <option value="5">Bortle 5</option>
+                    <option value="6">Bortle 6</option>
+                    <option value="7">Bortle 7</option>
+                    <option value="8">Bortle 8</option>
+                    <option value="9">Bortle 9</option>
+                  </select>
+                </label>
+              </div>
+              <p class="form-note">Results are 13 sampled, modeled sky-brightness estimates, not a complete map of dark areas or confirmed accessible observing sites. Check public access, safety and local conditions before travelling.</p>
               <p id="darksky-status" class="darksky-status">Search for a location to see nearby dark sky sites.</p>
             </div>
             <div id="darksky-list" class="darksky-list"></div>
@@ -173,6 +200,7 @@
       </div>
     </footer>
 
-    <script src="./assets/js/main.js?v=20260917-nav3"></script>
+    <script src="./assets/js/main.js?v=20261015-darksky1"></script>
+    <script src="./assets/js/darksky-finder.js?v=20261015-1"></script>
   </body>
 </html>
