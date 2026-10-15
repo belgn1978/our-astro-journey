@@ -1,0 +1,22 @@
+@import url("/assets/css/reset.css");
+@import url("/assets/css/styles.css");
+@import url("/assets/css/support.css");
+
+.migration-preview {
+  width: min(100% - 2rem, 1080px);
+  margin: 2rem auto 4rem;
+}
+.migration-preview .section-card {
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+}
+.migration-preview h1 {
+  margin: 0 0 1rem;
+}
+.migration-preview p {
+  max-width: 70ch;
+}
+.migration-preview-notice {
+  border-left: 4px solid var(--color-accent, #4a9eff);
+  padding: 1rem 1.25rem;
+  background: var(--surface, rgba(255,255,255,.08));
+}
