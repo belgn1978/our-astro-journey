@@ -35,7 +35,7 @@
     const locationButton = document.getElementById('darksky-location-btn');
     if (button) button.disabled = true;
     if (locationButton) locationButton.disabled = true;
-    status('Checking modeled sky brightness at up to 37 locations. This may take a few seconds…');
+    status('Checking modeled sky brightness at sampled locations. This may take a few seconds…');
     if (list()) list().replaceChildren();
     if (summary()) summary().hidden = true;
     try {
@@ -72,12 +72,45 @@
           article.className = 'darksky-site';
           const lat = Number(p.latitude), lon = Number(p.longitude);
           const mapUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(lat.toFixed(5) + ',' + lon.toFixed(5));
-          article.innerHTML = '<div class="darksky-result-heading"><div><span class="darksky-result-eyebrow">Modeled sky estimate</span>' +
-            '<h3>Estimated Bortle ' + escapeHtml(Math.round(Number(p.bortleClass))) + '</h3></div>' +
-            '<span class="darksky-sqm-badge">' + escapeHtml(Number(p.sqm).toFixed(2)) + ' SQM</span></div>' +
-            '<div class="darksky-result-details"><span><strong>Distance</strong>' + escapeHtml((p.distance / KM_PER_MILE).toFixed(1)) + ' miles</span>' +
-            '<span><strong>Coordinates</strong>' + escapeHtml(lat.toFixed(4)) + ', ' + escapeHtml(lon.toFixed(4)) + '</span></div>' +
-            '<a class="button darksky-map-button" href="' + mapUrl + '" target="_blank" rel="noopener noreferrer">Inspect area on map ↗</a>';
+          const sqm = Number(p.sqm).toFixed(2);
+          const bortleLabel = Math.round(Number(p.bortleClass));
+          article.innerHTML =
+            '<div class="darksky-result-heading"><div class="darksky-result-title">' +
+            '<span class="darksky-result-eyebrow">Estimated sky quality</span>' +
+            '<h3>Bortle ' + escapeHtml(bortleLabel) + '</h3>' +
+            '<span class="darksky-result-subtitle">Modeled light pollution level</span></div>' +
+            '<div class="darksky-sqm-display"><strong>' + escapeHtml(sqm) + '</strong>' +
+            '<span>mag/arcsec² · SQM</span><small>Higher = darker</small></div></div>' +
+            '<div class="darksky-result-details">' +
+            '<span><strong>Distance from search centre</strong><b>' + escapeHtml((p.distance / KM_PER_MILE).toFixed(1)) + ' miles</b></span>' +
+            '<span><strong>Sample coordinates</strong><b>' + escapeHtml(lat.toFixed(4)) + ', ' + escapeHtml(lon.toFixed(4)) + '</b></span></div>' +
+            '<div class="darksky-card-actions"><button class="button darksky-preview-button" type="button" aria-expanded="false">Show mini map</button>' +
+            '<a class="button darksky-map-button" href="' + mapUrl + '" target="_blank" rel="noopener noreferrer">Open in Google Maps ↗</a></div>' +
+            '<div class="darksky-mini-map" hidden></div>';
+          const previewButton = article.querySelector('.darksky-preview-button');
+          const preview = article.querySelector('.darksky-mini-map');
+          previewButton.addEventListener('click', () => {
+            const opening = preview.hidden;
+            preview.hidden = !opening;
+            previewButton.setAttribute('aria-expanded', String(opening));
+            previewButton.textContent = opening ? 'Hide mini map' : 'Show mini map';
+            if (opening && !preview.firstChild) {
+              const bounds = [Math.max(-90, lat - .025), Math.max(-180, lon - .04), Math.min(90, lat + .025), Math.min(180, lon + .04)];
+              const bbox = [bounds[1], bounds[0], bounds[3], bounds[2]].join(',');
+              const iframe = document.createElement('iframe');
+              iframe.title = 'Map showing sampled location at ' + lat.toFixed(4) + ', ' + lon.toFixed(4);
+              iframe.loading = 'lazy';
+              iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+              iframe.src = 'https://www.openstreetmap.org/export/embed.html?bbox=' +
+                encodeURIComponent(bbox) + '&layer=mapnik&marker=' +
+                encodeURIComponent(lat.toFixed(5) + ',' + lon.toFixed(5));
+              preview.appendChild(iframe);
+              const credit = document.createElement('p');
+              credit.className = 'darksky-map-credit';
+              credit.textContent = 'Map © OpenStreetMap contributors. A marker is not confirmation of public access.';
+              preview.appendChild(credit);
+            }
+          });
           host.appendChild(article);
         });
       }
