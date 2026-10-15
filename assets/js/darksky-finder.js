@@ -58,6 +58,25 @@
     lookupQueue = task.catch(() => {});
     return task;
   }
+  const knownQualityCache = new Map();
+  async function getKnownSiteQuality(site) {
+    const key = site.latitude + ',' + site.longitude;
+    if (knownQualityCache.has(key)) return knownQualityCache.get(key);
+    const response = await fetch(API, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ latitude: site.latitude, longitude: site.longitude, radiusKm: 1 })
+    });
+    if (!response.ok) throw new Error('Sky model unavailable');
+    const data = await response.json();
+    if (!data.success || !Array.isArray(data.points)) throw new Error('No model estimate');
+    const nearest = data.points.filter(p => Number.isFinite(Number(p.sqm)) && Number.isFinite(Number(p.bortleClass)))
+      .map(p => ({ ...p, d: distanceKm(site.latitude, site.longitude, Number(p.latitude), Number(p.longitude)) }))
+      .sort((a, b) => a.d - b.d)[0];
+    if (!nearest || nearest.d > 1.5) throw new Error('No close model sample');
+    const result = { bortle: Math.round(Number(nearest.bortleClass)), sqm: Number(nearest.sqm).toFixed(2), distance: nearest.d };
+    knownQualityCache.set(key, result);
+    return result;
+  }
   function showKnownSites(latitude, longitude, radiusKm) {
     const host = document.getElementById('darksky-known-sites');
     const summary = document.getElementById('darksky-known-summary');
@@ -79,11 +98,20 @@
         '<h3>' + escapeHtml(site.name) + '</h3>' +
         '<p>' + escapeHtml(site.region) + '</p>' +
         '<p><strong>Distance:</strong> ' + escapeHtml((site.distance / KM_PER_MILE).toFixed(1)) + ' miles</p>' +
+        '<p class="darksky-known-quality"><strong>Estimated Bortle:</strong> Checking local sky model…</p>' +
         '<p><strong>Visiting:</strong> ' + escapeHtml(site.access) + '</p>' +
+        (site.approximateCoordinates ? '<p>Map pin represents the general area, not a specific observing spot.</p>' : '') +
         '<p class="darksky-site-note">Known astronomy location, not a Bortle measurement or a guarantee of public access.</p>' +
         '<div class="darksky-card-actions"><a class="button darksky-map-button" target="_blank" rel="noopener noreferrer" href="' + map + '">View location on map ↗</a>' +
         (site.website ? '<a class="button darksky-map-button" target="_blank" rel="noopener noreferrer" href="' + escapeHtml(site.website) + '">Official website ↗</a>' : '') + '</div>';
       host.appendChild(card);
+      const qualityNode = card.querySelector('.darksky-known-quality');
+      getKnownSiteQuality(site).then(q => {
+        if (card.isConnected) qualityNode.textContent = 'Estimated Bortle ' + q.bortle +
+          ' · SQM ' + q.sqm + ' mag/arcsec² (modeled sample ' + Math.round(q.distance * 1000) + ' m away)';
+      }).catch(() => {
+        if (card.isConnected) qualityNode.textContent = 'Estimated Bortle unavailable for this location';
+      });
     });
   }
   let busy = false;
