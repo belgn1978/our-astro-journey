@@ -5041,3 +5041,12 @@ footer {
 
 .darksky-name-button { align-self:flex-start; margin-top:.4rem; padding:.45rem .75rem; border-radius:9px; border:1px solid rgba(126,196,255,.5); background:rgba(126,196,255,.1); color:#d9eeff; font:inherit; font-size:.85rem; cursor:pointer; }
 .darksky-name-button:focus-visible { outline:3px solid #7ec4ff; outline-offset:2px; }
+
+/* Named astronomy sites remain distinct from sampled sky-quality points. */
+.darksky-known-section,.darksky-modeled-section { margin-top:1.8rem; }
+.darksky-known-section h2,.darksky-modeled-section h2 { margin-bottom:.6rem; }
+#darksky-known-sites { display:grid; gap:1rem; margin-top:1rem; }
+#darksky-known-sites .darksky-known-card { padding:1.2rem; border:1px solid rgba(126,196,255,.3); border-radius:16px; background:rgba(126,196,255,.08); color:var(--section-text); }
+#darksky-known-sites .darksky-known-card h3 { font-size:1.35rem; margin:.3rem 0 .6rem; }
+#darksky-known-sites .darksky-known-card p { margin:.35rem 0; }
+.darksky-site-note { opacity:.8; font-size:.88rem; }
