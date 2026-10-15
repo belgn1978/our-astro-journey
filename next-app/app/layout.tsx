@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import type { ReactNode } from "react";
 import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
 import "./globals.css";
@@ -11,12 +12,10 @@ export const metadata: Metadata = {
   },
   description:
     "Beginner astronomy and astrophotography in plain English, with smart telescope guides, honest reviews, planning tools and real observing experiences.",
-  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     siteName: "Our Astro Journey",
     locale: "en_GB",
-    url: "/",
     images: [{ url: "/assets/images/branding/hero-ing.jpg", alt: "Night sky background from Our Astro Journey" }],
   },
   icons: {
@@ -34,7 +33,7 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="en-GB">
       <body>
