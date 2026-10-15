@@ -34,7 +34,7 @@
     const locationButton = document.getElementById('darksky-location-btn');
     if (button) button.disabled = true;
     if (locationButton) locationButton.disabled = true;
-    status('Checking modeled sky brightness at 13 locations. This may take a few seconds…');
+    status('Checking modeled sky brightness at up to 37 locations. This may take a few seconds…');
     if (list()) list().replaceChildren();
     try {
       const response = await fetch(API, {
