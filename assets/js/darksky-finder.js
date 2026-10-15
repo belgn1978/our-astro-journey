@@ -11,6 +11,7 @@
     }
   };
   const list = () => document.getElementById('darksky-list');
+  const summary = () => document.getElementById('darksky-summary');
   const escapeHtml = value => String(value).replace(/[&<>"']/g, char =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
   const distanceKm = (a, b, c, d) => {
@@ -36,6 +37,7 @@
     if (locationButton) locationButton.disabled = true;
     status('Checking modeled sky brightness at up to 37 locations. This may take a few seconds…');
     if (list()) list().replaceChildren();
+    if (summary()) summary().hidden = true;
     try {
       const response = await fetch(API, {
         method: 'POST',
@@ -51,7 +53,12 @@
           && Number.isFinite(Number(p.bortleClass)) && Number.isFinite(Number(p.sqm)))
         .map(p => ({ ...p, distance: distanceKm(latitude, longitude, Number(p.latitude), Number(p.longitude)) }))
         .filter(p => bortle === 'any' || Math.round(Number(p.bortleClass)) === Number(bortle))
-        .sort((a, b) => Number(a.bortleClass) - Number(b.bortleClass) || a.distance - b.distance);
+        .sort((a, b) => Number(b.sqm) - Number(a.sqm) || a.distance - b.distance);
+      const overview = summary();
+      if (overview) {
+        overview.hidden = false;
+        overview.textContent = results.length + ' of ' + data.points.length + ' sampled points match your selection. Sorted by darkest estimated sky first (higher SQM = darker sky).';
+      }
       const host = list();
       if (host) {
         if (!results.length) {
@@ -65,17 +72,19 @@
           article.className = 'darksky-site';
           const lat = Number(p.latitude), lon = Number(p.longitude);
           const mapUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(lat.toFixed(5) + ',' + lon.toFixed(5));
-          article.innerHTML = '<strong>Estimated Bortle ' + escapeHtml(Math.round(Number(p.bortleClass))) +
-            '</strong><span>' + escapeHtml(Number(p.sqm).toFixed(2)) + ' mag/arcsec² (modeled SQM)</span>' +
-            '<span>' + escapeHtml((p.distance / KM_PER_MILE).toFixed(1)) + ' miles from search centre</span>' +
-            '<span>Sample coordinates: ' + escapeHtml(lat.toFixed(4)) + ', ' + escapeHtml(lon.toFixed(4)) + '</span>' +
-            '<a href="' + mapUrl + '" target="_blank" rel="noopener noreferrer">Inspect area on map</a>';
+          article.innerHTML = '<div class="darksky-result-heading"><div><span class="darksky-result-eyebrow">Modeled sky estimate</span>' +
+            '<h3>Estimated Bortle ' + escapeHtml(Math.round(Number(p.bortleClass))) + '</h3></div>' +
+            '<span class="darksky-sqm-badge">' + escapeHtml(Number(p.sqm).toFixed(2)) + ' SQM</span></div>' +
+            '<div class="darksky-result-details"><span><strong>Distance</strong>' + escapeHtml((p.distance / KM_PER_MILE).toFixed(1)) + ' miles</span>' +
+            '<span><strong>Coordinates</strong>' + escapeHtml(lat.toFixed(4)) + ', ' + escapeHtml(lon.toFixed(4)) + '</span></div>' +
+            '<a class="button darksky-map-button" href="' + mapUrl + '" target="_blank" rel="noopener noreferrer">Inspect area on map ↗</a>';
           host.appendChild(article);
         });
       }
       status('Found ' + results.length + ' matching sampled estimates near ' + label +
         '. These are approximate sky-brightness readings, not confirmed public observing sites.');
     } catch (error) {
+      if (summary()) summary().hidden = true;
       console.error('Dark sky lookup:', error);
       status(error.message || 'Unable to retrieve sky-quality estimates right now.', true);
     } finally {
