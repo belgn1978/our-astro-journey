@@ -58,6 +58,34 @@
     lookupQueue = task.catch(() => {});
     return task;
   }
+  function showKnownSites(latitude, longitude, radiusKm) {
+    const host = document.getElementById('darksky-known-sites');
+    const summary = document.getElementById('darksky-known-summary');
+    if (!host) return;
+    host.replaceChildren();
+    const sites = (window.OAJ_KNOWN_ASTRONOMY_SITES || [])
+      .map(site => ({ ...site, distance: distanceKm(latitude, longitude, site.latitude, site.longitude) }))
+      .filter(site => site.distance <= radiusKm)
+      .sort((a, b) => a.distance - b.distance);
+    if (summary) summary.textContent = sites.length
+      ? sites.length + ' known astronomy location' + (sites.length === 1 ? '' : 's') + ' within your search radius.'
+      : 'No curated astronomy locations in this radius yet. More locations will be added.';
+    sites.forEach(site => {
+      const card = document.createElement('article');
+      card.className = 'darksky-site darksky-known-card';
+      const map = 'https://www.google.com/maps/search/?api=1&query=' +
+        encodeURIComponent(site.latitude + ',' + site.longitude);
+      card.innerHTML = '<span class="darksky-result-eyebrow">' + escapeHtml(site.type) + '</span>' +
+        '<h3>' + escapeHtml(site.name) + '</h3>' +
+        '<p>' + escapeHtml(site.region) + '</p>' +
+        '<p><strong>Distance:</strong> ' + escapeHtml((site.distance / KM_PER_MILE).toFixed(1)) + ' miles</p>' +
+        '<p><strong>Visiting:</strong> ' + escapeHtml(site.access) + '</p>' +
+        '<p class="darksky-site-note">Known astronomy location, not a Bortle measurement or a guarantee of public access.</p>' +
+        '<div class="darksky-card-actions"><a class="button darksky-map-button" target="_blank" rel="noopener noreferrer" href="' + map + '">View location on map ↗</a>' +
+        (site.website ? '<a class="button darksky-map-button" target="_blank" rel="noopener noreferrer" href="' + escapeHtml(site.website) + '">Official website ↗</a>' : '') + '</div>';
+      host.appendChild(card);
+    });
+  }
   let busy = false;
   async function searchAt(latitude, longitude, label) {
     if (busy) return;
@@ -68,6 +96,7 @@
       status('Invalid search location or radius.', true);
       return;
     }
+    showKnownSites(latitude, longitude, radiusKm);
     busy = true;
     const button = document.getElementById('darksky-search-btn');
     const locationButton = document.getElementById('darksky-location-btn');
