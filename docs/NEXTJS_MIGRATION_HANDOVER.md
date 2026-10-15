@@ -249,4 +249,3 @@ All root pages currently resolve at `https://ourastrojourney.co.uk/<filename>`; 
 - The 185 sitemap URL entries were counted and grouped; the 150 target query URLs and 8 category query URLs require special preservation handling.
 - A pattern-only scan of tracked backend-ionos/config.php produced zero key/secret/password/token/private-key assignment-line matches. No file contents or secret values were printed. This is not a full repository secret scan.
 - Testing remains blocked on a local checkout/lockfile: Node 24.19.0 is installed in the scratch environment, but the migration app dependencies are not. No install, typecheck, production build or browser test has been performed.
-- Next branch commit after this document update will be recorded below once GitHub confirms it.
