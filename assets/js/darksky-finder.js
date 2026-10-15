@@ -20,6 +20,34 @@
     const h = Math.sin(dl / 2) ** 2 + Math.cos(rad(a)) * Math.cos(rad(c)) * Math.sin(dn / 2) ** 2;
     return 6371 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(Math.max(0, 1 - h)));
   };
+  // Public Nominatim permits low-volume reverse lookups (maximum 1 request/second).
+  // Cache results locally to avoid repeating lookups during subsequent searches.
+  const placeCache = new Map();
+  let lookupQueue = Promise.resolve();
+  let lastLookupAt = 0;
+  const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+  function nearbyName(lat, lon) {
+    const key = lat.toFixed(4) + ',' + lon.toFixed(4);
+    if (placeCache.has(key)) return Promise.resolve(placeCache.get(key));
+    const task = lookupQueue.catch(() => {}).then(async () => {
+      if (placeCache.has(key)) return placeCache.get(key);
+      await delay(Math.max(0, 1100 - (Date.now() - lastLookupAt)));
+      lastLookupAt = Date.now();
+      const url = 'https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=12&addressdetails=1&lat=' +
+        encodeURIComponent(lat) + '&lon=' + encodeURIComponent(lon);
+      const response = await fetch(url, { headers: { Accept: 'application/json' } });
+      if (!response.ok) throw new Error('Place name lookup unavailable');
+      const data = await response.json();
+      const a = data.address || {};
+      const name = [a.village || a.town || a.city || a.hamlet || a.suburb || a.municipality || a.county,
+        a.county, a.state].filter((part, i, parts) => part && parts.indexOf(part) === i).slice(0, 2).join(', ');
+      const label = name || data.name || 'Remote or unnamed area';
+      placeCache.set(key, label);
+      return label;
+    });
+    lookupQueue = task.catch(() => {});
+    return task;
+  }
   let busy = false;
   async function searchAt(latitude, longitude, label) {
     if (busy) return;
@@ -81,6 +109,7 @@
             '<span class="darksky-result-subtitle">Modeled light pollution level</span></div>' +
             '<div class="darksky-sqm-display"><strong>' + escapeHtml(sqm) + '</strong>' +
             '<span>mag/arcsec² · SQM</span><small>Higher = darker</small></div></div>' +
+            '<div class="darksky-nearby-place"><span>Nearby named area</span><strong class="darksky-place-name">Looking up nearby place…</strong><small>Approximate place name, not the exact sampling point</small></div>' +
             '<div class="darksky-result-details">' +
             '<span><strong>Distance from search centre</strong><b>' + escapeHtml((p.distance / KM_PER_MILE).toFixed(1)) + ' miles</b></span>' +
             '<span><strong>Sample coordinates</strong><b>' + escapeHtml(lat.toFixed(4)) + ', ' + escapeHtml(lon.toFixed(4)) + '</b></span></div>' +
@@ -112,6 +141,11 @@
             }
           });
           host.appendChild(article);
+          nearbyName(lat, lon).then(name => {
+            if (article.isConnected) article.querySelector('.darksky-place-name').textContent = name;
+          }).catch(() => {
+            if (article.isConnected) article.querySelector('.darksky-place-name').textContent = 'Place name unavailable · view map';
+          });
         });
       }
       status('Found ' + results.length + ' matching sampled estimates near ' + label +
