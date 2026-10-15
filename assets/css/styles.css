@@ -5050,3 +5050,16 @@ footer {
 #darksky-known-sites .darksky-known-card h3 { font-size:1.35rem; margin:.3rem 0 .6rem; }
 #darksky-known-sites .darksky-known-card p { margin:.35rem 0; }
 .darksky-site-note { opacity:.8; font-size:.88rem; }
+
+/* Dark Sky Finder layout: each results section spans the full panel width. */
+.darkskies-page .darksky-panel { display:block; width:100%; min-width:0; }
+.darkskies-page .darksky-panel > .darksky-known-section,
+.darkskies-page .darksky-panel > .darksky-modeled-section { display:block; width:100%; min-width:0; clear:both; margin:2rem 0 0; padding:0; }
+.darkskies-page .darksky-panel > .darksky-known-section > h2,
+.darkskies-page .darksky-panel > .darksky-modeled-section > h2 { display:block; width:100%; margin:0 0 .65rem; font-size:clamp(1.3rem,2.4vw,1.7rem); }
+.darkskies-page #darksky-known-summary { display:block; width:100%; margin:0 0 1rem; color:#c9d9ed; }
+.darkskies-page #darksky-known-sites,
+.darkskies-page #darksky-list { display:grid; grid-template-columns:minmax(0,1fr); width:100%; min-width:0; gap:1rem; }
+.darkskies-page #darksky-known-sites .darksky-known-card { display:flex; flex-direction:column; gap:.45rem; width:100%; min-width:0; box-sizing:border-box; }
+.darkskies-page #darksky-known-sites .darksky-known-card strong { display:inline; margin:0; }
+.darkskies-page #darksky-known-sites .darksky-known-card .darksky-card-actions { margin-top:.75rem; }
