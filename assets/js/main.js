@@ -1904,6 +1904,9 @@ async function handleWeatherSearch() {
 }
 
 async function handleDarkSkySearch() {
+  if (typeof window.oajDarkSkySearch === 'function') {
+    return window.oajDarkSkySearch();
+  }
   const input = document.getElementById('darksky-location-input');
   const countrySelect = document.getElementById('darksky-country-select');
   if (!input) return;
