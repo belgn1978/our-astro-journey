@@ -14,7 +14,7 @@ Migrate Our Astro Journey from the existing static HTML/CSS/JavaScript site to N
 - Default/production branch: `main`
 - Development branch: `nextjs-migration-2026-10`
 - Development branch base: `main` at `9267704fc2797436a96ba5c0c2028ae0648d4d52` (2026-10-15, “Add YouTube channel to social footer”).
-- Latest development branch commit as of 2026-10-15: `03f68357adb56f05be5a09a452b24f93edf29566` (handover updated after foundation).
+- Latest development branch commit before this handover update: `356fa0e712daebd3547d33a6b6c983ed8da75f48` (centralize site links and SEO metadata).
 - Repo is public; GitHub Pages is enabled. No local checkout was available in this work session, so repository reads/writes used the GitHub connector. Local install/build/browser tests are not yet possible from this workspace.
 - Latest observed commit: `9267704fc2797436a96ba5c0c2028ae0648d4d52`.
 
@@ -95,16 +95,16 @@ All root pages currently resolve at `https://ourastrojourney.co.uk/<filename>`; 
 - Source file tree inventory: **completed and verified** (153 repository tree entries at audited main commit; 29 HTML files including nested review indexes).
 - HTML metadata, canonicals, stylesheets, scripts, and top headings: **completed and verified** for all 29 HTML files.
 - Detailed tool behavior/API map: **in progress**; primary service boundaries summarized in audit update.
-- Shared header/footer/navigation: **implemented but not tested** in next-app; desktop and mobile link sets mirror the existing navigation, with accessible toggle state, close control and backdrop.
+- Shared header/footer/navigation: **implemented but not tested** in next-app; desktop and mobile navigation links come from one shared site module, with accessible toggle state, close control and backdrop.
 - Shared social footer: **implemented but not tested**; includes Instagram, TikTok, Threads and the requested YouTube channel.
 - Donation section: **implemented but not tested**; Ko-fi URL and current copy are carried over from the current homepage.
-- App Router/TypeScript/static export foundation: **implemented but not tested** in next-app; original reset/styles/support CSS and branding assets copied from the current source tree.
+- App Router/TypeScript/static export foundation: **implemented but not tested** in next-app; original reset/styles/support CSS and branding assets copied from the current source tree. Page metadata helper now centralizes canonical URLs, descriptions and Open Graph values.
 - Actual content/tool page migration: **not started**. The development preview is explicitly incomplete and is not ready for deployment.
 - IONOS staging/deployment investigation: **in progress**; existing workflow target is unverified and destructive.
 
 ## 7. Files created, modified or removed
 
-- Created: docs/NEXTJS_MIGRATION_HANDOVER.md; next-app/package.json; next-app/tsconfig.json; next-app/next.config.ts; next-app/next-env.d.ts; next-app/app/layout.tsx; next-app/app/globals.css; next-app/app/page.tsx; next-app/components/site-header.tsx; next-app/components/site-footer.tsx; next-app/components/donation-section.tsx; next-app/README.md.
+- Created: docs/NEXTJS_MIGRATION_HANDOVER.md; next-app/package.json; next-app/tsconfig.json; next-app/next.config.ts; next-app/next-env.d.ts; next-app/app/layout.tsx; next-app/app/globals.css; next-app/app/page.tsx; next-app/components/site-header.tsx; next-app/components/site-footer.tsx; next-app/components/donation-section.tsx; next-app/lib/site.ts; next-app/lib/seo.ts; next-app/README.md.
 - Added copies of existing public styles/assets under next-app/public/assets/css and next-app/public/assets/images/branding, reusing the exact source blobs from main.
 - Modified: handover only; no production site files or existing deployment configuration modified.
 - Removed: none.
@@ -114,6 +114,7 @@ All root pages currently resolve at `https://ourastrojourney.co.uk/<filename>`; 
 
 - Added app-scoped package.json with Next.js 16, React 19 and TypeScript ranges; Node.js >=20.9 requirement; App Router config uses output: export, trailingSlash: false and unoptimized images.
 - A package-lock.json has not yet been generated or committed. Existing deployment workflow runs npm ci and will fail until a lockfile is added.
+- Added next-app/lib/site.ts as the single source for primary navigation, social links and Ko-fi URL, plus next-app/lib/seo.ts for page canonical/description/Open Graph metadata. These helpers are implemented but not typechecked.
 - Existing CSS and branding assets are copied into the app's public tree. Font Awesome was not added to the shell; the footer currently uses readable text links.
 - Existing IONOS workflow still uses Node 18 and requires a safe, confirmed staging path before updating or dispatching.
 
@@ -232,7 +233,20 @@ All root pages currently resolve at `https://ourastrojourney.co.uk/<filename>`; 
 
 - The production sitemap has 185 URLs: 150 /target.html?id=… URLs, 8 /target-category.html?category=… URLs, and 27 other page/resource entries. It includes the solar eclipse safety PDF and /reviews/entries/ canonical path. Keep every current query URL, metadata/canonical target and media/resource URL in the route manifest.
 - The 29 HTML files in the repository are not identical to the 27 non-query sitemap entries: some exist as redirects/compatibility files or are intentionally omitted from indexing. Do not create sitemap entries for every source file automatically.
+- Complete source asset file inventory at audited main: CSS = assets/css/affiliate.css, reset.css, styles.css, support.css, target-fov.css; JavaScript = assets/js/affiliate-tracking.js, analytics-control.js, darksky-finder.js, darksky-known-sites.js, data-finder.js, data-finder-v2.js through data-finder-v5.js, main.js, reviews.js, site-updates.js, support.js, target-catalogue.js, target-data.js, target-data-messier.js, target-data-messier-extra.js, target-data-notable.js; video = assets/dwarf-mini-costack-comosaic-guide.mp4; PDF = downloads/solar-eclipse-safety-guide.pdf.
+- Branding images: apple-touch-icon.png, favicon-16x16.png, favicon-32x32.png, hero-img.png, hero-ing.jpg, logo.png under assets/images/branding. Eclipse assets: box-pinhole.png, colander-projection.png, leaf-shadow-test.png, shadow-shape-challenge.png, temperature-light-log.png under assets/images/eclipse.
+- Gallery image inventory: assets/images/gallery/Crescent_Nebula_Final.jpeg, Crescent_Nebula_Final.png, Final.jpeg; astro/M45FINAL.jpg; cosmic/IC1805_073006.jpeg; dwarf-mini/full-moon.jpg, ic1396-elephants-trunk-mega-stack.jpg, m31-mosaic-final.jpg, m31-mosaic-second-processing.jpg, moon-and-telescope-silhouette.jpg; galactic-hunter/IC342_Final_081236.jpeg, IC410Final.jpeg, NGC1333.png, Soul_Final_100712.jpeg; my-pictures/MoonMightModePixel2.jpg, MoonNightModePixel1.jpg, MoonNightModePixel3.jpg, MoonPixelMaxZoom1.jpg, MoonPixelMaxZoom2.jpg, MoonPixelMaxZoom3.jpg, PXL_20260623_211722148.RAW-01.jpg. Review media is under reviews/images (JPGs, MP4s and text.txt); its exact filenames are listed in the repository tree.
 - The weather page is a Clear Outside forecast iframe with client-side geocoding, country choice, device location and fallback. Geocoding providers are called from assets/js/main.js: UK postcode, postal geocoder, Open-Meteo Geocoding, then Nominatim.
 - ISS location workflow uses client-side geocoding or device location, a copy-coordinates action and the wheretheiss.at API for live ISS position. Transit prediction remains an external Transit-Finder link; no local orbital prediction service was found in the inspected page/JS.
 - Static export limitation: all 150 target URLs currently share /target.html and differ only by query string. A static build cannot generate 150 distinct HTML files at the same filesystem path based on query parameters. Candidate design: pre-render each target to a distinct internal file and add verified Apache internal rewrites from legacy query URLs to those files, while preserving the browser-visible legacy URL and canonical. Category queries have the same constraint. This is a proposal only; test IONOS Apache/.htaccess behavior and query preservation before adopting it. If rewrites are unavailable, document alternatives and tradeoffs before changing these URLs.
 - Weather/ISS pages depend on browser geolocation permissions, multiple external geocoders and third-party services. These must be tested with permission granted/denied, API errors and fallback behavior.
+
+
+## Additional implementation milestone — 2026-10-15
+
+- Centralized shared navigation, social destinations and Ko-fi support URL in next-app/lib/site.ts; header, footer and donation components now consume these constants.
+- Added next-app/lib/seo.ts to generate page title, description, canonical and Open Graph metadata from explicit per-page paths. The root layout intentionally does not set a single canonical URL for every route.
+- The 185 sitemap URL entries were counted and grouped; the 150 target query URLs and 8 category query URLs require special preservation handling.
+- A pattern-only scan of tracked backend-ionos/config.php produced zero key/secret/password/token/private-key assignment-line matches. No file contents or secret values were printed. This is not a full repository secret scan.
+- Testing remains blocked on a local checkout/lockfile: Node 24.19.0 is installed in the scratch environment, but the migration app dependencies are not. No install, typecheck, production build or browser test has been performed.
+- Next branch commit after this document update will be recorded below once GitHub confirms it.
