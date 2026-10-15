@@ -14,6 +14,7 @@ Migrate Our Astro Journey from the existing static HTML/CSS/JavaScript site to N
 - Default/production branch: `main`
 - Development branch: `nextjs-migration-2026-10`
 - Development branch base: `main` at `9267704fc2797436a96ba5c0c2028ae0648d4d52` (2026-10-15, “Add YouTube channel to social footer”).
+- Latest development branch commit as of 2026-10-15: `03f68357adb56f05be5a09a452b24f93edf29566` (handover updated after foundation).
 - Repo is public; GitHub Pages is enabled. No local checkout was available in this work session, so repository reads/writes used the GitHub connector. Local install/build/browser tests are not yet possible from this workspace.
 - Latest observed commit: `9267704fc2797436a96ba5c0c2028ae0648d4d52`.
 
@@ -123,7 +124,7 @@ All root pages currently resolve at `https://ourastrojourney.co.uk/<filename>`; 
 - Recursive source tree read: passed; GitHub reported truncated: false, 153 entries.
 - Page audit: passed for title, description, canonical, stylesheet/script references and initial H1/H2 text across 29 HTML files.
 - Source-level checks: completed for navigation markup/CSS, dark-sky service calls, target calculations/storage, MAST backend docs, analytics opt-outs, Formspree contact endpoint, IONOS workflow and rewrite rules.
-- New branch tree check: verify all foundation source/assets and copied public CSS/image files before next milestone.
+- New branch tree check: passed; recursive Git tree (not truncated) contains all 15 expected handover, config, app/component and copied CSS/branding files.
 - Environment probe: Node 24.19.0 and npm 11.9.0 are available, but this workspace has no repository checkout, package files or installed Next.js. Local build, TypeScript, browser rendering, mobile/desktop, link, accessibility, tool/API, SEO crawl and production export tests therefore remain **not run**.
 
 ## 10. Known bugs and unresolved issues
@@ -217,3 +218,10 @@ All root pages currently resolve at `https://ourastrojourney.co.uk/<filename>`; 
 - The root route is an explicit migration preview notice, not migrated homepage content. It is not production-ready and must not replace the live site.
 - Verification limitation: no local clone or Next installation was available in the workspace. Files were committed, but no npm install, lockfile generation, TypeScript check, Next build, browser or screenshot test was performed. All foundation items remain implemented-but-untested.
 - Existing workflow is dangerous if pointed at a live/shared directory: it runs rm -rf on all direct children of its configured target before upload. Target is not known. It remains manual-only and was not dispatched.
+
+
+## Foundation structure check — 2026-10-15
+
+- GitHub tree verification passed for all 15 expected project/handover and sample copied asset paths. Development tree had 182 entries and was not truncated.
+- The production main branch head remains 9267704fc2797436a96ba5c0c2028ae0648d4d52, matching the audited production head. No production branch files were changed.
+- This confirms repository structure only; it does not replace the pending npm install, lockfile, typecheck, build, browser, responsive or accessibility testing.
