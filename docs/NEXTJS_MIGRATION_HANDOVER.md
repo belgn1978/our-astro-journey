@@ -6,7 +6,7 @@ Last updated: 2026-10-15 (Europe/London)
 
 Migrate Our Astro Journey from the existing static HTML/CSS/JavaScript site to Next.js, React and TypeScript, preferably with the App Router and static export, while preserving its public URLs, content, SEO, styling, interactive tools and current production availability.
 
-**Status: Phase 1 audit completed; Next.js foundation is next.** The public GitHub Pages branch `main` has not been modified. A dedicated development branch was created. The repository tree, all current HTML metadata/script references, key tool code paths, PHP API documentation and IONOS workflow have been reviewed. No Next.js files have been added yet.
+**Status: Phase 1 audit completed; Phase 2 foundation scaffolding implemented but not yet build-tested.** The public GitHub Pages branch `main` has not been modified. A dedicated development branch was created. The repository tree, all current HTML metadata/script references, key tool code paths, PHP API documentation and IONOS workflow have been reviewed. The isolated Next.js app shell is in next-app/; no legacy content pages have been migrated yet.
 
 ## 2. Repository and development branch
 
@@ -93,43 +93,48 @@ All root pages currently resolve at `https://ourastrojourney.co.uk/<filename>`; 
 - Repository and branch: **completed and verified** (GitHub API confirms repository, Pages enabled, current default branch and new branch).
 - Source file tree inventory: **completed and verified** (153 repository tree entries at audited main commit; 29 HTML files including nested review indexes).
 - HTML metadata, canonicals, stylesheets, scripts, and top headings: **completed and verified** for all 29 HTML files.
-- Detailed tool behavior/API map: **in progress**.
-- Shared header/footer/navigation and social link implementation review: **planned**.
-- Next.js/TypeScript/static export foundation: **planned; not implemented**.
-- Page migrations and test coverage: **not started**.
-- IONOS staging/deployment investigation: **not started**.
+- Detailed tool behavior/API map: **in progress**; primary service boundaries summarized in audit update.
+- Shared header/footer/navigation: **implemented but not tested** in next-app; desktop and mobile link sets mirror the existing navigation, with accessible toggle state, close control and backdrop.
+- Shared social footer: **implemented but not tested**; includes Instagram, TikTok, Threads and the requested YouTube channel.
+- Donation section: **implemented but not tested**; Ko-fi URL and current copy are carried over from the current homepage.
+- App Router/TypeScript/static export foundation: **implemented but not tested** in next-app; original reset/styles/support CSS and branding assets copied from the current source tree.
+- Actual content/tool page migration: **not started**. The development preview is explicitly incomplete and is not ready for deployment.
+- IONOS staging/deployment investigation: **in progress**; existing workflow target is unverified and destructive.
 
 ## 7. Files created, modified or removed
 
-- Created: `docs/NEXTJS_MIGRATION_HANDOVER.md` (this living handover; first development-branch file).
-- Modified: none.
+- Created: docs/NEXTJS_MIGRATION_HANDOVER.md; next-app/package.json; next-app/tsconfig.json; next-app/next.config.ts; next-app/next-env.d.ts; next-app/app/layout.tsx; next-app/app/globals.css; next-app/app/page.tsx; next-app/components/site-header.tsx; next-app/components/site-footer.tsx; next-app/components/donation-section.tsx; next-app/README.md.
+- Added copies of existing public styles/assets under next-app/public/assets/css and next-app/public/assets/images/branding, reusing the exact source blobs from main.
+- Modified: handover only; no production site files or existing deployment configuration modified.
 - Removed: none.
 - Production files/configuration: untouched.
 
 ## 8. Dependencies and configuration changes
 
-- No dependency or configuration changes yet.
-- No Next.js package exists in the audited root tree.
-- External Font Awesome stylesheet is included on most pages; assess whether to preserve remote load or replace with a small free/local icon approach.
-- IONOS PHP configuration files are out of scope until call sites and secret exposure risks are mapped.
+- Added app-scoped package.json with Next.js 16, React 19 and TypeScript ranges; Node.js >=20.9 requirement; App Router config uses output: export, trailingSlash: false and unoptimized images.
+- A package-lock.json has not yet been generated or committed. Existing deployment workflow runs npm ci and will fail until a lockfile is added.
+- Existing CSS and branding assets are copied into the app's public tree. Font Awesome was not added to the shell; the footer currently uses readable text links.
+- Existing IONOS workflow still uses Node 18 and requires a safe, confirmed staging path before updating or dispatching.
 
 ## 9. Tests completed and their results
 
-- GitHub repository metadata read: passed; repository is public, Pages enabled, default branch `main`.
-- Branch creation: passed; `nextjs-migration-2026-10` created from `main`.
-- Recursive repository tree read: passed; GitHub reported `truncated: false`, 153 entries.
+- GitHub repository metadata read: passed; repository is public, Pages enabled, default branch main.
+- Branch creation and updates: passed; development branch created from the recorded main SHA and contains the audit and foundation commits.
+- Recursive source tree read: passed; GitHub reported truncated: false, 153 entries.
 - Page audit: passed for title, description, canonical, stylesheet/script references and initial H1/H2 text across 29 HTML files.
-- Local build, TypeScript, browser rendering, mobile/desktop, link, accessibility, tool/API, SEO crawl and production export tests: **not run**. This environment did not contain a local repository checkout at session start.
+- Source-level checks: completed for navigation markup/CSS, dark-sky service calls, target calculations/storage, MAST backend docs, analytics opt-outs, Formspree contact endpoint, IONOS workflow and rewrite rules.
+- New branch tree check: verify all foundation source/assets and copied public CSS/image files before next milestone.
+- Environment probe: Node 24.19.0 and npm 11.9.0 are available, but this workspace has no repository checkout, package files or installed Next.js. Local build, TypeScript, browser rendering, mobile/desktop, link, accessibility, tool/API, SEO crawl and production export tests therefore remain **not run**.
 
 ## 10. Known bugs and unresolved issues
 
-- Need confirm the actual behavior and service dependencies for dark skies/Bortle/location search, weather, ISS planner and Hubble/JWST downloader.
+- Need confirm the remaining detailed behavior of the weather and ISS location interfaces, all catalogue query variants, and gallery/review data sources.
 - Need inspect GitHub Actions IONOS workflow and `DEPLOY.md` before classifying production vs staging deployment.
 - Need safely audit `backend-ionos/config.php` for credential exposure without echoing secrets into logs, commits or handover. If secrets are tracked, document and address only with explicit care; do not rotate or alter live credentials as part of migration.
 - Catalogue target/category paths rely on legacy page/query behavior and lack sampled canonical links; URL preservation must be designed around actual inbound URLs and sitemap entries.
 - `hubble-jwst-data-finder.html` canonical currently points at downloader, while both pages exist and the first says the tool moved. Clarify desired compatibility behavior from source and sitemap.
 - Contact page is present but no form submission behavior has yet been confirmed.
-- IONOS static-export support, clean URLs, upload path, staging options, HTTPS/caching and rollback are unverified.
+- IONOS Web Hosting Plus package-specific static-file behavior, clean URLs, upload path, staging options, HTTPS/caching and rollback are unverified.
 - No visual baseline screenshots or browser tests have been captured.
 
 ## 11. Decisions made and reasons
@@ -201,3 +206,14 @@ All root pages currently resolve at `https://ourastrojourney.co.uk/<filename>`; 
 - Next.js static export: https://nextjs.org/docs/app/guides/static-exports
 - Next.js v16 requirements: https://nextjs.org/docs/app/guides/upgrading/version-16
 - IONOS SFTP/SSH account guide: https://www.ionos.co.uk/help/hosting/setting-up-and-managing-ftp-access/creating-an-sftp/ssh-account/
+
+
+## Foundation milestone — 2026-10-15
+
+- App source is under next-app/ to match the existing manual deployment workflow's expected build directory.
+- The foundation uses App Router, TypeScript, static export, no runtime image optimization and the existing site's copied styles and brand files. No API routes or secrets were introduced.
+- Shared header links point to the current public .html routes. Mobile navigation tracks expanded state, supports close and backdrop interactions, and uses inert while closed. Footer includes Instagram, TikTok, Threads and https://www.youtube.com/@OurAstroJourneyYT.
+- Reusable donation section carries the existing Ko-fi support message and destination. Analytics click tracking and consent controls are not yet migrated; do not mark donation/analytics complete.
+- The root route is an explicit migration preview notice, not migrated homepage content. It is not production-ready and must not replace the live site.
+- Verification limitation: no local clone or Next installation was available in the workspace. Files were committed, but no npm install, lockfile generation, TypeScript check, Next build, browser or screenshot test was performed. All foundation items remain implemented-but-untested.
+- Existing workflow is dangerous if pointed at a live/shared directory: it runs rm -rf on all direct children of its configured target before upload. Target is not known. It remains manual-only and was not dispatched.
