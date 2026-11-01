@@ -1,0 +1,52 @@
+name: Deploy Hubble test ZIP API
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend-ionos/test-download/**'
+      - 'tests/fits-zip.test.php'
+      - '.github/workflows/deploy-hubble-test-api.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+concurrency:
+  group: hubble-test-api
+  cancel-in-progress: false
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check PHP and ZIP contents
+        run: |
+          php -l backend-ionos/test-download/FitsZip.php
+          php -l backend-ionos/test-download/index.php
+          php tests/fits-zip.test.php /tmp/test-fits.zip
+          python3 - <<'PY'
+          import zipfile
+          with zipfile.ZipFile('/tmp/test-fits.zip') as z:
+              assert z.testzip() is None
+              fits = z.read(next(n for n in z.namelist() if n.endswith('.fits')))
+              assert fits[:8] == b'SIMPLE  '
+              assert fits[2880:2896].hex() == '3f80000040000000404000007fc00000'
+          PY
+      - name: Check configured API deployment access
+        env:
+          DEPLOY_HOST: ${{ secrets.IONOS_HOST }}
+          DEPLOY_USER: ${{ secrets.IONOS_USERNAME }}
+          DEPLOY_KEY: ${{ secrets.IONOS_SSH_PRIVATE_KEY }}
+        run: |
+          test -n "$DEPLOY_HOST" && test -n "$DEPLOY_USER" && test -n "$DEPLOY_KEY" || { echo 'IONOS SSH deployment secrets are not configured. No files deployed.'; exit 1; }
+      - name: Upload only new test ZIP API directory
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.IONOS_HOST }}
+          username: ${{ secrets.IONOS_USERNAME }}
+          key: ${{ secrets.IONOS_SSH_PRIVATE_KEY }}
+          source: 'backend-ionos/test-download/*'
+          target: '/astro-api/'
+          strip_components: 1
+          overwrite: true
+      - name: Verify deployed test endpoint
+        run: |
+          curl --fail --retry 2 --max-time 30 'https://api.ourastrojourney.co.uk/test-download/index.php?health=1' | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d.get("success") and d.get("version")==7'
