@@ -53,3 +53,11 @@ Pixel-preserving SCI extraction alone does not calibrate, register or combine da
 `node --check assets/js/fits-science.js`
 `node tests/hubble-download.test.cjs`
 Optional arguments: downloaded Pillars search JSON, real original FITS, output FITS.
+
+## User acceptance findings — 1 November 2026 (Helix / HST WFPC2)
+- Windows .ps1 script downloaded original archive FITS sequentially. First file `u39s0401r_drw.fits` reached expected ~250.5 MB; subsequent files began. Verify final integrity and all three completed before marking download acceptance passed.
+- Filenames `u39s0401r_drw.fits`, `u39s0403r_drw.fits`, `u39s0405r_drw.fits` are opaque for beginners. Add descriptive local output names with target, telescope, instrument, filter, channel label and original archive ID; preserve original identifier and FITS bytes. Apply consistently to Windows/Mac/Linux/individual downloads, and consider a metadata manifest.
+- Siril 1.4.5 image compositing showed ERROR on a direct original FITS. Opening `u39s0405r_drw.fits` instead loaded a 2-image sequence; conversion created two 4676×4676 32-bit mono FITS files. One showed a sparse star field; the other showed WFPC2-like detector/calibration geometry (diamond-shaped footprint, dark circles and lines). Exact HDU types are NOT yet confirmed from headers; do not assume either is SCI without inspection.
+- HIGH PRIORITY: inspect actual FITS HDU headers/EXTNAME, detector geometry, WCS and science/quality/calibration content for WFPC2 `*_drw.fits`. Ensure the existing local SCI extractor explicitly handles or clearly rejects these multi-image products and never silently treats ancillary planes as science frames or automatically combines incompatible detectors. Preserve scientific geometry; do not mislabel the file as immediately RGB-ready.
+- Verify exported single science planes open individually in Siril and can be registered across F450W/F555W/F814W when footprints genuinely overlap. Add regression fixture(s) for this WFPC2 case, with honest warnings where automatic extraction/compositing is unsupported.
+- Release gate unchanged: public downloader stays offline until end-to-end user tests and explicit approval.
