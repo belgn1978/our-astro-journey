@@ -40,7 +40,7 @@
     }
     var science = images.filter(function (im) { return im.values.EXTNAME === 'SCI'; });
     if (science.length > 1) throw new Error('This file has several SCI detector images. Download the original and choose the detector in desktop software.');
-    var image = science[0] || images.find(function (im) { return im.primary; });
+    var image = science[0] || images.find(function (im) { return im.primary && !/WHT|WEIGHT|CONTEXT|QUALITY|ERR|DQ/i.test(im.values.FILETYPE || im.values.EXTNAME || ''); });
     if (!image) throw new Error('No uncompressed 2-D SCI image found. Download the original for desktop software.');
     function makeCard(k, v) { return (k.padEnd(8) + '= ' + String(v).padStart(20)).padEnd(80); }
     var out = [makeCard('SIMPLE', 'T'), makeCard('BITPIX', image.values.BITPIX), makeCard('NAXIS', '2'), makeCard('NAXIS1', image.values.NAXIS1), makeCard('NAXIS2', image.values.NAXIS2)];
@@ -48,7 +48,7 @@
     image.cards.forEach(function (card) { if (!skip.test(key(card))) out.push(card); });
     // Only inherit descriptive primary metadata. Keep the science HDU's WCS,
     // scaling and units authoritative; obsolete checksums are removed.
-    ['TELESCOP','INSTRUME','FILTER','FILTER1','FILTER2','PUPIL','OBJECT','TARGNAME','EXPTIME','DATE-OBS'].forEach(function (k) {
+    ['TELESCOP','INSTRUME','FILTER','FILTER1','FILTER2','FILTNAM1','FILTNAM2','PUPIL','OBJECT','TARGNAME','EXPTIME','DATE-OBS'].forEach(function (k) {
       if (image.values[k] !== undefined) return;
       var card = primary.find(function (c) { return key(c) === k; });
       if (card) out.push(card);
@@ -56,7 +56,7 @@
     out.push(('HISTORY Extracted one science image by Our Astro Journey; pixel bytes unchanged.').padEnd(80));
     out.push('END'.padEnd(80));
     var header = new TextEncoder().encode(out.join('').padEnd(Math.ceil(out.length * 80 / 2880) * 2880));
-    return { parts: [header, bytes.subarray(image.start, image.start + image.size), new Uint8Array((2880 - image.size % 2880) % 2880)], width: Number(image.values.NAXIS1), height: Number(image.values.NAXIS2), filter: image.values.FILTER || image.values.FILTER1 || '' };
+    return { parts: [header, bytes.subarray(image.start, image.start + image.size), new Uint8Array((2880 - image.size % 2880) % 2880)], width: Number(image.values.NAXIS1), height: Number(image.values.NAXIS2), filter: image.values.FILTER || image.values.FILTNAM1 || primary.map(function (c) { return ['FILTER','FILTNAM1'].indexOf(key(c)) >= 0 ? value(c) : ''; }).filter(Boolean)[0] || '', target: image.values.TARGNAME || image.values.OBJECT || primary.map(function (c) { return ['TARGNAME','OBJECT'].indexOf(key(c)) >= 0 ? value(c) : ''; }).filter(Boolean)[0] || '' };
   }
   root.OajFits = { extractScience: extractScience };
 })(typeof window === 'undefined' ? globalThis : window);

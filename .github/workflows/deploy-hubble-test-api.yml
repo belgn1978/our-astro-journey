@@ -1,11 +1,5 @@
 name: Deploy Hubble test ZIP API
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'backend-ionos/test-download/**'
-      - 'tests/fits-zip.test.php'
-      - '.github/workflows/deploy-hubble-test-api.yml'
   workflow_dispatch: {}
 permissions:
   contents: read

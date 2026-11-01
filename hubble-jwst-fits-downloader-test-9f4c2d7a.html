@@ -168,17 +168,12 @@
             <article class="feature-card">
               <h2 id="finder-howto-heading">How to use it</h2>
               <ol class="finder-steps">
-                <li><strong>Enter a target.</strong> Search for an object such as M51, the Orion Nebula, M42, NGC 7000 or the Pillars of Creation.</li>
-                <li><strong>Choose a telescope.</strong> Search Hubble, JWST or both.</li>
-                <li><strong>Choose what you need.</strong> For most people, &ldquo;Recommended colour-filter set for image processing&rdquo; is the best starting point. It aims to choose separate filtered images that can be combined into colour.</li>
-                <li><strong>Review the recommended datasets.</strong> The tool groups observations, filters and instruments, and explains which combinations may be useful for colour processing.</li>
-                <li><strong>Add files to your download basket.</strong> Select individual files or use <em>Add matched colour set</em> when it is offered. The tool now chooses separate filter observations for colour processing rather than simply taking the first few science products.</li>
-                <li><strong>Open the download basket.</strong> Each file has its own direct MAST download link. For a small set, the individual <em>Download</em> buttons are the easiest option.</li>
-                <li><strong>Choose a bulk method for larger sets.</strong> Windows users can generate a PowerShell script; macOS/Linux users can generate a curl shell script; you can also save or copy the direct links.</li>
-                <li><strong>Follow the on-page instructions.</strong> The basket now shows one complete walkthrough at a time for the method you choose, including exactly how to run downloaded scripts.</li>
-                <li><strong>Process the FITS files on a computer.</strong> Keep files for the same target together, then open them in software such as Siril or PixInsight. Phones are fine for searching and building the basket, but the science files can be very large.</li>
+                <li><strong>Choose a target and telescope.</strong> Search an object name or coordinates. “Helix” means the Helix Nebula; choose “Helix Galaxy” for NGC 2685.</li>
+                <li><strong>Add a colour set.</strong> Use Check &amp; add colour set on one suitable dataset. The basket shows the target, filters and output names.</li>
+                <li><strong>Download one ZIP.</strong> Open the basket and choose Download processing FITS (.zip). Actual science headers, filters and sky footprints are checked first.</li>
+                <li><strong>Process the images.</strong> Extract the ZIP on your computer. Each FITS contains one science image. Open, register and combine the labelled filters in Siril.</li>
               </ol>
-              <p>The files do <strong>not</strong> come from Our Astro Journey and are not hosted by us. Every download comes from the official MAST archive — this tool simply helps you locate and organise the correct public datasets.</p>
+              <p>The files do <strong>not</strong> come from Our Astro Journey and are not hosted by us. Science data comes from the official MAST archive. The processing ZIP extracts one science image per file and includes an original-file manifest.</p>
             </article>
             <aside class="finder-size-warning" role="note" aria-label="Large download warning">
               <h2><i class="fas fa-hard-drive" aria-hidden="true"></i> Large download warning</h2>
@@ -239,115 +234,32 @@
 
           <div id="finder-basket" class="finder-basket" hidden>
             <div class="basket-header">
-              <h2 class="basket-heading">Download basket</h2>
-              <p class="basket-summary" id="basket-summary">No files yet. Add files from the search results below.</p>
+              <h2 class="basket-heading">Your processing FITS</h2>
+              <p class="basket-summary" id="basket-summary">Add one target’s colour set to begin.</p>
               <p class="basket-size-note" id="basket-size-note" hidden></p>
             </div>
-            <div class="feature-card finder-download-guide" role="region" aria-labelledby="download-guide-heading">
-              <h3 id="download-guide-heading">Which download method should I use?</h3>
-              <p><strong>For one image per filter:</strong> download an <em>Original file</em>, then choose it in <em>Extract a single SCI image</em> below. Extraction happens locally in your browser; your file is not uploaded. Original links and bulk scripts download the untouched archive products instead.</p>
-              <div class="download-method-chooser" aria-label="Download method help">
-                <button type="button" class="button download-method-button" data-download-help="windows" aria-pressed="true" aria-controls="download-help-windows">Single SCI FITS</button>
-                <button type="button" class="button button-secondary download-method-button" data-download-help="shell" aria-pressed="false" aria-controls="download-help-shell">Mac / Linux originals</button>
-                <button type="button" class="button button-secondary download-method-button" data-download-help="links" aria-pressed="false" aria-controls="download-help-links">Original links (advanced)</button>
-                <button type="button" class="button button-secondary download-method-button" data-download-help="mast" aria-pressed="false" aria-controls="download-help-mast">MAST Portal</button>
-              </div>
-
-              <div id="download-help-windows" class="download-help-panel" data-download-help-panel="windows">
-                <h4>Download one science image</h4>
-                <ol class="finder-steps">
-                  <li>Add a matched colour set where available, then download each <strong>Original file</strong> from your basket.</li>
-                  <li>Choose the downloaded file in <strong>Extract a single SCI image</strong>. Your browser extracts its single 2-D science image, preserving pixel values, image coordinates, scaling and units. No Siril installation is needed to download.</li>
-                  <li>There is a 512 MB source-file limit. Compressed images, multiple SCI detectors and unsupported files must be opened using <strong>Original file</strong> in desktop software.</li>
-                  <li>For bulk downloads, the Windows script below saves the original archive files, including extra extensions. It does not extract SCI.</li>
-                </ol>
-                <p class="finder-note">Direct in-page archive fetching is blocked by archive browser permissions, so this test uses a downloaded file. Your file stays on your device. The extracted file excludes error, quality and other auxiliary extensions; keep the original for scientific work.</p>
-              </div>
-              <div id="download-help-shell" class="download-help-panel" data-download-help-panel="shell" hidden>
-                <h4>Mac / Linux archive downloads</h4>
-                <p>Save the .sh script in a new folder and run <span class="finder-mono">bash oaj-archive-downloads.sh</span>. It uses curl to download the original archive files. No extraction or calibration is performed.</p>
-              </div>
-
-              <div id="download-help-links" class="download-help-panel" data-download-help-panel="links" hidden>
-                <h4>Save or copy the direct links <span class="finder-note">useful for download managers or your own commands</span></h4>
-                <ol class="finder-steps">
-                  <li><strong>Save all download links (.txt)</strong> creates a plain text file containing the MAST links for your basket.</li>
-                  <li><strong>Copy all download links</strong> puts the same set of direct URLs on your clipboard.</li>
-                  <li>For a single file, paste its URL into a browser. For many files, paste the list into a download manager or use it as input for your own script.</li>
-                  <li>Keep the list until you have checked that every FITS file downloaded successfully. It is a handy recovery list if one file fails.</li>
-                </ol>
-                <p class="finder-note">The link list itself is not the science data. It is simply a set of direct STScI MAST addresses pointing to the files you selected.</p>
-              </div>
-
-              <div id="download-help-mast" class="download-help-panel" data-download-help-panel="mast" hidden>
-                <h4>Use the official MAST Portal directly <span class="finder-note">advanced / manual route</span></h4>
-                <ol class="finder-steps">
-                  <li>Open the <a href="https://mast.stsci.edu/portal/Mashup/Clients/Mast/Portal.html" target="_blank" rel="noopener noreferrer">MAST Portal</a> in a new tab.</li>
-                  <li>Search the same target name or coordinates you used here, then narrow the results to HST or JWST if necessary.</li>
-                  <li>Select the observation or observations you want and add them to the MAST Download Basket.</li>
-                  <li>In MAST's Download Manager, expand the observations and select the actual products you need. For beginner image processing, look for the most highly calibrated combined products rather than downloading every raw exposure.</li>
-                  <li>Use MAST's browser download for smaller selections. For larger sets, choose its <strong>Curl</strong> download option and run the generated script on your computer.</li>
-                </ol>
-                <p class="finder-note">Our Astro Journey does not transfer your basket into MAST's own basket, so this route means selecting the observations again. See STScI's <a href="https://archive.stsci.edu/datadownloads.html" target="_blank" rel="noopener noreferrer">MAST data download guide</a> for the archive's current retrieval options.</p>
-              </div>
-            </div>
-            <div class="feature-card" role="region" aria-labelledby="science-extract-heading">
-              <h3 id="science-extract-heading">Extract a single SCI image</h3>
-              <p>First download an Original file. Choose it here to save a single monochrome science FITS. Nothing is uploaded. Maximum source size: 512 MB. Multiple SCI detectors, compressed images and cubes need desktop software.</p>
-              <label for="science-file">Choose a downloaded FITS file</label>
-              <input id="science-file" type="file" accept=".fits,.fit,.fts" />
-              <p class="finder-note">This extracts pixels; it does not calibrate raw data, align filters or create a colour composite. Keep the original archive file.</p>
+            <div class="feature-card" aria-labelledby="zip-heading">
+              <h3 id="zip-heading">One target. One ZIP. Clear filenames.</h3>
+              <p>Choose <strong>Download processing FITS (.zip)</strong>. We check the actual science images and filters, remove weight/error/context images, and package one monochrome FITS per selected channel. Names include your target, colour and filter, plus the archive ID to keep them unique.</p>
+              <p>After extracting the ZIP, open the FITS directly in Siril. Register the filters and combine them into colour. No PowerShell, file upload or manual extension extraction is needed.</p>
+              <button type="button" class="button" id="basket-zip" disabled>Download processing FITS (.zip)</button>
+              <p id="zip-message" role="status" aria-live="polite"></p>
+              <a id="zip-ready-link" class="button" hidden referrerpolicy="no-referrer">Download ZIP</a>
+              <p class="finder-note">Unsupported or mismatched data is stopped before download. The FITS preserve original science pixels and coordinates; they are ready for processing, rather than pre-aligned or stretched. Test limit: 12 files / 8 GiB per ZIP. Download on a computer.</p>
             </div>
             <ul id="basket-list" class="basket-list"></ul>
-            <div class="feature-card" role="note" aria-label="Bulk download options">
-              <h3>Download options <span class="finder-note">(choose what suits the size of your basket)</span></h3>
-              <div class="basket-actions">
-                <div>
-                  <button type="button" class="button" id="basket-powershell" disabled>
-                    <i class="fas fa-terminal" aria-hidden="true"></i> Download originals with Windows (.ps1)
-                  </button>
-                  <p class="finder-note"><strong>Windows:</strong> downloads the original archive files. For a single science plane, use the local extraction control below.</p>
-                </div>
-                <div>
-                  <button type="button" class="button button-secondary" id="basket-script" disabled>
-                    <i class="fas fa-file-arrow-down" aria-hidden="true"></i> Download originals with Mac/Linux (.sh)
-                  </button>
-                  <p class="finder-note"><strong>macOS/Linux:</strong> downloads the original archive files. For a single science plane, use the local extraction control below.</p>
-                </div>
-                <div>
-                  <button type="button" class="button button-secondary" id="basket-manifest" disabled>
-                    <i class="fas fa-list" aria-hidden="true"></i> Save all download links (.txt)
-                  </button>
-                  <p class="finder-note"><strong>Link list:</strong> keeps the direct MAST addresses in a small text file for manual use or a download manager.</p>
-                </div>
-                <div>
-                  <button type="button" class="button button-secondary" id="basket-copy" disabled>
-                    <i class="fas fa-copy" aria-hidden="true"></i> Copy all download links
-                  </button>
-                  <p class="finder-note"><strong>Clipboard:</strong> copies every direct MAST URL so you can paste the list elsewhere.</p>
-                </div>
-                <div>
-                  <button type="button" class="button button-secondary basket-clear" id="basket-clear" disabled>
-                    <i class="fas fa-trash" aria-hidden="true"></i> Remove everything from basket
-                  </button>
-                  <p class="finder-note"><strong>Clear basket:</strong> removes selections from this page only. It never deletes files you already downloaded.</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="feature-card finder-after-download" role="region" aria-labelledby="after-download-heading">
-              <h3 id="after-download-heading">I've downloaded the files. What now?</h3>
-              <ol class="finder-steps">
-                <li><strong>Keep each target together.</strong> Put the files for one target in their own folder, ideally with the telescope or dataset name in the folder title.</li>
-                <li><strong>Use the friendly SCI files.</strong> The local extraction control saves the SCI image with the original product ID and an _SCI suffix. Original-file links and scripts retain all archive extensions.</li>
-                <li><strong>Expect monochrome data.</strong> Space-telescope colour images are normally built from separate filtered images. One FITS file does not necessarily equal one finished colour photograph.</li>
-                <li><strong>Open the FITS files directly in processing software.</strong> An extracted SCI FITS contains one monochrome image. Original archive files may contain several extensions or detectors. Do not debayer them.</li>
-                <li><strong>Stretch and inspect each filter first.</strong> Check that the target overlaps properly and that each file contains useful signal before building a colour combination.</li>
-                <li><strong>Combine filters into colour.</strong> Align the images if necessary, assign filters to colour channels, then balance, stretch and finish the image. The filter suggestions in the search results are a starting point, not a rule.</li>
-              </ol>
-              <p class="finder-note">If you deliberately chose <strong>Individual exposures</strong> or <strong>Advanced / manual</strong>, you may have files that need additional calibration, alignment or instrument-specific processing before they are ready for a normal colour workflow.</p>
-            </div>
-            <p class="basket-note">Files download directly from the official STScI MAST archive — nothing is uploaded to or proxied through Our Astro Journey. Browsers limit automatic multi-file downloads, which is why larger sets are offered as a URL list or download script.</p>
+            <button type="button" class="button button-secondary" id="basket-clear" disabled>Clear basket</button>
+            <details class="feature-card">
+              <summary>Advanced: original archive downloads and recovery</summary>
+              <p>These options download the original multi-extension files. They may contain support images and do not have the same structure as the processing FITS in the ZIP. Direct archive links may keep the archive’s filename.</p>
+              <button type="button" id="basket-powershell" class="button button-secondary" disabled>Originals: Windows script (.ps1)</button>
+              <button type="button" id="basket-script" class="button button-secondary" disabled>Originals: Mac/Linux script (.sh)</button>
+              <button type="button" id="basket-manifest" class="button button-secondary" disabled>Save original links</button>
+              <button type="button" id="basket-copy" class="button button-secondary" disabled>Copy original links</button>
+              <p>Optional local recovery for a file you already downloaded. It does not align or calibrate data. Multiple detectors, compressed images and cubes are rejected.</p>
+              <label for="science-file">Extract a downloaded FITS locally (512 MB maximum)</label>
+              <input id="science-file" type="file" accept=".fits,.fit,.fts" />
+            </details>
           </div>
 
           <div id="finder-results" class="finder-results" aria-live="polite"></div>
@@ -361,7 +273,7 @@
           <div class="feature-card-grid">
             <article class="feature-card">
               <h3>Where does the data come from?</h3>
-              <p>Every search and download goes to the <a href="https://mast.stsci.edu/" target="_blank" rel="noopener noreferrer">MAST archive</a> (Mikulski Archive for Space Telescopes) at the Space Telescope Science Institute (STScI) — the official home of Hubble and JWST data. Nothing is re-hosted, modified or proxied by Our Astro Journey.</p>
+              <p>Every search and download goes to the <a href="https://mast.stsci.edu/" target="_blank" rel="noopener noreferrer">MAST archive</a> (Mikulski Archive for Space Telescopes) at the Space Telescope Science Institute (STScI) — the official home of Hubble and JWST data. Processing ZIPs stream science image pixels from the archive without changing their values; the files contain only the science plane and its image metadata.</p>
             </article>
             <article class="feature-card">
               <h3>What are FITS files?</h3>
@@ -418,7 +330,7 @@
             </details>
             <details class="faq-item">
               <summary>Where does this tool get its data?</summary>
-              <p>All results and downloads come directly from the Mikulski Archive for Space Telescopes (MAST) at the Space Telescope Science Institute, the official archive for Hubble and JWST. Our Astro Journey never re-hosts or modifies the science files.</p>
+              <p>All results and downloads come directly from the Mikulski Archive for Space Telescopes (MAST) at the Space Telescope Science Institute, the official archive for Hubble and JWST. Original links retain archive files; processing ZIPs extract single science images without changing their pixels.</p>
             </details>
             <details class="faq-item">
               <summary>What are FITS files?</summary>
@@ -487,8 +399,8 @@
     </footer>
 
     <script src="./assets/js/main.js?v=20260917-nav3"></script>
-    <script src="./assets/js/fits-science.js?v=20261101"></script>
-    <script src="./assets/js/data-finder-v6.js?v=20261101"></script>
+    <script src="./assets/js/fits-science.js?v=20261101zip1"></script>
+    <script src="./assets/js/data-finder-v7.js?v=20261101zip1"></script>
     <div id="finder-toast" class="finder-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
     <a href="#page-top" id="finder-back-to-top" class="finder-back-to-top" aria-label="Back to top" title="Back to top" style="position:fixed!important;right:18px!important;bottom:18px!important;z-index:99999!important;width:54px!important;height:54px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:50%!important;background:#167dcc!important;border:2px solid #8bd4ff!important;color:#fff!important;text-decoration:none!important;font-size:30px!important;font-weight:800!important;line-height:1!important;box-shadow:0 10px 30px rgba(0,0,0,.55)!important;opacity:1!important;visibility:visible!important;">↑</a>
   </body>

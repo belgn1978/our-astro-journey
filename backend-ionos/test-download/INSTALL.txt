@@ -1,0 +1,36 @@
+OUR ASTRO JOURNEY — TEST ZIP API INSTALL
+
+Upload the test-download folder (index.php and FitsZip.php) into the existing
+IONOS API directory /astro-api/ so the files are at:
+
+/astro-api/test-download/index.php
+/astro-api/test-download/FitsZip.php
+
+Keep the existing /astro-api/bootstrap.php, config.php, lib/ and cache/ untouched.
+No database, new service, API key or new paid hosting is required.
+Requirements: existing PHP 8+, cURL, 64-bit PHP, writable existing API cache folder.
+
+After upload, open:
+https://api.ourastrojourney.co.uk/test-download/index.php?health=1
+
+Expected JSON includes success:true, version:7, streamingZip:true.
+Refresh the separate Hubble test page. Its ZIP button enables automatically.
+The public downloader must remain under maintenance until Matt approves it.
+
+This endpoint checks real science HDUs, filters and WCS corner overlap before
+providing a short-lived ZIP download link. Pixels stream directly from MAST to
+an uncompressed ZIP64 response. No complete source/image/ZIP is stored on IONOS.
+It keeps only small preparation records for up to 30 minutes. At most 12 files
+and 8 GiB per package; one active stream per visitor IP. No generic URL proxy.
+Multiple SCI detectors, unsupported image compression/projections, raw/auxiliary
+products, mismatched filters and disjoint fields are rejected.
+
+An interrupted archive transfer deliberately leaves an invalid/incomplete ZIP
+rather than a falsely successful archive. Retry preparation/download if needed.
+Original archive IDs and URIs are retained in FILES_AND_FILTERS.json.
+
+Optional automated deployment: configure the existing IONOS_HOST,
+IONOS_USERNAME and IONOS_SSH_PRIVATE_KEY GitHub Actions secrets, then manually
+run the 'Deploy Hubble test ZIP API' workflow. It uploads only this test directory.
+The attempted automatic deployment on 1 November failed because these secrets
+were not configured; it did not change the live API.

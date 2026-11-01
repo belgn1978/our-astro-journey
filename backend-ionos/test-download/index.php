@@ -10,6 +10,7 @@ $dir=rtrim((string)($OAJ_CONFIG['cache_dir']??dirname(__DIR__).'/cache'),'/').'/
 if(!is_dir($dir)&&!mkdir($dir,0700,true)&&!is_dir($dir))Response::error('SERVER_ERROR','Download preparation is unavailable.',503);
 try {
     if($method==='POST') {
+        @set_time_limit(900);
         $raw=(string)file_get_contents('php://input');if(strlen($raw)>32000)throw new RuntimeException('Download selection is too large.');
         $body=json_decode($raw,true,32,JSON_THROW_ON_ERROR);$items=$body['items']??[];
         if(!is_array($items)||!count($items)||count($items)>12)throw new RuntimeException('Choose between 1 and 12 combined image files for one ZIP.');
@@ -25,6 +26,7 @@ try {
             $v=$image['values'];$filters=ScienceFits::filters($v);$expected=array_map('strtoupper',$item['filters']??[]);
             if(count($filters)!==1||count($expected)!==1||$filters[0]!==$expected[0])throw new RuntimeException($filename.': the actual FITS filter does not match the selected channel. No ZIP was created.');
             $scope=strtoupper(trim($v['TELESCOP']??''));$inst=strtoupper(trim($v['INSTRUME']??''));
+            if(!in_array($scope,['HST','JWST'],true)||$inst==='')throw new RuntimeException('Missing telescope/instrument metadata in the science product.');
             $identity=$scope.'/'.$inst;
             if($instrument!==''&&$instrument!==$identity)throw new RuntimeException('Choose files from the same telescope and instrument for one colour set.');$instrument=$identity;
             if(($scope==='HST'&&!str_starts_with($uri,'mast:HST/'))||($scope==='JWST'&&!str_starts_with($uri,'mast:JWST/')))throw new RuntimeException('Archive mission and FITS telescope do not match.');

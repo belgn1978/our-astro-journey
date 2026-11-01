@@ -69,3 +69,58 @@ Optional arguments: downloaded Pillars search JSON, real original FITS, output F
 - If browser-direct original downloads cannot be renamed reliably, make that limitation explicit and provide a verified alternative. Keep PowerShell and shell scripts optional for advanced users, not mandatory.
 - Distinguish original archive products from extracted Siril-ready SCI images. Do not promise direct browser download of processed SCI products until extraction and download behavior are end-to-end tested.
 - Keep public downloader offline until user acceptance and approval.
+
+## Generic processing ZIP implementation — 1 November 2026
+User clarified this is a target-independent requirement: one ZIP of understandable,
+single-image processing FITS for the selected target. No PowerShell or manual
+upload/extraction in the normal flow. v7 uses the selected target/filter/channel
+metadata for every target; it is not a hardcoded Helix download.
+
+Implemented a new isolated `/test-download/index.php` API with bounded HTTP range
+reads and a streaming ZIP64 writer. It validates actual unique SCI HDUs, source
+filters (including WFPC2 FILTNAM1 and NIRCam blocking filters), telescope/instrument,
+and overlap of image WCS corner polygons before offering a 30-minute download link.
+Only combined drc/drz/drw/i2d sources are accepted. Multiple SCI detectors, cubes,
+compressed image tables, missing/unsupported WCS, raw/auxiliary products, filter
+mismatches and disjoint fields stop preparation. All FITS pixel bytes, science WCS,
+units and scaling are retained. Each output contains one primary image, excluding
+WHT/CTX/ERR/DQ and header tables. ZIP includes manifest and processing instructions.
+
+Readable output examples: `M51_Blue_F555W__<archive-id>.fits`.
+Filenames keep an original ID suffix to prevent collisions. Original recovery
+scripts are optional advanced controls and clearly named `_ORIGINAL.fits`.
+
+**Critical Helix diagnosis:** live `target=helix` resolved through NED to
+NGC 2685 (RA 133.8947032, Dec +58.7344189), the Helix Galaxy, not NGC 7293.
+Actual downloaded u39s0401r/u39s0403r/u39s0405r headers confirm TARGNAME=NGC2685.
+The test frontend now sends Helix/Helix Nebula to NGC 7293 and Helix Galaxy to
+NGC 2685. Explicit resolved names remain visible. A new v7 basket avoids mixing
+old, wrongly identified selections with the corrected search.
+
+**Actual WFPC2 HDUs verified:** PRIMARY, SCI, WHT, CTX, HDRTAB. SCI is the only
+image to extract. The geometric-looking second frame must not be called SCI:
+it is a support image when opened as a multi-image sequence. SCI dimensions are
+4677x4677 (F450W/F555W) and 4676x4676 (F814W), so registration remains necessary.
+
+**End-to-end local server evidence:** the real three original MAST files were
+preflighted and their science ranges streamed to a 262,493,996-byte ZIP. Python
+zipfile verified every CRC. Astropy independently opened all three FITS, verified
+the headers, one 2-D primary HDU each and valid celestial WCS. SCI pixel SHA256:
+- F450W: 70bd8be4b94e46f03a38b7fd60f3841137e622fabd87c1cdec9379f1d3de9382
+- F555W: 3f628b7479a66ed63bcdb2cb9fddc701ff451844a62f923a1d8d2ba6b0a04a69
+- F814W: 1a41401f37dee3a93ec745c9189e1aef4064802feb76ab83d32554fe31cd2389
+Actual WFPC2 header metadata fixture and PHP/Node regression tests are committed.
+Ready for processing means calibrated, single-image data that can be opened,
+registered and combined; it does not mean already aligned, stretched or a colour
+composite. Siril itself is not installed here; user Siril acceptance remains open.
+
+**Deployment blocker (not a completed live feature):** GitHub Actions run
+41310890885 passed PHP/ZIP tests, then failed the explicit deployment-access check:
+IONOS_HOST / IONOS_USERNAME / IONOS_SSH_PRIVATE_KEY are not all configured. No API
+files were uploaded. A manual-only deployment workflow remains available. The
+installation ZIP `downloads/hubble-test-zip-api-install.zip` contains only the new
+test-download folder and instructions; upload to the existing `/astro-api/`.
+No config.php, existing API or public maintenance page changes are required.
+Until API health returns version 7, v7 explicitly disables the ZIP button and
+explains that installation is pending. Do not present this as an available live
+ZIP download or restore the public downloader until installation and user tests.

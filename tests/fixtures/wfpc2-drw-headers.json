@@ -1,0 +1,191 @@
+{
+  "source": "Actual MAST range-header inspection, 1 November 2026; no pixels in this fixture",
+  "files": [
+    {
+      "filename": "u39s0401r_drw.fits",
+      "sourceTarget": "NGC2685",
+      "filters": [
+        "F450W"
+      ],
+      "scienceValues": {
+        "TELESCOP": "HST",
+        "INSTRUME": "WFPC2",
+        "NAXIS1": "4677",
+        "NAXIS2": "4677",
+        "BITPIX": "-32",
+        "CTYPE1": "RA---TAN",
+        "CTYPE2": "DEC--TAN",
+        "CRVAL1": "133.89391518985673",
+        "CRVAL2": "58.7409483626178",
+        "CRPIX1": "2338.582537969212",
+        "CRPIX2": "2339.2071480566256",
+        "CD1_1": "-1.2645555555555E-05",
+        "CD1_2": "4.77566638522895E-22",
+        "CD2_1": "1.00363936585836E-21",
+        "CD2_2": "1.26455555555555E-05",
+        "FILTNAM1": "F450W"
+      },
+      "extensions": [
+        {
+          "hdu": 0,
+          "name": "PRIMARY",
+          "naxis": 0,
+          "size": 0,
+          "dataStart": 66240
+        },
+        {
+          "hdu": 1,
+          "name": "SCI",
+          "naxis": 2,
+          "size": 87497316,
+          "dataStart": 74880
+        },
+        {
+          "hdu": 2,
+          "name": "WHT",
+          "naxis": 2,
+          "size": 87497316,
+          "dataStart": 87583680
+        },
+        {
+          "hdu": 3,
+          "name": "CTX",
+          "naxis": 2,
+          "size": 87497316,
+          "dataStart": 175092480
+        },
+        {
+          "hdu": 4,
+          "name": "HDRTAB",
+          "naxis": 2,
+          "size": 8992,
+          "dataStart": 262638720
+        }
+      ]
+    },
+    {
+      "filename": "u39s0403r_drw.fits",
+      "sourceTarget": "NGC2685",
+      "filters": [
+        "F555W"
+      ],
+      "scienceValues": {
+        "TELESCOP": "HST",
+        "INSTRUME": "WFPC2",
+        "NAXIS1": "4677",
+        "NAXIS2": "4677",
+        "BITPIX": "-32",
+        "CTYPE1": "RA---TAN",
+        "CTYPE2": "DEC--TAN",
+        "CRVAL1": "133.893914932211",
+        "CRVAL2": "58.740947769138224",
+        "CRPIX1": "2338.582537969212",
+        "CRPIX2": "2339.207148056625",
+        "CD1_1": "-1.2647777777777E-05",
+        "CD1_2": "5.82516814413241E-22",
+        "CD2_1": "7.55273678196775E-22",
+        "CD2_2": "1.26477777777777E-05",
+        "FILTNAM1": "F555W"
+      },
+      "extensions": [
+        {
+          "hdu": 0,
+          "name": "PRIMARY",
+          "naxis": 0,
+          "size": 0,
+          "dataStart": 66240
+        },
+        {
+          "hdu": 1,
+          "name": "SCI",
+          "naxis": 2,
+          "size": 87497316,
+          "dataStart": 74880
+        },
+        {
+          "hdu": 2,
+          "name": "WHT",
+          "naxis": 2,
+          "size": 87497316,
+          "dataStart": 87583680
+        },
+        {
+          "hdu": 3,
+          "name": "CTX",
+          "naxis": 2,
+          "size": 87497316,
+          "dataStart": 175092480
+        },
+        {
+          "hdu": 4,
+          "name": "HDRTAB",
+          "naxis": 2,
+          "size": 8992,
+          "dataStart": 262638720
+        }
+      ]
+    },
+    {
+      "filename": "u39s0405r_drw.fits",
+      "sourceTarget": "NGC2685",
+      "filters": [
+        "F814W"
+      ],
+      "scienceValues": {
+        "TELESCOP": "HST",
+        "INSTRUME": "WFPC2",
+        "NAXIS1": "4676",
+        "NAXIS2": "4676",
+        "BITPIX": "-32",
+        "CTYPE1": "RA---TAN",
+        "CTYPE2": "DEC--TAN",
+        "CRVAL1": "133.8939250485598",
+        "CRVAL2": "58.74094758153019",
+        "CRPIX1": "2338.229923255591",
+        "CRPIX2": "2338.852658474637",
+        "CD1_1": "-1.2652499999999E-05",
+        "CD1_2": "8.33240681772252E-22",
+        "CD2_1": "7.24132663027009E-22",
+        "CD2_2": "1.26524999999999E-05",
+        "FILTNAM1": "F814W"
+      },
+      "extensions": [
+        {
+          "hdu": 0,
+          "name": "PRIMARY",
+          "naxis": 0,
+          "size": 0,
+          "dataStart": 66240
+        },
+        {
+          "hdu": 1,
+          "name": "SCI",
+          "naxis": 2,
+          "size": 87459904,
+          "dataStart": 74880
+        },
+        {
+          "hdu": 2,
+          "name": "WHT",
+          "naxis": 2,
+          "size": 87459904,
+          "dataStart": 87546240
+        },
+        {
+          "hdu": 3,
+          "name": "CTX",
+          "naxis": 2,
+          "size": 87459904,
+          "dataStart": 175017600
+        },
+        {
+          "hdu": 4,
+          "name": "HDRTAB",
+          "naxis": 2,
+          "size": 8992,
+          "dataStart": 262526400
+        }
+      ]
+    }
+  ]
+}
