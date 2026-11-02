@@ -124,3 +124,18 @@ No config.php, existing API or public maintenance page changes are required.
 Until API health returns version 7, v7 explicitly disables the ZIP button and
 explains that installation is pending. Do not present this as an available live
 ZIP download or restore the public downloader until installation and user tests.
+
+
+## IONOS upload and live verification — 2 November 2026
+Matt uploaded the test-download folder to the existing API server. The previous
+server-installation blocker is now resolved; do not ask him to upload it again.
+- Live health returned HTTP 200, success:true, version:7, streamingZip:true.
+- A live three-filter preparation POST returned correctly named F450W, F555W,
+  F814W science files, with the expected website CORS origin.
+- The deployed endpoint streamed a complete 262,493,996-byte ZIP in 23 seconds.
+  Python zipfile checked every CRC; all entries were intact.
+- Each FITS contained one 2-D primary image. All three science pixel SHA256 hashes
+  match the previously independently verified/Astropy-opened outputs above.
+- Website test page loads v7 and detects the now available ZIP service.
+- Public downloader was checked and remains under maintenance. User acceptance
+  in Siril and explicit release approval are still pending. Do not restore it.
