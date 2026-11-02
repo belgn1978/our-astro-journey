@@ -1,115 +1,16 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-02T14:30:34.912036+00:00",
-  "indexGeneratedAt": "2026-11-02T14:30:33.141361+00:00",
+  "generatedAt": "2026-11-02T14:55:55.712415+00:00",
+  "indexGeneratedAt": "2026-11-02T14:55:55.252950+00:00",
   "coverage": {
-    "targetsChecked": 12,
+    "targetsChecked": 1,
     "sampleOnly": true
   },
   "warning": "Product metadata only. No pixel coverage, complete-image quality, WCS alignment or Siril usability has been verified.",
   "targets": [
     {
-      "name": "HD-84406",
-      "observationsChecked": 12,
-      "scienceFitsProducts": 0,
-      "combinedFitsProducts": 0,
-      "status": "no-products-in-sample",
-      "fitsVerified": false,
-      "products": []
-    },
-    {
-      "name": "K5-2MASS-16235565+2823024",
-      "observationsChecked": 12,
-      "scienceFitsProducts": 0,
-      "combinedFitsProducts": 0,
-      "status": "no-products-in-sample",
-      "fitsVerified": false,
-      "products": []
-    },
-    {
-      "name": "GRW+70D5824",
-      "observationsChecked": 12,
-      "scienceFitsProducts": 0,
-      "combinedFitsProducts": 0,
-      "status": "no-products-in-sample",
-      "fitsVerified": false,
-      "products": []
-    },
-    {
-      "name": "BD+60-1753",
-      "observationsChecked": 12,
-      "scienceFitsProducts": 0,
-      "combinedFitsProducts": 0,
-      "status": "no-products-in-sample",
-      "fitsVerified": false,
-      "products": []
-    },
-    {
-      "name": "PAR",
-      "observationsChecked": 12,
-      "scienceFitsProducts": 0,
-      "combinedFitsProducts": 0,
-      "status": "no-products-in-sample",
-      "fitsVerified": false,
-      "products": []
-    },
-    {
-      "name": "INTFLAT",
-      "observationsChecked": 12,
-      "scienceFitsProducts": 0,
-      "combinedFitsProducts": 0,
-      "status": "no-products-in-sample",
-      "fitsVerified": false,
-      "products": []
-    },
-    {
-      "name": "P330E",
-      "observationsChecked": 12,
-      "scienceFitsProducts": 0,
-      "combinedFitsProducts": 0,
-      "status": "no-products-in-sample",
-      "fitsVerified": false,
-      "products": []
-    },
-    {
-      "name": "M2CC",
-      "observationsChecked": 12,
-      "scienceFitsProducts": 0,
-      "combinedFitsProducts": 0,
-      "status": "no-products-in-sample",
-      "fitsVerified": false,
-      "products": []
-    },
-    {
-      "name": "J1802271",
-      "observationsChecked": 10,
-      "scienceFitsProducts": 0,
-      "combinedFitsProducts": 0,
-      "status": "no-products-in-sample",
-      "fitsVerified": false,
-      "products": []
-    },
-    {
-      "name": "LIST-1",
-      "observationsChecked": 12,
-      "scienceFitsProducts": 0,
-      "combinedFitsProducts": 0,
-      "status": "no-products-in-sample",
-      "fitsVerified": false,
-      "products": []
-    },
-    {
-      "name": "M-33-Mortar4",
-      "observationsChecked": 10,
-      "scienceFitsProducts": 0,
-      "combinedFitsProducts": 0,
-      "status": "no-products-in-sample",
-      "fitsVerified": false,
-      "products": []
-    },
-    {
-      "name": "PAR-TARGET",
-      "observationsChecked": 12,
+      "name": "ORION-NEBULA-TRAP.CENTER",
+      "observationsChecked": 1,
       "scienceFitsProducts": 0,
       "combinedFitsProducts": 0,
       "status": "no-products-in-sample",
