@@ -1,0 +1,34 @@
+name: Refresh Hubble and JWST target index
+
+on:
+  workflow_dispatch:
+    inputs:
+      pages:
+        description: "Pages per telescope (1-40)"
+        required: true
+        default: "4"
+      page_size:
+        description: "Observations per page (1-2000)"
+        required: true
+        default: "500"
+
+permissions:
+  contents: write
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build observation index
+        run: python3 scripts/build-space-target-index.py --pages "${{ inputs.pages }}" --page-size "${{ inputs.page_size }}"
+      - name: Commit generated index
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/data/space-target-index.json
+          git diff --cached --quiet || (git commit -m "Refresh MAST target observation index" && git push)
