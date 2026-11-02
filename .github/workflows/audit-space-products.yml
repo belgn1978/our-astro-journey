@@ -1,6 +1,10 @@
 name: Audit Hubble and JWST science products
 
 on:
+  push:
+    paths:
+      - 'scripts/audit-space-products.py'
+      - '.github/workflows/audit-space-products.yml'
   workflow_dispatch:
     inputs:
       targets:
@@ -27,7 +31,7 @@ jobs:
       - name: Build current observation index
         run: python3 scripts/build-space-target-index.py --pages 4 --page-size 500
       - name: Audit public science products
-        run: python3 scripts/audit-space-products.py --targets "${{ inputs.targets }}" --observations "${{ inputs.observations }}"
+        run: python3 scripts/audit-space-products.py --targets "${{ inputs.targets || '12' }}" --observations "${{ inputs.observations || '12' }}"
       - name: Commit audit and index
         run: |
           git config user.name "github-actions[bot]"
