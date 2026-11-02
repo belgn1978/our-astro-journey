@@ -53,12 +53,14 @@ def main():
                 if not name or len(name) > 100 or BAD.match(name):
                     continue
                 key = name.casefold()
-                g = groups.setdefault(key, {"name": name, "missions": set(), "programmes": set(), "filters": set(), "observationCount": 0})
+                g = groups.setdefault(key, {"name": name, "missions": set(), "programmes": set(), "filters": set(), "observationCount": 0, "observations": []})
                 g["missions"].add(mission)
                 if obs.get("proposal_id") is not None:
                     g["programmes"].add(str(obs["proposal_id"]))
                 g["filters"].update(str(obs.get("filters") or "").replace(",", ";").split(";"))
                 g["observationCount"] += 1
+                if str(obs.get("obsid") or "").isdigit() and len(g["observations"]) < 40:
+                    g["observations"].append({"obsid": str(obs["obsid"]), "mission": mission, "programme": str(obs.get("proposal_id") or ""), "filters": str(obs.get("filters") or ""), "instrument": str(obs.get("instrument_name") or ""), "ra": obs.get("s_ra"), "dec": obs.get("s_dec")})
             if len(rows) < args.page_size:
                 break
     targets = []
@@ -66,11 +68,11 @@ def main():
         targets.append({"name": g["name"], "missions": sorted(g["missions"]),
                         "programmes": sorted(g["programmes"])[:20],
                         "filters": sorted(f.strip() for f in g["filters"] if f.strip())[:30],
-                        "observationCount": g["observationCount"],
+                        "observationCount": g["observationCount"], "observations": g["observations"],
                         "status": "observation-indexed",
                         "fitsVerified": False})
     targets.sort(key=lambda x: (-x["observationCount"], x["name"].casefold()))
-    result = {"schemaVersion": 1, "generatedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    result = {"schemaVersion": 2, "generatedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(),
               "coverage": {"pagesPerMission": args.pages, "pageSize": args.page_size,
                            "observationsScanned": total, "completeArchive": False},
               "policy": "Observation metadata only. Do not label any target FITS-verified without pixel/WCS and product validation.",
