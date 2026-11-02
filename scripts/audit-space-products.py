@@ -44,7 +44,8 @@ def main():
     candidates = [t for t in index["targets"] if familiar.match(t["name"])]
     # The bounded archive slice can contain very few familiar names. Fall back
     # to other non-calibration targets rather than auditing just one field.
-    candidates += [t for t in index["targets"] if not familiar.match(t["name"])]
+    # Do not pad the audit with calibration stars, flats, or parallel fields.
+    # A small meaningful sample is preferable to a misleading larger one.
     for target in candidates:
         observations = target.get("observations") or []
         ids = list(dict.fromkeys(str(o["obsid"]) for o in observations
