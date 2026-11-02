@@ -1,0 +1,36 @@
+name: Audit Hubble and JWST science products
+
+on:
+  workflow_dispatch:
+    inputs:
+      targets:
+        description: "Maximum indexed targets to audit (1-100)"
+        required: true
+        default: "12"
+      observations:
+        description: "Maximum observation IDs per target (1-40)"
+        required: true
+        default: "12"
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build current observation index
+        run: python3 scripts/build-space-target-index.py --pages 4 --page-size 500
+      - name: Audit public science products
+        run: python3 scripts/audit-space-products.py --targets "${{ inputs.targets }}" --observations "${{ inputs.observations }}"
+      - name: Commit audit and index
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/data/space-target-index.json assets/data/space-product-audit.json
+          git diff --cached --quiet || (git commit -m "Refresh science-product audit" && git push)
