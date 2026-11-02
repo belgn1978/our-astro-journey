@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-02T14:29:08.669333+00:00",
+  "indexGeneratedAt": "2026-11-02T14:29:08.236714+00:00",
+  "coverage": {
+    "targetsChecked": 1,
+    "sampleOnly": true
+  },
+  "warning": "Product metadata only. No pixel coverage, complete-image quality, WCS alignment or Siril usability has been verified.",
+  "targets": [
+    {
+      "name": "ORION-NEBULA-TRAP.CENTER",
+      "observationsChecked": 1,
+      "scienceFitsProducts": 0,
+      "combinedFitsProducts": 0,
+      "status": "no-products-in-sample",
+      "fitsVerified": false,
+      "products": []
+    }
+  ]
+}
