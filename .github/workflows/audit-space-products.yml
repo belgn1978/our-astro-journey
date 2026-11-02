@@ -32,6 +32,11 @@ jobs:
         run: python3 scripts/build-space-target-index.py --pages 4 --page-size 500
       - name: Audit public science products
         run: python3 scripts/audit-space-products.py --targets "${{ inputs.targets || '12' }}" --observations "${{ inputs.observations || '12' }}"
+      - name: Verify generated audit artifacts
+        run: |
+          python3 -m json.tool assets/data/space-target-index.json > /dev/null
+          python3 -m json.tool assets/data/space-product-audit.json > /dev/null
+          python3 -c 'import json; d=json.load(open("assets/data/space-target-index.json")); assert d["schemaVersion"] >= 2 and any(t.get("observations") for t in d["targets"]), "Missing observation IDs"; a=json.load(open("assets/data/space-product-audit.json")); assert a["coverage"]["targetsChecked"] > 0, "No targets audited"; print("Audit validated:", a["coverage"]["targetsChecked"], "targets")'
       - name: Commit audit and index
         run: |
           git config user.name "github-actions[bot]"
