@@ -1,6 +1,10 @@
 name: Refresh Hubble and JWST target index
 
 on:
+  push:
+    paths:
+      - 'scripts/build-space-target-index.py'
+      - '.github/workflows/refresh-space-target-index.yml'
   workflow_dispatch:
     inputs:
       pages:
@@ -25,7 +29,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Build observation index
-        run: python3 scripts/build-space-target-index.py --pages "${{ inputs.pages }}" --page-size "${{ inputs.page_size }}"
+        run: python3 scripts/build-space-target-index.py --pages "${{ inputs.pages || '4' }}" --page-size "${{ inputs.page_size || '500' }}"
       - name: Commit generated index
         run: |
           git config user.name "github-actions[bot]"
