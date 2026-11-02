@@ -22,8 +22,8 @@ assert.throws(()=>extract(Buffer.concat([primary,hdu({XTENSION:"'BINTABLE'",BITP
 const storage=new Map(), elements=new Map();function el(){return {hidden:true,value:'recommended',dataset:{},classList:{add(){},remove(){},toggle(){}},addEventListener(){},setAttribute(){},querySelector(){return null;}};}
 const document={getElementById(id){if(!elements.has(id))elements.set(id,el());return elements.get(id);},querySelectorAll(){return []},addEventListener(){},querySelector(){return null}};
 const window={location:{search:'',hostname:'example.org'},localStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)}};
-const ctx={fetch:async()=>({ok:true,json:async()=>({success:true,version:7,streamingZip:true})}),document,window,URLSearchParams,URL,Blob,setTimeout,clearTimeout,TextEncoder,TextDecoder,console};
-let code=fs.readFileSync(require.resolve('../assets/js/data-finder-v7.js'),'utf8');code=code.replace('  var initialTarget =', '  window.test = { normaliseProductResults, selectColourObsids, productPreferenceScore, readyFitsFilename, shellQuote, archiveTargetName };\n  var initialTarget =');vm.runInNewContext(code,ctx);const t=window.test;
+const ctx={fetch:async()=>({ok:true,json:async()=>({success:true,version:8,streamingZip:true,pixelCoverage:true})}),document,window,URLSearchParams,URL,Blob,setTimeout,clearTimeout,TextEncoder,TextDecoder,console};
+let code=fs.readFileSync(require.resolve('../assets/js/data-finder-v8.js'),'utf8');code=code.replace('  var initialTarget =', '  window.test = { normaliseProductResults, selectColourObsids, productPreferenceScore, readyFitsFilename, shellQuote, archiveTargetName };\n  var initialTarget =');vm.runInNewContext(code,ctx);const t=window.test;
 const filters=['F502N','F657N','F673N'];const group={telescope:'HST',instrument:'WFC3/UVIS',observations:filters.map((f,i)=>({obsid:String(i+1),filters:[f],ra:274.7,dec:-13.8,exposureSeconds:500}))};
 function products(names=filters.map((f,i)=>`obs${i}_drc.fits`)) {return {results:filters.map((f,i)=>({obsid:String(i+1),products:[{filename:names[i],category:'combined',subGroup:'DRC',filters:[f],sizeBytes:100}]}))};}
 let selected=t.normaliseProductResults(products(),'1,2,3',group);assert.equal(selected.recommendedCount,3);assert.equal(new Set(selected.recommended.map(p=>p.filters[0])).size,3);
@@ -31,11 +31,13 @@ assert.equal(t.normaliseProductResults({results:products().results.slice(0,2)},'
 assert.equal(t.normaliseProductResults(products(['hst_skycell-a_f502n_drc.fits','hst_skycell-b_f657n_drc.fits','hst_skycell-a_f673n_drc.fits']),'1,2,3',group).recommendedCount,0);
 assert.equal(t.productPreferenceScore({filename:'obs_flt_hlet.fits',category:'combined',subGroup:'DRC'}),0);
 assert.equal(t.productPreferenceScore({filename:'preview.jpg',category:'preview',subGroup:'DRC'}),0);
+assert(t.productPreferenceScore({filename:'ick906030_drc.fits',category:'combined',subGroup:'DRC'}) > t.productPreferenceScore({filename:'hst_skycell-p1033x08y12_wfc3_uvis_f502n_all_drc.fits',category:'combined',subGroup:'DRC'}));
 assert.notEqual(t.readyFitsFilename({filename:'one_drc.fits',filters:['F502N']},0),t.readyFitsFilename({filename:'two_drc.fits',filters:['F502N']},0));
 assert.equal(t.shellQuote("a'$(touch nope)"),"'a'\\''$(touch nope)'");
 assert.equal(t.archiveTargetName('helix'),'NGC 7293');
 assert.equal(t.archiveTargetName('Helix Galaxy'),'NGC 2685');
 assert.equal(t.archiveTargetName('M51'),'M51');
+assert.equal(t.archiveTargetName('Pillars of Creation'),'274.7196666666667, -13.83943611111111');
 assert.match(t.readyFitsFilename({targetLabel:'M51',channelColor:'BLUE',filters:['F555W'],filename:'test_drc.fits'},0),/^M51_Blue_F555W__/);
 // Real search response can be supplied without committing a large archive fixture.
 if(process.argv[2]){const real=JSON.parse(fs.readFileSync(process.argv[2]));const g=real.groups.find(g=>g.proposalId==='13926'&&g.instrumentFull==='WFC3/UVIS');const ids=t.selectColourObsids(g);assert.equal(ids.length,3);console.log('Pillars observation candidates:',ids.join(','));}
