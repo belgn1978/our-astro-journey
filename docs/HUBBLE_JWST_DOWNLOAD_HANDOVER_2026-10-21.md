@@ -1,3 +1,5 @@
+> Latest test-only progress: [2 November 2026 handover](HUBBLE_JWST_DOWNLOAD_HANDOVER_2026-11-02.md). The notes below remain historical context.
+
 # Hubble / JWST FITS Downloader: Handover (21 October 2026)
 
 ## Status

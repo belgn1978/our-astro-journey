@@ -1,6 +1,6 @@
 OUR ASTRO JOURNEY — TEST ZIP API INSTALL
 
-Upload the test-download folder (index.php and FitsZip.php) into the existing
+Upload the test-download folder (index.php, FitsZip.php, Coverage.php, ProductRanker.php and products.php) into the existing
 IONOS API directory /astro-api/ so the files are at:
 
 /astro-api/test-download/index.php
@@ -13,16 +13,19 @@ Requirements: existing PHP 8+, cURL, 64-bit PHP, writable existing API cache fol
 After upload, open:
 https://api.ourastrojourney.co.uk/test-download/index.php?health=1
 
-Expected JSON includes success:true, version:7, streamingZip:true.
+Expected JSON includes success:true, version:8, pixelCoverage:true, streamingZip:true.
 Refresh the separate Hubble test page. Its ZIP button enables automatically.
 The public downloader must remain under maintenance until Matt approves it.
 
-This endpoint checks real science HDUs, filters and WCS corner overlap before
+This endpoint resolves the requested target, scans every SCI/WHT pixel, selects
+a gap-free rectangular crop containing the target, and checks compatible
+programme, telescope, instrument, detector and filter class before
 providing a short-lived ZIP download link. Pixels stream directly from MAST to
 an uncompressed ZIP64 response. No complete source/image/ZIP is stored on IONOS.
 It keeps only small preparation records for up to 30 minutes. At most 12 files
 and 8 GiB per package; one active stream per visitor IP. No generic URL proxy.
-Multiple SCI detectors, unsupported image compression/projections, raw/auxiliary
+Missing WHT maps, distorted WCS, tiny crops, targets on gaps, multiple SCI detectors,
+unsupported image compression/projections, raw/auxiliary
 products, mismatched filters and disjoint fields are rejected.
 
 An interrupted archive transfer deliberately leaves an invalid/incomplete ZIP
@@ -34,3 +37,7 @@ IONOS_USERNAME and IONOS_SSH_PRIVATE_KEY GitHub Actions secrets, then manually
 run the 'Deploy Hubble test ZIP API' workflow. It uploads only this test directory.
 The attempted automatic deployment on 1 November failed because these secrets
 were not configured; it did not change the live API.
+
+Version 8 requires the test page data-finder-v8.js. Rebuild any old basket.
+The separate test products.php includes MAST DERIVED drizzle products.
+No production resolver, product ranking or public downloader is modified.

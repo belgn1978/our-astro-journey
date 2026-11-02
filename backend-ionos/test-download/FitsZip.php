@@ -88,13 +88,13 @@ final class ScienceFits {
         $make=fn($k,$v)=>str_pad(str_pad($k,8).'= '.str_pad((string)$v,20,' ',STR_PAD_LEFT),80);
         $out=[$make('SIMPLE','T'),$make('BITPIX',$v['BITPIX']),$make('NAXIS',2),$make('NAXIS1',$v['NAXIS1']),$make('NAXIS2',$v['NAXIS2'])];
         foreach ($image['cards'] as $c) if (!preg_match($skip,self::key($c))) $out[]=$c;
-        foreach (['TELESCOP','INSTRUME','FILTER','FILTER1','FILTER2','FILTNAM1','FILTNAM2','PUPIL','OBJECT','TARGNAME','EXPTIME','DATE-OBS'] as $k) {
+        foreach (['TELESCOP','INSTRUME','FILTER','FILTER1','FILTER2','FILTNAM1','FILTNAM2','PUPIL','OBJECT','TARGNAME','PROPOSID','PROGRAM','DETECTOR','EXPTIME','DATE-OBS'] as $k) {
             if (isset($v[$k])) continue;
             foreach ($primary as $c) if (self::key($c)===$k) { $out[]=$c;$v[$k]=self::value($c);break; }
         }
         $out[]=str_pad('HISTORY OAJ: one science image extracted; original pixel bytes unchanged.',80);
         $out[]=str_pad('END',80);$h=implode('',$out);$image['header']=str_pad($h,(int)(ceil(strlen($h)/2880)*2880));
-        $image['values']=$v;$image['layouts']=$layouts;$image['total']=$total;
+        $image['values']=$v;$image['planes']=$images;$image['layouts']=$layouts;$image['total']=$total;
         return $image;
     }
     public static function filters(array $v): array {

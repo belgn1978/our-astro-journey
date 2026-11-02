@@ -1,0 +1,98 @@
+[
+  {
+    "productFilename": "ick906030_drc.fits",
+    "dataURI": "mast:HST/product/ick906030_drc.fits",
+    "type": "D",
+    "productType": "SCIENCE",
+    "size": 259551360,
+    "dataRights": "PUBLIC",
+    "productSubGroupDescription": "DRC",
+    "calib_level": 3,
+    "filters": "F502N",
+    "description": "DADS DRC file - CTE-corrected calibrated combined image ACS/WFC3"
+  },
+  {
+    "productFilename": "ick906030_drz.fits",
+    "dataURI": "mast:HST/product/ick906030_drz.fits",
+    "type": "D",
+    "productType": "SCIENCE",
+    "size": 259551360,
+    "dataRights": "PUBLIC",
+    "productSubGroupDescription": "DRZ",
+    "calib_level": 3,
+    "filters": "F502N",
+    "description": "DADS DRZ file - Calibrated combined image ACS/WFC3/WFPC2/STIS"
+  },
+  {
+    "productFilename": "hst_13926_06_wfc3_uvis_f502n_ick906ku_drc.fits",
+    "dataURI": "mast:HST/product/hst_13926_06_wfc3_uvis_f502n_ick906ku_drc.fits",
+    "type": "D",
+    "productType": "SCIENCE",
+    "size": 505140480,
+    "dataRights": "PUBLIC",
+    "productSubGroupDescription": "DRC",
+    "calib_level": 2,
+    "filters": "F502N",
+    "description": "HAP fits science image"
+  },
+  {
+    "productFilename": "hst_13926_06_wfc3_uvis_f502n_ick906l1_drc.fits",
+    "dataURI": "mast:HST/product/hst_13926_06_wfc3_uvis_f502n_ick906l1_drc.fits",
+    "type": "D",
+    "productType": "SCIENCE",
+    "size": 505140480,
+    "dataRights": "PUBLIC",
+    "productSubGroupDescription": "DRC",
+    "calib_level": 2,
+    "filters": "F502N",
+    "description": "HAP fits science image"
+  },
+  {
+    "productFilename": "hst_13926_06_wfc3_uvis_f502n_ick906la_drc.fits",
+    "dataURI": "mast:HST/product/hst_13926_06_wfc3_uvis_f502n_ick906la_drc.fits",
+    "type": "D",
+    "productType": "SCIENCE",
+    "size": 505140480,
+    "dataRights": "PUBLIC",
+    "productSubGroupDescription": "DRC",
+    "calib_level": 2,
+    "filters": "F502N",
+    "description": "HAP fits science image"
+  },
+  {
+    "productFilename": "hst_13926_06_wfc3_uvis_f502n_ick906_drc.fits",
+    "dataURI": "mast:HST/product/hst_13926_06_wfc3_uvis_f502n_ick906_drc.fits",
+    "type": "D",
+    "productType": "SCIENCE",
+    "size": 505154880,
+    "dataRights": "PUBLIC",
+    "productSubGroupDescription": "DRC",
+    "calib_level": 3,
+    "filters": "F502N",
+    "description": "HAP fits science image"
+  },
+  {
+    "productFilename": "hst_skycell-p1033x08y12_wfc3_uvis_f502n_all_drc.fits",
+    "dataURI": "mast:HST/product/hst_skycell-p1033x08y12_wfc3_uvis_f502n_all_drc.fits",
+    "type": "D",
+    "productType": "SCIENCE",
+    "size": 2494376640,
+    "dataRights": "PUBLIC",
+    "productSubGroupDescription": "DRC",
+    "calib_level": 3,
+    "filters": "F502N",
+    "description": "HAP fits science image"
+  },
+  {
+    "productFilename": "hst_skycell-p1033x09y12_wfc3_uvis_f502n_all_drc.fits",
+    "dataURI": "mast:HST/product/hst_skycell-p1033x09y12_wfc3_uvis_f502n_all_drc.fits",
+    "type": "D",
+    "productType": "SCIENCE",
+    "size": 1539817920,
+    "dataRights": "PUBLIC",
+    "productSubGroupDescription": "DRC",
+    "calib_level": 3,
+    "filters": "F502N",
+    "description": "HAP fits science image"
+  }
+]

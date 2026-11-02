@@ -1,0 +1,71 @@
+{
+  "date": "2026-11-02",
+  "ra": 274.7196666666667,
+  "dec": -13.83943611111111,
+  "verification": "PHP crop output independently checked with NumPy against all original SCI and WHT crop pixels; not a Siril registration test",
+  "files": [
+    {
+      "source": "pillars-f502n-drc.fits",
+      "originalArchiveProduct": "ick906030_drc.fits",
+      "output": "Pillars_Blue_F502N.fits",
+      "filter": "F502N",
+      "programme": "13926",
+      "detector": "UVIS",
+      "crop": {
+        "x": 320,
+        "y": 512,
+        "width": 3776,
+        "height": 3840,
+        "size": 57999360,
+        "sourceWidth": 4382,
+        "bytesPerPixel": 4
+      },
+      "finiteScience": true,
+      "positiveFiniteWeight": true,
+      "pixelsExactlyPreserved": true,
+      "outputSha256": "5f9bce6d501542d012aa85ead36915054d0b05247542edf113a5df267f7a3daa"
+    },
+    {
+      "source": "ick907040_drc.fits",
+      "originalArchiveProduct": "ick907040_drc.fits",
+      "output": "Pillars_Green_F657N.fits",
+      "filter": "F657N",
+      "programme": "13926",
+      "detector": "UVIS",
+      "crop": {
+        "x": 320,
+        "y": 512,
+        "width": 3776,
+        "height": 3840,
+        "size": 57999360,
+        "sourceWidth": 4382,
+        "bytesPerPixel": 4
+      },
+      "finiteScience": true,
+      "positiveFiniteWeight": true,
+      "pixelsExactlyPreserved": true,
+      "outputSha256": "86a4029e3bbef280257b12ea03ac352d375438b90f5b4e4c173d8d0ac51f40f7"
+    },
+    {
+      "source": "ick906050_drc.fits",
+      "originalArchiveProduct": "ick906050_drc.fits",
+      "output": "Pillars_Red_F673N.fits",
+      "filter": "F673N",
+      "programme": "13926",
+      "detector": "UVIS",
+      "crop": {
+        "x": 832,
+        "y": 576,
+        "width": 3264,
+        "height": 3840,
+        "size": 50135040,
+        "sourceWidth": 4382,
+        "bytesPerPixel": 4
+      },
+      "finiteScience": true,
+      "positiveFiniteWeight": true,
+      "pixelsExactlyPreserved": true,
+      "outputSha256": "5290daf9182ce00581287b19c0d3707134f134ece7f917cdb4949f4242c19218"
+    }
+  ]
+}
