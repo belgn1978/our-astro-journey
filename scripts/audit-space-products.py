@@ -8,6 +8,7 @@ import argparse
 import datetime
 import json
 import pathlib
+import re
 import urllib.parse
 import urllib.request
 
@@ -38,17 +39,24 @@ def main():
     if index.get("schemaVersion", 0) < 2:
         raise SystemExit("Index lacks observation IDs. Run target index refresh first.")
     audited = []
-    for target in index["targets"]:
+    # Prioritise recognisable objects over calibration fields and anonymous pointings.
+    familiar = re.compile(r"^(?:M(?:ESSIER)?[-_ ]?\\d+|NGC[-_ ]?\\d+|IC[-_ ]?\\d+|ORION|CARINA|PILLARS)", re.I)
+    candidates = [t for t in index["targets"] if familiar.match(t["name"])]
+    for target in candidates:
         observations = target.get("observations") or []
         ids = list(dict.fromkeys(str(o["obsid"]) for o in observations
                                  if str(o.get("obsid", "")).isdigit()))[:args.observations]
         if not ids:
             continue
-        rows = fetch_products(ids)
+        try:
+            rows = fetch_products(ids)
+        except (OSError, ValueError) as exc:
+            print("MAST product lookup failed for", target["name"], ":", exc)
+            continue
         products = []
         for row in rows:
             name = str(row.get("productFilename") or "")
-            if (row.get("productType") != "SCIENCE" or
+            if (str(row.get("productType") or "").upper() != "SCIENCE" or
                     not name.lower().endswith(VALID_SUFFIX) or
                     not row.get("dataURI")):
                 continue
