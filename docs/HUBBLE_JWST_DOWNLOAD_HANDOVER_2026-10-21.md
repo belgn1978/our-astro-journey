@@ -40,3 +40,21 @@ Prior work reportedly added direct FITS downloads, PowerShell and curl download 
 
 ## Working rules
 Do not rebuild from scratch. Preserve existing working functionality. Inspect code and test before deployment. No changes to the live site as part of this handover.
+
+
+## Architecture decision — 2 November 2026 (supersedes target-name-first recommendations)
+
+**Do not release the public downloader.** The live IONOS test ZIP backend v7 works, but the Siril test of `Pillars_of_Creation_M16_Eagle_Nebula_Red_F775W` showed a readable 4126×4387 mono star field with no recognisable Pillars. This is not proof the Pillars are absent; it is proof that archive target-name association and successful FITS parsing are insufficient to certify target coverage. A filename is not verification.
+
+### Required redesign
+1. Offer two discovery routes: a **verified target catalogue** for beginners and an **advanced archive search** with clear unverified warnings. Do not label candidate catalogue entries verified until independently checked.
+2. Index known suitable HST/JWST *imaging programmes and products*, with programme ID, product ID, instrument, actual filter, target aliases and exact sky coordinates. Do not simply search for programmes whose descriptions mention the target.
+3. Prefer calibrated combined HST DRZ/DRC and JWST I2D science images. Inspect product metadata and actual FITS HDUs; suffix alone does not establish quality. WFPC2 DRW must pass the same checks and may require special handling.
+4. Compute target coverage from actual science-plane WCS/footprint and usable pixel region (including masks/gaps), not observation centre or bounding box alone. Validate that the target lies in meaningful image coverage. Check actual field overlap between channels, not just matching programme/pointing or skycell names.
+5. Prefer distinct, compatible filters, with transparent *display colour* assignments rather than pretending every filter is physical RGB. Do not promise three-channel colour where compatible images are unavailable.
+6. Reject misleading ready-to-process recommendations, auxiliary/quality planes, empty or unusable science footprints, non-overlapping fields and incompatible detector images. Do not alter or invent scientific pixels to hide irregular shapes; choose suitable mosaics or explain limitations.
+7. Retain the proven IONOS `/astro-api/test-download/` direct ZIP service, human-readable FITS filenames, original IDs, `FILES_AND_FILTERS.json` and `READ_ME.txt`. Do not redeploy the backend unless the validation requirements necessitate it; do not break the existing working ZIP route.
+8. Add regression tests for false-positive target matches, object-in-bounding-box-but-not-usable-pixels, mismatched footprints, unsupported HDUs, incomplete filters, and valid science products.
+
+### First milestone and release gate
+Find one authentic HST or JWST multi-filter Pillars of Creation dataset, document programme/product IDs, verify that the **Pillars themselves** are inside usable science pixels, produce a direct ZIP and have the user open its individual channels in Siril. A successful API response or FITS load is not acceptance. Record evidence and limitations before adding further verified targets. Keep `hubble-jwst-fits-downloader.html` under maintenance until explicit user approval.
