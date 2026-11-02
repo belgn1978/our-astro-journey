@@ -42,6 +42,9 @@ def main():
     # Prioritise recognisable objects over calibration fields and anonymous pointings.
     familiar = re.compile(r"^(?:M(?:ESSIER)?[-_ ]?\\d+|NGC[-_ ]?\\d+|IC[-_ ]?\\d+|ORION|CARINA|PILLARS)", re.I)
     candidates = [t for t in index["targets"] if familiar.match(t["name"])]
+    # The bounded archive slice can contain very few familiar names. Fall back
+    # to other non-calibration targets rather than auditing just one field.
+    candidates += [t for t in index["targets"] if not familiar.match(t["name"])]
     for target in candidates:
         observations = target.get("observations") or []
         ids = list(dict.fromkeys(str(o["obsid"]) for o in observations
