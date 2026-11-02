@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-11-02",
+  "policy": "Published image and observing programme verified from official release; science FITS products NOT verified. Never show a verified download badge without product-level science validation.",
+  "images": [
+    {
+      "id": "pillars-hubble-2015",
+      "title": "Pillars of Creation",
+      "release": "Hubble visible-light image (2015)",
+      "telescope": "HST",
+      "instrument": "WFC3/UVIS",
+      "programme": "13926",
+      "target": "Pillars of Creation",
+      "coordinates": {
+        "raDeg": 274.7196667,
+        "decDeg": -13.8394361
+      },
+      "filters": [
+        {
+          "name": "F502N",
+          "display": "Blue"
+        },
+        {
+          "name": "F657N",
+          "display": "Green"
+        },
+        {
+          "name": "F673N",
+          "display": "Red"
+        }
+      ],
+      "releaseUrl": "https://science.nasa.gov/asset/webb/pillars-of-creation-in-visible-and-near-infrared-hubble/",
+      "imageUrl": "https://esahubble.org/images/heic1501a/",
+      "status": "programme-confirmed",
+      "fitsProducts": [],
+      "note": "Official release confirms programme and filter mapping; individual science FITS filenames, coverage, and alignment remain unverified."
+    },
+    {
+      "id": "pillars-webb-2022",
+      "title": "Pillars of Creation",
+      "release": "Webb NIRCam image (2022)",
+      "telescope": "JWST",
+      "instrument": "NIRCam",
+      "programme": "2739",
+      "target": "Pillars of Creation",
+      "filters": [
+        {
+          "name": "F090W",
+          "display": "Purple"
+        },
+        {
+          "name": "F187N",
+          "display": "Blue"
+        },
+        {
+          "name": "F200W",
+          "display": "Cyan"
+        },
+        {
+          "name": "F335M",
+          "display": "Yellow"
+        },
+        {
+          "name": "F444W",
+          "display": "Orange"
+        },
+        {
+          "name": "F470N",
+          "display": "Red"
+        }
+      ],
+      "releaseUrl": "https://science.nasa.gov/asset/webb/pillars-of-creation-nircam-image/",
+      "status": "programme-confirmed",
+      "fitsProducts": [],
+      "note": "Six published filters; no individual FITS files or compatible 3-channel subset validated yet."
+    }
+  ]
+}
