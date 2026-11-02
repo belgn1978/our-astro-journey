@@ -42,10 +42,11 @@ def main():
     # Prioritise recognisable objects over calibration fields and anonymous pointings.
     familiar = re.compile(r"^(?:M(?:ESSIER)?[-_ ]?\\d+|NGC[-_ ]?\\d+|IC[-_ ]?\\d+|ORION|CARINA|PILLARS)", re.I)
     candidates = [t for t in index["targets"] if familiar.match(t["name"])]
-    # The bounded archive slice can contain very few familiar names. Fall back
-    # to other non-calibration targets rather than auditing just one field.
-    # Do not pad the audit with calibration stars, flats, or parallel fields.
-    # A small meaningful sample is preferable to a misleading larger one.
+    # If the bounded slice has no catalogue-style names, retain a small
+    # science-looking fallback while excluding known technical pointings.
+    technical = re.compile(r"(?:CAL|DARK|FLAT|BIAS|TEST|PAR|P330|GRW|GD71|HD[-_ ]?84406|BD\\+60|LIST|FOCUS|LAMP|WAVE|ALIGN|2MASS|INTFLAT)", re.I)
+    if not candidates:
+        candidates = [t for t in index["targets"] if not technical.search(t["name"]) and t.get("observations")]
     for target in candidates:
         observations = target.get("observations") or []
         ids = list(dict.fromkeys(str(o["obsid"]) for o in observations
