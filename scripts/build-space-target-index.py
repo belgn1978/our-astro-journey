@@ -6,7 +6,6 @@ No images or FITS are downloaded. This is an *observation* index, not verified
 processing packages. Repeated runs rebuild deterministically from the API.
 """
 import argparse
-import collections
 import datetime
 import json
 import pathlib
@@ -16,7 +15,7 @@ import urllib.request
 
 API = "https://mast.stsci.edu/api/v0/invoke"
 OUTPUT = pathlib.Path(__file__).resolve().parents[1] / "assets/data/space-target-index.json"
-BAD = re.compile(r"^(?:UNKNOWN|NONE|NULL|ANY|PARALLEL|CALIB|DARK|FLAT|BIAS|TEST|SKY|BACKGROUND|WAVEFRONT|FOCUS|TBD|N/A|UNNAMED|STAR)$", re.I)
+BAD = re.compile(r"(?:^|[-_\\s])(?:CALIB(?:RATION)?|DARK|FLAT|BIAS|TEST|BACKGROUND|WAVEFRONT|FOCUS|LAMP|TUNGSTEN|EARTH-CALIB|POST-SAA|P330|INTERNAL|ENGINEERING|DETECTOR|WAVE-CAL|GRISM-CAL)(?:$|[-_\\s])|^(?:UNKNOWN|NONE|NULL|ANY|PARALLEL|SKY|TBD|N/A|UNNAMED|STAR)$", re.I)
 
 def request(page, page_size, mission):
     query = {
