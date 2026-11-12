@@ -7,6 +7,12 @@
 // - imageAlt: Accessible alt text for the card image
 const reviewPages = [
   {
+    title: 'DWARFLAB DRACO First Look & Image Processing',
+    href: '/reviews/entries/draco-first-look.html',
+    imageSrc: '/assets/images/Draco/img_draco_page_40_tripod_gallery_4.webp',
+    imageAlt: 'DWARFLAB DRACO smart telescope on tripod'
+  },
+  {
     title: 'DwarfLabs Dwarf Mini Review',
     href: '/reviews/entries/',
     imageSrc: '/reviews/images/dwarfmini.jpg',
