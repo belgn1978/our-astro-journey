@@ -7,6 +7,12 @@
 // - imageAlt: Accessible alt text for the card image
 const reviewPages = [
   {
+    title: 'Seestar S30 Plus First Look: Specs & Sample Images',
+    href: '/reviews/entries/seestar-s30-plus-first-look.html',
+    imageSrc: '/assets/images/Seestar-S30-Plus/s30-plus-hero.webp',
+    imageAlt: 'Seestar S30 Plus smart telescope, photograph supplied by ZWO'
+  },
+  {
     title: 'DWARFLAB DRACO First Look & Image Processing',
     href: '/reviews/entries/draco-first-look.html',
     imageSrc: '/assets/images/Draco/img_draco_page_40_tripod_gallery_4.webp',
