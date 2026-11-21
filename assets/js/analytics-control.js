@@ -32,7 +32,7 @@
     window.gtag = window.gtag || function () {
       window.dataLayer.push(arguments);
     };
-    window.gtag('js', new Date());
+    window.gtag('consent', 'default', {\n      analytics_storage: 'denied',\n      ad_storage: 'denied',\n      ad_user_data: 'denied',\n      ad_personalization: 'denied'\n    });\n    window.gtag('consent', 'update', { analytics_storage: 'granted' });\n    window.gtag('js', new Date());
     window.gtag('config', MEASUREMENT_ID);
 
     var script = document.createElement('script');
