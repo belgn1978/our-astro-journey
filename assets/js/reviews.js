@@ -7,12 +7,6 @@
 // - imageAlt: Accessible alt text for the card image
 const reviewPages = [
   {
-    title: 'Inside Death Valley Observatories: Remote Astronomy in Nevada',
-    href: '/reviews/entries/death-valley-observatories-interview.html',
-    imageSrc: '/assets/images/interviews/death-valley-observatories/dvo-observatory-desert-hero.jpg',
-    imageAlt: 'Death Valley Observatories buildings in the Nevada desert'
-  },
-  {
     title: 'Seestar S30 Plus First Look: Specs & Sample Images',
     href: '/reviews/entries/seestar-s30-plus-first-look.html',
     imageSrc: '/assets/images/Seestar-S30-Plus/s30-plus-hero.webp',
