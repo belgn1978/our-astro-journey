@@ -36,6 +36,10 @@
     <link rel="stylesheet" href="./assets/css/styles.css?v=20260924-subnav-dark1" />
     <style>
       .finder-basket [hidden]{display:none!important}
+      /* Native dropdown menus need opaque option backgrounds on Windows/Chrome. */
+      #finder-mode {color:#f4f8ff;color-scheme:dark;background-color:#14233d}
+      #finder-mode option {color:#f4f8ff;background-color:#14233d}
+      #finder-mode option:checked {color:#ffffff;background-color:#245a94}
       .finder-results-pager{display:flex;align-items:center;justify-content:center;gap:.9rem;flex-wrap:wrap;margin:1.25rem 0;padding:.9rem 1rem;border:1px solid rgba(126,196,255,.18);border-radius:16px;background:rgba(255,255,255,.045)}
       .finder-results-pager .button{min-width:8.25rem}
       .finder-results-pager .button:disabled{opacity:.42;cursor:not-allowed}
