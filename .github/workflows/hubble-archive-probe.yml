@@ -1,0 +1,42 @@
+name: Probe Pillars FITS archive access
+on:
+  push:
+    branches:
+      - fix/hubble-product-basket-safety-20261122
+    paths:
+      - '.github/workflows/hubble-archive-probe.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  archive-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Inspect official archive FITS range responses (no full downloads)
+        shell: python
+        run: |
+          import urllib.request, urllib.error, urllib.parse
+          sources = []
+          for flt in ('f502n', 'f657n', 'f673n'):
+              hap = 'hst_13926_06_wfc3_uvis_' + flt + '_ick906_drc.fits'
+              sources.append(('MAST HAP ' + flt, 'https://mast.stsci.edu/api/v0.1/Download/file?uri=' + urllib.parse.quote('mast:HST/product/' + hap, safe='')))
+              heritage = 'hlsp_heritage_hst_wfc3-uvis_m16_' + flt + '_v1_drz.fits'
+              sources.append(('Heritage ' + flt, 'https://archive.stsci.edu/pub/hlsp/heritage/m16/' + heritage))
+          passed = 0
+          for label, url in sources:
+              try:
+                  req = urllib.request.Request(url, headers={'Range':'bytes=0-2879','User-Agent':'OurAstroJourney-archive-validation/1'})
+                  with urllib.request.urlopen(req, timeout=18) as response:
+                      head = response.read(2880)
+                      status = response.status
+                      content_range = response.headers.get('Content-Range', '')
+                      is_fits = head.startswith(b'SIMPLE  =')
+                      print(label, 'status=', status, 'range=', content_range, 'FITS=', is_fits, 'bytes=', len(head))
+                      if is_fits and status == 206 and content_range.startswith('bytes 0-2879/'):
+                          passed += 1
+              except (urllib.error.URLError, TimeoutError, OSError) as error:
+                  print(label, 'unavailable:', type(error).__name__, str(error)[:180])
+          print('Validated 2880-byte partial FITS responses:', passed, 'of', len(sources))
+          if passed == 0:
+              print('No verified archive range response. Do not mark any catalogue FITS package verified.')

@@ -180,7 +180,13 @@
     try {
       var raw = window.localStorage.getItem(BASKET_KEY);
       var parsed = raw ? JSON.parse(raw) : [];
-      return Array.isArray(parsed) ? parsed : [];
+      // Older test builds could store previews and individual exposures.
+      // Never restore them into a processing ZIP basket.
+      return Array.isArray(parsed) ? parsed.filter(function (item) {
+        return item && typeof item.dataUri === 'string' &&
+          /^mast:(?:HST|JWST)\/product\/[A-Za-z0-9._-]+\.fits$/.test(item.dataUri) &&
+          /_(?:drc|drz|drw|i2d)\.fits$/i.test(item.filename || '');
+      }) : [];
     } catch (e) {
       return [];
     }
@@ -281,7 +287,10 @@
     items.forEach(function (item) { seen[item.dataUri] = true; });
     var added = 0;
     products.forEach(function (p) {
-      if (!p.dataUri || seen[p.dataUri]) return;
+      if (!p || p.category !== 'combined' ||
+          !/_(?:drc|drz|drw|i2d)\.fits$/i.test(p.filename || '') ||
+          !/^mast:(?:HST|JWST)\/product\/[A-Za-z0-9._-]+\.fits$/.test(p.dataUri || '') ||
+          seen[p.dataUri]) return;
       seen[p.dataUri] = true;
       items.push({
         filename: p.filename,
@@ -292,6 +301,7 @@
         telescope: context.telescope || '',
         instrument: context.instrument || '',
         filters: p.filters || [],
+        category: p.category,
         categoryLabel: p.categoryLabel || '',
         hasPolarizer: !!p.hasPolarizer,
         channelColor: p.channelColor || '',
@@ -303,6 +313,30 @@
     renderBasket();
     return added;
   }
+
+  // Curated starter set: these exact Hubble HAP products passed live MAST
+  // FITS header/filter/WCS checks. Full-image Siril validation remains pending.
+  var pillarsStarterButton = document.getElementById('pillars-load-colour-set');
+  if (pillarsStarterButton) pillarsStarterButton.addEventListener('click', function () {
+    var filters = ['F502N', 'F657N', 'F673N'];
+    var colours = ['BLUE', 'GREEN', 'RED'];
+    var products = filters.map(function (filter, index) {
+      var filename = 'hst_13926_06_wfc3_uvis_' + filter.toLowerCase() + '_ick906_drc.fits';
+      var dataUri = 'mast:HST/product/' + filename;
+      return {
+        filename: filename, dataUri: dataUri,
+        downloadUrl: 'https://mast.stsci.edu/api/v0.1/Download/file?uri=' + encodeURIComponent(dataUri),
+        category: 'combined', categoryLabel: 'Combined Hubble science image',
+        filters: [filter], channelColor: colours[index],
+        sizeBytes: 6420 * 6555 * 4, sizeLabel: '160.5 MiB extracted science plane'
+      };
+    });
+    saveBasket([]);
+    var added = addToBasket(products, { telescope: 'HST', instrument: 'WFC3/UVIS', targetLabel: 'Pillars of Creation' });
+    setStatus(added === 3
+      ? 'Loaded the three Hubble Pillars filters. Open the basket and choose Download processing FITS (.zip).'
+      : 'Could not load all three science images; please reload the test page.');
+  });
 
   function removeFromBasket(index) {
     var items = loadBasket();
@@ -693,8 +727,8 @@
       return;
     }
 
-    var html = '<p class="finder-note">' + result.totalScienceProducts + ' science products checked; ' +
-      result.recommendedCount + ' selected as separate colour-filter channels for image processing. Download links go directly to the official MAST archive.</p>';
+    var html = '<p class="finder-note">' + result.totalScienceProducts + ' archive products checked; ' +
+      result.recommendedCount + ' selected as candidate colour-filter channels. Only combined FITS images can enter the processing ZIP basket. Other files remain available via direct archive links.</p>';
     html += '<ul class="product-list">';
     products.forEach(function (p, i) {
       var recommended = p.recommended ? ' product-recommended' : '';
@@ -708,6 +742,10 @@
           (p.description ? ' · ' + escapeHtml(p.description) : '') +
           '</span>'
         : '';
+      var isCombinedFits = p.category === 'combined' && /_(?:drc|drz|drw|i2d)\.fits$/i.test(p.filename || '') && /^mast:(?:HST|JWST)\/product\/[A-Za-z0-9._-]+\.fits$/.test(p.dataUri || '');
+      var basketButton = isCombinedFits
+        ? '<button type="button" class="product-add" data-obsid="' + escapeHtml(result.obsid) + '" data-index="' + i + '" aria-label="Add ' + escapeHtml(p.filename) + ' to download basket">Add</button>'
+        : '<span class="product-advanced">Archive file only</span>';
       html += '<li class="product-item' + recommended + '">' +
         '<div class="product-info">' +
           '<span class="product-name">' + escapeHtml(p.filename) + '</span>' +
@@ -718,8 +756,7 @@
           reasons + advanced +
         '</div>' +
         '<div class="product-actions">' +
-          '<button type="button" class="product-add" data-obsid="' + escapeHtml(result.obsid) + '" data-index="' + i + '"' +
-            ' aria-label="Add ' + escapeHtml(p.filename) + ' to download basket">Add</button>' +
+          basketButton +
           '<a class="product-download" href="' + escapeHtml(p.downloadUrl) + '" rel="noopener noreferrer" target="_blank"' +
             ' aria-label="Download ' + escapeHtml(p.filename) + ' from the MAST archive">Download</a>' +
         '</div>' +
@@ -731,7 +768,7 @@
       return {
         filename: p.filename, dataUri: p.dataUri, downloadUrl: p.downloadUrl,
         sizeBytes: p.sizeBytes, sizeLabel: p.sizeLabel, filters: p.filters,
-        categoryLabel: p.categoryLabel, recommended: p.recommended,
+        category: p.category, categoryLabel: p.categoryLabel, recommended: p.recommended,
         hasPolarizer: !!p.hasPolarizer, channelColor: p.channelColor || ''
       };
     }));
@@ -931,7 +968,7 @@
     var perId = {};
     selectedIds.forEach(function (id) {
       perId[id] = merged.filter(function (p) {
-        return String(p._obsid) === id && p.category === 'combined' && productPreferenceScore(p) >= 78;
+        return String(p._obsid) === id && p.category === 'combined' && productPreferenceScore(p) >= 78 && /^mast:(?:HST|JWST)\/product\/[A-Za-z0-9._-]+\.fits$/.test(p.dataUri || '');
       }).sort(function (a, b) {
         var scoreDiff = productPreferenceScore(b) - productPreferenceScore(a);
         if (scoreDiff) return scoreDiff;
@@ -1226,6 +1263,10 @@
       if (!list || !list.dataset.products || !currentSearch) return;
       var all = JSON.parse(list.dataset.products);
       var product = all[parseInt(singleAdd.dataset.index, 10)];
+      if (!product || product.category !== 'combined' || !/_(?:drc|drz|drw|i2d)\.fits$/i.test(product.filename || '')) {
+        setStatus('Only combined science FITS files can be added to the processing ZIP basket. Use Download for original archive files.', true);
+        return;
+      }
       var groupCard = singleAdd.closest('.finder-group');
       var gIndex = groupCard ? parseInt(groupCard.dataset.groupIndex, 10) : -1;
       var g = gIndex >= 0 ? currentSearch.groups[gIndex] : {};
@@ -1255,6 +1296,17 @@
     if (!items.length) return;
     var targets = Array.from(new Set(items.map(function (item) { return item.targetLabel; })));
     if (targets.length !== 1) { zipMessage.textContent = 'Keep one target per ZIP. Clear the basket and add one target’s colour set.'; return; }
+    // A colour-processing ZIP must have exactly three distinct, known filters.
+    // The backend also validates the actual FITS headers and footprints.
+    var channels = items.map(function (item) {
+      return Array.isArray(item.filters) && item.filters.length === 1
+        ? normaliseFilterName(item.filters[0]) : '';
+    });
+    if (items.length !== 3 || channels.some(function (filter) { return !filter; }) ||
+        new Set(channels).size !== 3) {
+      zipMessage.textContent = 'Choose exactly three combined FITS images with three different filters for a colour ZIP. No download was started.';
+      return;
+    }
     var revision = zipRevision;
     basketZipBtn.disabled = true;
     zipReadyLink.hidden = true;

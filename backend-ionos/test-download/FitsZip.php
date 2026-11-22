@@ -1,6 +1,38 @@
 <?php
 declare(strict_types=1);
 
+/** Validate colour-ZIP selection independently of the HTTP endpoint. */
+final class ColourSetSelection {
+    public static function validateItems(mixed $items): void {
+        if (!is_array($items) || !array_is_list($items) || count($items)!==3) {
+            throw new RuntimeException('Choose exactly three combined FITS images with different filters for a colour ZIP.');
+        }
+        $uris=[];
+        foreach ($items as $item) {
+            if (!is_array($item)) throw new RuntimeException('Invalid FITS selection.');
+            $uri=$item['dataUri']??null;
+            if (!is_string($uri) || !preg_match('~^mast:(HST|JWST)/product/[A-Za-z0-9._-]+_(?:drc|drz|drw|i2d)\\.fits$~i',$uri)) {
+                throw new RuntimeException('Only combined HST/JWST FITS science products can enter the colour ZIP.');
+            }
+            if (isset($uris[$uri])) throw new RuntimeException('Select three different FITS files.');
+            $uris[$uri]=true;
+            if (!isset($item['filters']) || !is_array($item['filters']) || count($item['filters'])!==1 ||
+                !is_string($item['filters'][0]) || !preg_match('/^F\\d{3,4}(?:W2|W|M|N|LP|X)$/i',$item['filters'][0])) {
+                throw new RuntimeException('Each science image must have one valid filter.');
+            }
+        }
+    }
+    public static function validateActualFilter(array $actual,array $requested,array &$seen): string {
+        $expected=array_map('strtoupper',$requested);
+        if (count($actual)!==1 || count($expected)!==1 || $actual[0]!==$expected[0]) {
+            throw new RuntimeException('The actual FITS filter does not match the selected channel. No ZIP was created.');
+        }
+        if (isset($seen[$actual[0]])) throw new RuntimeException('A colour ZIP needs three different science filters. Duplicate: '.$actual[0]);
+        $seen[$actual[0]]=true;
+        return $actual[0];
+    }
+}
+
 /** Bounded MAST range reader: no archive files are stored on this host. */
 final class MastRanges {
     public string $url;

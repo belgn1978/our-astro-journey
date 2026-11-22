@@ -18,16 +18,69 @@ assert.throws(()=>extract(Buffer.concat([primary,sci,sci])),/several SCI/);
 assert.throws(()=>extract(Buffer.concat([primary,sci]).subarray(0,5800)),/Incomplete/);
 const filePrimary=hdu({SIMPLE:'T',BITPIX:16,NAXIS:2,NAXIS1:2,NAXIS2:2},Buffer.alloc(8));assert.equal(extract(filePrimary).width,2);
 assert.throws(()=>extract(Buffer.concat([primary,hdu({XTENSION:"'BINTABLE'",BITPIX:8,NAXIS:2,NAXIS1:1,NAXIS2:1,PCOUNT:0,GCOUNT:1,EXTNAME:"'SCI'",ZIMAGE:'T'},Buffer.alloc(1))])),/No uncompressed/);
+// Documented archive filenames are candidates, not claims of verified science data.
+const catalogue=JSON.parse(fs.readFileSync(require.resolve('../assets/data/space-image-catalogue.json'),'utf8'));
+const pillars=catalogue.images.find(x=>x.id==='pillars-hubble-2015');
+assert.equal(pillars.fitsProducts.length,3);
+assert.deepEqual(pillars.fitsProducts.map(x=>x.filter),['F502N','F657N','F673N']);
+assert.notEqual(pillars.status,'fits-verified');
+assert(pillars.fitsProducts.every(x=>x.status==='full-zip-crc-validated' && /_drc\.fits$/.test(x.filename)));
+// Candidate filenames alone must never increase the FITS-verified catalogue counter.
+assert.equal(catalogue.images.filter(x=>x.status==='fits-verified').length,0);
 // Run the real browser code with inert DOM elements, exposing functions only in this test VM.
-const storage=new Map(), elements=new Map();function el(){return {hidden:true,value:'recommended',dataset:{},classList:{add(){},remove(){},toggle(){}},addEventListener(){},setAttribute(){},querySelector(){return null;}};}
+const storage=new Map(), elements=new Map();function el(){return {hidden:true,value:'recommended',dataset:{},classList:{add(){},remove(){},toggle(){}},addEventListener(type,fn){(this.listeners||(this.listeners={}))[type]=fn;},setAttribute(){},querySelector(){return null;}};}
 const document={getElementById(id){if(!elements.has(id))elements.set(id,el());return elements.get(id);},querySelectorAll(){return []},addEventListener(){},querySelector(){return null}};
 const window={location:{search:'',hostname:'example.org'},localStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)}};
 const ctx={fetch:async()=>({ok:true,json:async()=>({success:true,version:7,streamingZip:true})}),document,window,URLSearchParams,URL,Blob,setTimeout,clearTimeout,TextEncoder,TextDecoder,console};
-let code=fs.readFileSync(require.resolve('../assets/js/data-finder-v7.js'),'utf8');code=code.replace('  var initialTarget =', '  window.test = { normaliseProductResults, selectColourObsids, productPreferenceScore, readyFitsFilename, shellQuote, archiveTargetName };\n  var initialTarget =');vm.runInNewContext(code,ctx);const t=window.test;
+let code=fs.readFileSync(require.resolve('../assets/js/data-finder-v8.js'),'utf8');code=code.replace('  var initialTarget =', '  window.test = { normaliseProductResults, selectColourObsids, productPreferenceScore, readyFitsFilename, shellQuote, archiveTargetName, renderProducts, loadBasket, addToBasket };\n  var initialTarget =');vm.runInNewContext(code,ctx);const t=window.test;
+// Ensure the colour ZIP cannot silently be prepared with one/two channels or duplicate filters.
+assert.match(code,/items\.length !== 3/);
+assert.match(code,/new Set\(channels\)\.size !== 3/);
+
+// A preview or an individual exposure must never offer the processing-ZIP Add button.
+const productContainer={innerHTML:'',dataset:{}};
+t.renderProducts(productContainer, {telescope:'HST'}, {
+ obsid:'42',totalScienceProducts:3,recommendedCount:0,
+ products:[
+  {filename:'preview.jpg',category:'preview',categoryLabel:'Preview',sizeLabel:'12 KB',downloadUrl:'https://example.org/preview.jpg'},
+  {filename:'exposure_flc.fits',category:'calibrated',categoryLabel:'Calibrated exposure',sizeLabel:'8 MB',downloadUrl:'https://example.org/exposure_flc.fits'},
+  {filename:'combined_drc.fits',dataUri:'mast:HST/product/combined_drc.fits',category:'combined',categoryLabel:'Combined image',sizeLabel:'30 MB',downloadUrl:'https://example.org/combined_drc.fits'}
+ ]
+},'recommended');
+assert.equal((productContainer.innerHTML.match(/class="product-add"/g)||[]).length,1);
+assert.equal((productContainer.innerHTML.match(/Archive file only/g)||[]).length,2);
+assert.equal(JSON.parse(productContainer.dataset.products)[2].category,'combined');
+const withoutUri={...JSON.parse(productContainer.dataset.products)[2],dataUri:''};
+t.renderProducts(productContainer,{telescope:'HST'},{obsid:'42',totalScienceProducts:1,recommendedCount:0,products:[withoutUri]},'recommended');
+assert.equal((productContainer.innerHTML.match(/class="product-add"/g)||[]).length,0);
+
+// A basket restored from a previous test version must discard unsafe archive products.
+const basketKey='oaj-data-finder-basket-v8';
+const good={filename:'valid_drc.fits',dataUri:'mast:HST/product/valid_drc.fits',category:'combined',filters:['F502N'],downloadUrl:'https://mast.stsci.edu/example'};
+const bad={filename:'raw_flc.fits',dataUri:'mast:HST/product/raw_flc.fits',category:'calibrated'};
+storage.set(basketKey,JSON.stringify([good,bad,{filename:'preview.jpg',dataUri:'mast:HST/product/preview.jpg'}]));
+assert.equal(t.loadBasket().length,1);
+assert.equal(t.loadBasket()[0].filename,'valid_drc.fits');
+assert.equal(t.addToBasket([bad],{targetLabel:'M16'}),0);
+assert.equal(t.addToBasket([good],{targetLabel:'M16'}),0);
+assert.equal(t.addToBasket([{...good,filename:'valid2_i2d.fits',dataUri:'mast:JWST/product/valid2_i2d.fits'}],{targetLabel:'M16'}),1);
+assert.equal(t.loadBasket().length,2);
+assert.equal(t.loadBasket()[1].category,'combined');
+// The starter button must load exactly three real MAST combined science products.
+const starter=elements.get('pillars-load-colour-set');
+assert.equal(typeof starter.listeners.click,'function');
+starter.listeners.click();
+const starterBasket=t.loadBasket();
+assert.equal(starterBasket.length,3);
+assert.deepEqual(Array.from(starterBasket.map(x=>x.filters[0])),['F502N','F657N','F673N']);
+assert(starterBasket.every(x=>x.category==='combined'&&x.targetLabel==='Pillars of Creation'&&x.dataUri.startsWith('mast:HST/product/')));
+assert.equal(elements.get('basket-count').textContent,'3');
 const filters=['F502N','F657N','F673N'];const group={telescope:'HST',instrument:'WFC3/UVIS',observations:filters.map((f,i)=>({obsid:String(i+1),filters:[f],ra:274.7,dec:-13.8,exposureSeconds:500}))};
-function products(names=filters.map((f,i)=>`obs${i}_drc.fits`)) {return {results:filters.map((f,i)=>({obsid:String(i+1),products:[{filename:names[i],category:'combined',subGroup:'DRC',filters:[f],sizeBytes:100}]}))};}
+function products(names=filters.map((f,i)=>`obs${i}_drc.fits`)) {return {results:filters.map((f,i)=>({obsid:String(i+1),products:[{filename:names[i],dataUri:'mast:HST/product/'+names[i],category:'combined',subGroup:'DRC',filters:[f],sizeBytes:100}]}))};}
 let selected=t.normaliseProductResults(products(),'1,2,3',group);assert.equal(selected.recommendedCount,3);assert.equal(new Set(selected.recommended.map(p=>p.filters[0])).size,3);
 assert.equal(t.normaliseProductResults({results:products().results.slice(0,2)},'1,2,3',group).recommendedCount,0);
+const unavailable=products();delete unavailable.results[1].products[0].dataUri;
+assert.equal(t.normaliseProductResults(unavailable,'1,2,3',group).recommendedCount,0);
 assert.equal(t.normaliseProductResults(products(['hst_skycell-a_f502n_drc.fits','hst_skycell-b_f657n_drc.fits','hst_skycell-a_f673n_drc.fits']),'1,2,3',group).recommendedCount,0);
 assert.equal(t.productPreferenceScore({filename:'obs_flt_hlet.fits',category:'combined',subGroup:'DRC'}),0);
 assert.equal(t.productPreferenceScore({filename:'preview.jpg',category:'preview',subGroup:'DRC'}),0);

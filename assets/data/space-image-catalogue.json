@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-11-02",
+  "updated": "2026-11-22",
   "policy": "Published image and observing programme verified from official release; science FITS products NOT verified. Never show a verified download badge without product-level science validation.",
   "images": [
     {
@@ -32,8 +32,76 @@
       "releaseUrl": "https://science.nasa.gov/asset/webb/pillars-of-creation-in-visible-and-near-infrared-hubble/",
       "imageUrl": "https://esahubble.org/images/heic1501a/",
       "status": "programme-confirmed",
-      "fitsProducts": [],
-      "note": "Official release confirms programme and filter mapping; individual science FITS filenames, coverage, and alignment remain unverified."
+      "fitsProducts": [
+        {
+          "filename": "hst_13926_06_wfc3_uvis_f502n_ick906_drc.fits",
+          "filter": "F502N",
+          "channel": "blue",
+          "status": "full-zip-crc-validated",
+          "scienceWidth": 6420,
+          "scienceHeight": 6555,
+          "bitpix": -32,
+          "sourceSizeBytes": 505154880
+        },
+        {
+          "filename": "hst_13926_06_wfc3_uvis_f657n_ick906_drc.fits",
+          "filter": "F657N",
+          "channel": "green",
+          "status": "full-zip-crc-validated",
+          "scienceWidth": 6420,
+          "scienceHeight": 6555,
+          "bitpix": -32,
+          "sourceSizeBytes": 505154880
+        },
+        {
+          "filename": "hst_13926_06_wfc3_uvis_f673n_ick906_drc.fits",
+          "filter": "F673N",
+          "channel": "red",
+          "status": "full-zip-crc-validated",
+          "scienceWidth": 6420,
+          "scienceHeight": 6555,
+          "bitpix": -32,
+          "sourceSizeBytes": 505154880
+        }
+      ],
+      "note": "On 22 Nov 2026 GitHub Actions retrieved all three Hubble HAP DRC products, validated their FITS filters, WCS overlap, 6420×6555 SCI planes and nonzero sample pixels, then streamed the full 505,035,982-byte three-channel ZIP. All three extracted FITS files passed unzip CRC tests. Siril registration and full-image visual coverage still require a user test. Public catalogue FITS-verified status remains withheld until then.",
+      "fitsDocumentationUrl": "https://archive.stsci.edu/contents/newsletters/december-2020/hap-single-visit-mosaics-now-available",
+      "alternativeArchiveProducts": [
+        {
+          "filter": "F502N",
+          "filename": "hlsp_heritage_hst_wfc3-uvis_m16_f502n_v1_drz.fits",
+          "url": "https://archive.stsci.edu/pub/hlsp/heritage/m16/hlsp_heritage_hst_wfc3-uvis_m16_f502n_v1_drz.fits",
+          "source": "STScI Hubble Heritage M16 Data Access",
+          "status": "linked-not-validated"
+        },
+        {
+          "filter": "F657N",
+          "filename": "hlsp_heritage_hst_wfc3-uvis_m16_f657n_v1_drz.fits",
+          "url": "https://archive.stsci.edu/pub/hlsp/heritage/m16/hlsp_heritage_hst_wfc3-uvis_m16_f657n_v1_drz.fits",
+          "source": "STScI Hubble Heritage M16 Data Access",
+          "status": "linked-not-validated"
+        },
+        {
+          "filter": "F673N",
+          "filename": "hlsp_heritage_hst_wfc3-uvis_m16_f673n_v1_drz.fits",
+          "url": "https://archive.stsci.edu/pub/hlsp/heritage/m16/hlsp_heritage_hst_wfc3-uvis_m16_f673n_v1_drz.fits",
+          "source": "STScI Hubble Heritage M16 Data Access",
+          "status": "linked-not-validated"
+        }
+      ],
+      "alternativeArchiveUrl": "https://archive.stsci.edu/prepds/heritage/m16/datalist.html",
+      "headerValidation": {
+        "date": "2026-11-22",
+        "githubWorkflow": "https://github.com/belgn1978/our-astro-journey/actions/runs/45032369757",
+        "status": "passed"
+      },
+      "zipValidation": {
+        "date": "2026-11-22",
+        "bytes": 505035982,
+        "scienceFiles": 3,
+        "githubWorkflow": "https://github.com/belgn1978/our-astro-journey/actions/runs/45032551299",
+        "status": "passed"
+      }
     },
     {
       "id": "pillars-webb-2022",

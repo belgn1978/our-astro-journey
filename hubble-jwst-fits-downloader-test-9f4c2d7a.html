@@ -36,6 +36,10 @@
     <link rel="stylesheet" href="./assets/css/styles.css?v=20260924-subnav-dark1" />
     <style>
       .finder-basket [hidden]{display:none!important}
+      /* Native dropdown menus need opaque option backgrounds on Windows/Chrome. */
+      #finder-mode {color:#f4f8ff;color-scheme:dark;background-color:#14233d}
+      #finder-mode option {color:#f4f8ff;background-color:#14233d}
+      #finder-mode option:checked {color:#ffffff;background-color:#245a94}
       .finder-results-pager{display:flex;align-items:center;justify-content:center;gap:.9rem;flex-wrap:wrap;margin:1.25rem 0;padding:.9rem 1rem;border:1px solid rgba(126,196,255,.18);border-radius:16px;background:rgba(255,255,255,.045)}
       .finder-results-pager .button{min-width:8.25rem}
       .finder-results-pager .button:disabled{opacity:.42;cursor:not-allowed}
@@ -163,6 +167,17 @@
         </div>
 
 
+      <section aria-label="Three-filter Hubble starter dataset">
+        <div class="content-wrapper">
+          <article class="feature-card">
+            <h2>Start with the Pillars of Creation</h2>
+            <p>A documented Hubble WFC3 mosaic using three matching science images: F502N (blue), F657N (green) and F673N (red). The original FITS headers, filter identities, dimensions and overlapping sky fields have been checked against the live MAST archive. This is a test dataset, not a finished colour image.</p>
+            <p><strong>About 505 MB</strong> for the three extracted science images in one ZIP. Allow additional free space for processing in Siril.</p>
+            <button type="button" id="pillars-load-colour-set" class="button button-secondary">Load Pillars colour set (replaces basket)</button>
+            <p class="finder-note">The original three archive products are approximately 505 MB each. This processing ZIP extracts only their science images. Full-image visual inspection and Siril alignment are still to be tested.</p>
+          </article>
+        </div>
+      </section>
       <section aria-label="Published image catalogue"><div class="content-wrapper"><div id="oaj-verified-library" aria-live="polite"><p>Loading published-image catalogue…</p></div></div></section>
       <section id="finder-howto" aria-labelledby="finder-howto-heading">
         <div class="content-wrapper">
@@ -247,7 +262,7 @@
               <button type="button" class="button" id="basket-zip" disabled>Download processing FITS (.zip)</button>
               <p id="zip-message" role="status" aria-live="polite"></p>
               <a id="zip-ready-link" class="button" hidden referrerpolicy="no-referrer">Download ZIP</a>
-              <p class="finder-note">Unsupported or mismatched data is stopped before download. The FITS preserve original science pixels and coordinates; they are ready for processing, rather than pre-aligned or stretched. Test limit: 12 files / 8 GiB per ZIP. Download on a computer.</p>
+              <p class="finder-note">Unsupported or mismatched data is stopped before download. The FITS preserve original science pixels and coordinates; they are ready for processing, rather than pre-aligned or stretched. Test colour ZIP: exactly three different filters; maximum 8 GiB. Download on a computer.</p>
             </div>
             <ul id="basket-list" class="basket-list"></ul>
             <button type="button" class="button button-secondary" id="basket-clear" disabled>Clear basket</button>
@@ -402,7 +417,7 @@
 
     <script src="./assets/js/main.js?v=20260917-nav3"></script>
     <script src="./assets/js/fits-science.js?v=20261101zip1"></script>
-    <script src="./assets/js/data-finder-v8.js?v=20261102candidate1"></script>
+    <script src="./assets/js/data-finder-v8.js?v=20261122pillars1"></script>
     <script src="./assets/js/space-image-catalogue.js?v=20261102i"></script>
     <div id="finder-toast" class="finder-toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
     <a href="#page-top" id="finder-back-to-top" class="finder-back-to-top" aria-label="Back to top" title="Back to top" style="position:fixed!important;right:18px!important;bottom:18px!important;z-index:99999!important;width:54px!important;height:54px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:50%!important;background:#167dcc!important;border:2px solid #8bd4ff!important;color:#fff!important;text-decoration:none!important;font-size:30px!important;font-weight:800!important;line-height:1!important;box-shadow:0 10px 30px rgba(0,0,0,.55)!important;opacity:1!important;visibility:visible!important;">↑</a>
