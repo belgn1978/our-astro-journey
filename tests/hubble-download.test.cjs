@@ -24,7 +24,7 @@ const pillars=catalogue.images.find(x=>x.id==='pillars-hubble-2015');
 assert.equal(pillars.fitsProducts.length,3);
 assert.deepEqual(pillars.fitsProducts.map(x=>x.filter),['F502N','F657N','F673N']);
 assert.notEqual(pillars.status,'fits-verified');
-assert(pillars.fitsProducts.every(x=>x.status==='documented-not-validated' && /_drc\\.fits$/.test(x.filename)));
+assert(pillars.fitsProducts.every(x=>x.status==='documented-not-validated' && /_drc\.fits$/.test(x.filename)));
 // Candidate filenames alone must never increase the FITS-verified catalogue counter.
 assert.equal(catalogue.images.filter(x=>x.status==='fits-verified').length,0);
 // Run the real browser code with inert DOM elements, exposing functions only in this test VM.
