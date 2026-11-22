@@ -180,7 +180,13 @@
     try {
       var raw = window.localStorage.getItem(BASKET_KEY);
       var parsed = raw ? JSON.parse(raw) : [];
-      return Array.isArray(parsed) ? parsed : [];
+      // Older test builds could store previews and individual exposures.
+      // Never restore them into a processing ZIP basket.
+      return Array.isArray(parsed) ? parsed.filter(function (item) {
+        return item && typeof item.dataUri === 'string' &&
+          /^mast:(?:HST|JWST)\/product\/[A-Za-z0-9._-]+\.fits$/.test(item.dataUri) &&
+          /_(?:drc|drz|drw|i2d)\.fits$/i.test(item.filename || '');
+      }) : [];
     } catch (e) {
       return [];
     }
@@ -281,7 +287,10 @@
     items.forEach(function (item) { seen[item.dataUri] = true; });
     var added = 0;
     products.forEach(function (p) {
-      if (!p.dataUri || seen[p.dataUri]) return;
+      if (!p || p.category !== 'combined' ||
+          !/_(?:drc|drz|drw|i2d)\.fits$/i.test(p.filename || '') ||
+          !/^mast:(?:HST|JWST)\/product\/[A-Za-z0-9._-]+\.fits$/.test(p.dataUri || '') ||
+          seen[p.dataUri]) return;
       seen[p.dataUri] = true;
       items.push({
         filename: p.filename,
@@ -292,6 +301,7 @@
         telescope: context.telescope || '',
         instrument: context.instrument || '',
         filters: p.filters || [],
+        category: p.category,
         categoryLabel: p.categoryLabel || '',
         hasPolarizer: !!p.hasPolarizer,
         channelColor: p.channelColor || '',
