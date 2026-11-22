@@ -52,24 +52,27 @@
           "status": "documented-not-validated"
         }
       ],
-      "note": "STScI documents the three HAP DRC mosaics and separately links three Heritage HLSP DRZ mosaics for the same filters. Product bytes and SCI footprints remain untested. The current ZIP API accepts only mast:HST/JWST product URIs; the Heritage HLSP links cannot be submitted directly. No verified ZIP yet.",
+      "note": "Exact Heritage FITS filenames and links confirmed on STScI M16 Data Access page (2015). Direct fetch returned HTTP 403 in the current retrieval environment, so bytes and science coverage are not validated. Current ZIP API only accepts MAST product URIs; no verified ZIP yet.",
       "fitsDocumentationUrl": "https://archive.stsci.edu/contents/newsletters/december-2020/hap-single-visit-mosaics-now-available",
       "alternativeArchiveProducts": [
         {
           "filter": "F502N",
           "filename": "hlsp_heritage_hst_wfc3-uvis_m16_f502n_v1_drz.fits",
+          "url": "https://archive.stsci.edu/pub/hlsp/heritage/m16/hlsp_heritage_hst_wfc3-uvis_m16_f502n_v1_drz.fits",
           "source": "STScI Hubble Heritage M16 Data Access",
           "status": "linked-not-validated"
         },
         {
           "filter": "F657N",
           "filename": "hlsp_heritage_hst_wfc3-uvis_m16_f657n_v1_drz.fits",
+          "url": "https://archive.stsci.edu/pub/hlsp/heritage/m16/hlsp_heritage_hst_wfc3-uvis_m16_f657n_v1_drz.fits",
           "source": "STScI Hubble Heritage M16 Data Access",
           "status": "linked-not-validated"
         },
         {
           "filter": "F673N",
           "filename": "hlsp_heritage_hst_wfc3-uvis_m16_f673n_v1_drz.fits",
+          "url": "https://archive.stsci.edu/pub/hlsp/heritage/m16/hlsp_heritage_hst_wfc3-uvis_m16_f673n_v1_drz.fits",
           "source": "STScI Hubble Heritage M16 Data Access",
           "status": "linked-not-validated"
         }
