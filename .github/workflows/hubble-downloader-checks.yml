@@ -11,6 +11,7 @@ on:
       - 'assets/js/fits-science.js'
       - 'tests/hubble-download.test.cjs'
       - 'tests/fits-zip.test.php'
+      - 'tests/probe-pillars-mast.py'
       - 'backend-ionos/test-download/**'
       - '.github/workflows/hubble-downloader-checks.yml'
   workflow_dispatch: {}
@@ -32,20 +33,6 @@ jobs:
         run: php -l backend-ionos/test-download/index.php && php -l backend-ionos/test-download/FitsZip.php
       - name: Validate FITS ZIP fixture
         run: php tests/fits-zip.test.php /tmp/hubble-test-fits.zip
-      - name: Check public archive partial FITS access (diagnostic only)
+      - name: Inspect real Pillars FITS headers, WCS and sample pixels
         continue-on-error: true
-        run: |
-          python3 - <<'PY'
-          import urllib.request, urllib.parse, urllib.error
-          for flt in ('f502n','f657n','f673n'):
-              name='hst_13926_06_wfc3_uvis_'+flt+'_ick906_drc.fits'
-              uri='mast:HST/product/'+name
-              url='https://mast.stsci.edu/api/v0.1/Download/file?uri='+urllib.parse.quote(uri,safe='')
-              try:
-                  request=urllib.request.Request(url,headers={'Range':'bytes=0-2879','User-Agent':'OurAstroJourney-test/1'})
-                  with urllib.request.urlopen(request,timeout=12) as response:
-                      data=response.read(2880)
-                      print(flt,'HTTP',response.status,'range',response.headers.get('Content-Range'),'FITS',data.startswith(b'SIMPLE  ='))
-              except Exception as error:
-                  print(flt,'archive access failed',type(error).__name__,str(error)[:150])
-          PY
+        run: python3 tests/probe-pillars-mast.py
