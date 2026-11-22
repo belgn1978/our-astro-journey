@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-11-02",
+  "updated": "2026-11-22",
   "policy": "Published image and observing programme verified from official release; science FITS products NOT verified. Never show a verified download badge without product-level science validation.",
   "images": [
     {
@@ -32,8 +32,28 @@
       "releaseUrl": "https://science.nasa.gov/asset/webb/pillars-of-creation-in-visible-and-near-infrared-hubble/",
       "imageUrl": "https://esahubble.org/images/heic1501a/",
       "status": "programme-confirmed",
-      "fitsProducts": [],
-      "note": "Official release confirms programme and filter mapping; individual science FITS filenames, coverage, and alignment remain unverified."
+      "fitsProducts": [
+        {
+          "filename": "hst_13926_06_wfc3_uvis_f502n_ick906_drc.fits",
+          "filter": "F502N",
+          "channel": "blue",
+          "status": "documented-not-validated"
+        },
+        {
+          "filename": "hst_13926_06_wfc3_uvis_f657n_ick906_drc.fits",
+          "filter": "F657N",
+          "channel": "green",
+          "status": "documented-not-validated"
+        },
+        {
+          "filename": "hst_13926_06_wfc3_uvis_f673n_ick906_drc.fits",
+          "filter": "F673N",
+          "channel": "red",
+          "status": "documented-not-validated"
+        }
+      ],
+      "note": "STScI MAST documentation identifies these three HAP combined mosaic filenames for the 2015 colour image. Actual product retrieval, FITS header/pixel checks, target coverage, and end-to-end Siril validation are still pending; do not label as FITS-verified.",
+      "fitsDocumentationUrl": "https://archive.stsci.edu/contents/newsletters/december-2020/hap-single-visit-mosaics-now-available"
     },
     {
       "id": "pillars-webb-2022",
