@@ -23,7 +23,7 @@ const storage=new Map(), elements=new Map();function el(){return {hidden:true,va
 const document={getElementById(id){if(!elements.has(id))elements.set(id,el());return elements.get(id);},querySelectorAll(){return []},addEventListener(){},querySelector(){return null}};
 const window={location:{search:'',hostname:'example.org'},localStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)}};
 const ctx={fetch:async()=>({ok:true,json:async()=>({success:true,version:7,streamingZip:true})}),document,window,URLSearchParams,URL,Blob,setTimeout,clearTimeout,TextEncoder,TextDecoder,console};
-let code=fs.readFileSync(require.resolve('../assets/js/data-finder-v8.js'),'utf8');code=code.replace('  var initialTarget =', '  window.test = { normaliseProductResults, selectColourObsids, productPreferenceScore, readyFitsFilename, shellQuote, archiveTargetName, renderProducts };\n  var initialTarget =');vm.runInNewContext(code,ctx);const t=window.test;
+let code=fs.readFileSync(require.resolve('../assets/js/data-finder-v8.js'),'utf8');code=code.replace('  var initialTarget =', '  window.test = { normaliseProductResults, selectColourObsids, productPreferenceScore, readyFitsFilename, shellQuote, archiveTargetName, renderProducts, loadBasket, addToBasket };\n  var initialTarget =');vm.runInNewContext(code,ctx);const t=window.test;
 // A preview or an individual exposure must never offer the processing-ZIP Add button.
 const productContainer={innerHTML:'',dataset:{}};
 t.renderProducts(productContainer, {telescope:'HST'}, {
@@ -37,6 +37,18 @@ t.renderProducts(productContainer, {telescope:'HST'}, {
 assert.equal((productContainer.innerHTML.match(/class="product-add"/g)||[]).length,1);
 assert.equal((productContainer.innerHTML.match(/Archive file only/g)||[]).length,2);
 assert.equal(JSON.parse(productContainer.dataset.products)[2].category,'combined');
+// A basket restored from a previous test version must discard unsafe archive products.
+const basketKey='oaj-data-finder-basket-v8';
+const good={filename:'valid_drc.fits',dataUri:'mast:HST/product/valid_drc.fits',category:'combined',filters:['F502N'],downloadUrl:'https://mast.stsci.edu/example'};
+const bad={filename:'raw_flc.fits',dataUri:'mast:HST/product/raw_flc.fits',category:'calibrated'};
+storage.set(basketKey,JSON.stringify([good,bad,{filename:'preview.jpg',dataUri:'mast:HST/product/preview.jpg'}]));
+assert.equal(t.loadBasket().length,1);
+assert.equal(t.loadBasket()[0].filename,'valid_drc.fits');
+assert.equal(t.addToBasket([bad],{targetLabel:'M16'}),0);
+assert.equal(t.addToBasket([good],{targetLabel:'M16'}),0);
+assert.equal(t.addToBasket([{...good,filename:'valid2_i2d.fits',dataUri:'mast:JWST/product/valid2_i2d.fits'}],{targetLabel:'M16'}),1);
+assert.equal(t.loadBasket().length,2);
+assert.equal(t.loadBasket()[1].category,'combined');
 const filters=['F502N','F657N','F673N'];const group={telescope:'HST',instrument:'WFC3/UVIS',observations:filters.map((f,i)=>({obsid:String(i+1),filters:[f],ra:274.7,dec:-13.8,exposureSeconds:500}))};
 function products(names=filters.map((f,i)=>`obs${i}_drc.fits`)) {return {results:filters.map((f,i)=>({obsid:String(i+1),products:[{filename:names[i],category:'combined',subGroup:'DRC',filters:[f],sizeBytes:100}]}))};}
 let selected=t.normaliseProductResults(products(),'1,2,3',group);assert.equal(selected.recommendedCount,3);assert.equal(new Set(selected.recommended.map(p=>p.filters[0])).size,3);
