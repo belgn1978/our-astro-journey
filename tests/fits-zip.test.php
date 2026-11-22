@@ -6,6 +6,26 @@ function hdu(array $v,string $data=''):string {
     $cards='';foreach($v as $k=>$x)$cards.=str_pad(str_pad($k,8).'= '.str_pad((string)$x,20,' ',STR_PAD_LEFT),80);
     $cards.=str_pad('END',80);return str_pad($cards,(int)(ceil(strlen($cards)/2880)*2880)).$data.str_repeat("\0",(2880-strlen($data)%2880)%2880);
 }
+// The backend, not only the browser, must reject incomplete or duplicated colour sets.
+$selection=fn(string $name,string $filter):array=>['dataUri'=>'mast:HST/product/'.$name.'_drc.fits','filters'=>[$filter]];
+$valid=[$selection('one','F502N'),$selection('two','F657N'),$selection('three','F673N')];
+ColourSetSelection::validateItems($valid);
+foreach ([
+    array_slice($valid,0,2),
+    [$valid[0],$valid[0],$valid[2]],
+    [$valid[0],['dataUri'=>'https://example.org/file_drc.fits','filters'=>['F657N']],$valid[2]],
+    [$valid[0],['dataUri'=>'mast:HST/product/two_flc.fits','filters'=>['F657N']],$valid[2]],
+    [$valid[0],['dataUri'=>'mast:HST/product/two_drc.fits','filters'=>[]],$valid[2]],
+] as $badSelection) {
+    try { ColourSetSelection::validateItems($badSelection); throw new RuntimeException('Invalid colour selection accepted'); }
+    catch (RuntimeException $e) { check($e->getMessage()!=='Invalid colour selection accepted','Invalid selection rejected'); }
+}
+$seenFilters=[];
+ColourSetSelection::validateActualFilter(['F502N'],['F502N'],$seenFilters);
+try { ColourSetSelection::validateActualFilter(['F502N'],['F502N'],$seenFilters); throw new RuntimeException('Duplicate filter accepted'); }
+catch (RuntimeException $e) { check($e->getMessage()!=='Duplicate filter accepted','Duplicate filter rejected'); }
+try { ColourSetSelection::validateActualFilter(['F657N'],['F673N'],$seenFilters); throw new RuntimeException('Wrong actual filter accepted'); }
+catch (RuntimeException $e) { check($e->getMessage()!=='Wrong actual filter accepted','Actual FITS filter mismatch rejected'); }
 $primary=['SIMPLE'=>'T','BITPIX'=>8,'NAXIS'=>0,'TELESCOP'=>"'HST'",'INSTRUME'=>"'WFPC2'",'FILTNAM1'=>"'F814W'",'TARGNAME'=>"'NGC2685'"];
 $values=['XTENSION'=>"'IMAGE'",'BITPIX'=>-32,'NAXIS'=>2,'NAXIS1'=>2,'NAXIS2'=>2,'PCOUNT'=>0,'GCOUNT'=>1,'EXTNAME'=>"'SCI'",'CTYPE1'=>"'RA---TAN'",'CTYPE2'=>"'DEC--TAN'",'CRVAL1'=>133.89,'CRVAL2'=>58.74,'CRPIX1'=>1,'CRPIX2'=>1,'CD1_1'=>-0.00001,'CD1_2'=>0,'CD2_1'=>0,'CD2_2'=>0.00001,'CHECKSUM'=>"'obsolete'"];
 $pixels=hex2bin('3f80000040000000404000007fc00000');
