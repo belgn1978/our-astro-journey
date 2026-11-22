@@ -12,6 +12,7 @@ on:
       - 'tests/hubble-download.test.cjs'
       - 'tests/fits-zip.test.php'
       - 'tests/probe-pillars-mast.py'
+      - 'tests/probe-live-pillars-php.php'
       - 'backend-ionos/test-download/**'
       - '.github/workflows/hubble-downloader-checks.yml'
   workflow_dispatch: {}
@@ -36,3 +37,6 @@ jobs:
       - name: Inspect real Pillars FITS headers, WCS and sample pixels
         continue-on-error: true
         run: python3 tests/probe-pillars-mast.py
+      - name: Validate live MAST files with actual PHP ZIP backend inspector
+        continue-on-error: true
+        run: php tests/probe-live-pillars-php.php
