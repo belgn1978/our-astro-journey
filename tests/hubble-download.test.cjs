@@ -63,9 +63,11 @@ assert.equal(t.addToBasket([{...good,filename:'valid2_i2d.fits',dataUri:'mast:JW
 assert.equal(t.loadBasket().length,2);
 assert.equal(t.loadBasket()[1].category,'combined');
 const filters=['F502N','F657N','F673N'];const group={telescope:'HST',instrument:'WFC3/UVIS',observations:filters.map((f,i)=>({obsid:String(i+1),filters:[f],ra:274.7,dec:-13.8,exposureSeconds:500}))};
-function products(names=filters.map((f,i)=>`obs${i}_drc.fits`)) {return {results:filters.map((f,i)=>({obsid:String(i+1),products:[{filename:names[i],category:'combined',subGroup:'DRC',filters:[f],sizeBytes:100}]}))};}
+function products(names=filters.map((f,i)=>`obs${i}_drc.fits`)) {return {results:filters.map((f,i)=>({obsid:String(i+1),products:[{filename:names[i],dataUri:'mast:HST/product/'+names[i],category:'combined',subGroup:'DRC',filters:[f],sizeBytes:100}]}))};}
 let selected=t.normaliseProductResults(products(),'1,2,3',group);assert.equal(selected.recommendedCount,3);assert.equal(new Set(selected.recommended.map(p=>p.filters[0])).size,3);
 assert.equal(t.normaliseProductResults({results:products().results.slice(0,2)},'1,2,3',group).recommendedCount,0);
+const unavailable=products();delete unavailable.results[1].products[0].dataUri;
+assert.equal(t.normaliseProductResults(unavailable,'1,2,3',group).recommendedCount,0);
 assert.equal(t.normaliseProductResults(products(['hst_skycell-a_f502n_drc.fits','hst_skycell-b_f657n_drc.fits','hst_skycell-a_f673n_drc.fits']),'1,2,3',group).recommendedCount,0);
 assert.equal(t.productPreferenceScore({filename:'obs_flt_hlet.fits',category:'combined',subGroup:'DRC'}),0);
 assert.equal(t.productPreferenceScore({filename:'preview.jpg',category:'preview',subGroup:'DRC'}),0);
