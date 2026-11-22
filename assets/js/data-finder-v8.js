@@ -693,8 +693,8 @@
       return;
     }
 
-    var html = '<p class="finder-note">' + result.totalScienceProducts + ' science products checked; ' +
-      result.recommendedCount + ' selected as separate colour-filter channels for image processing. Download links go directly to the official MAST archive.</p>';
+    var html = '<p class="finder-note">' + result.totalScienceProducts + ' archive products checked; ' +
+      result.recommendedCount + ' selected as candidate colour-filter channels. Only combined FITS images can enter the processing ZIP basket. Other files remain available via direct archive links.</p>';
     html += '<ul class="product-list">';
     products.forEach(function (p, i) {
       var recommended = p.recommended ? ' product-recommended' : '';
@@ -708,6 +708,10 @@
           (p.description ? ' · ' + escapeHtml(p.description) : '') +
           '</span>'
         : '';
+      var isCombinedFits = p.category === 'combined' && /\.fits(?:\.gz)?$/i.test(p.filename || '');
+      var basketButton = isCombinedFits
+        ? '<button type="button" class="product-add" data-obsid="' + escapeHtml(result.obsid) + '" data-index="' + i + '" aria-label="Add ' + escapeHtml(p.filename) + ' to download basket">Add</button>'
+        : '<span class="product-advanced">Archive file only</span>';
       html += '<li class="product-item' + recommended + '">' +
         '<div class="product-info">' +
           '<span class="product-name">' + escapeHtml(p.filename) + '</span>' +
@@ -718,8 +722,7 @@
           reasons + advanced +
         '</div>' +
         '<div class="product-actions">' +
-          '<button type="button" class="product-add" data-obsid="' + escapeHtml(result.obsid) + '" data-index="' + i + '"' +
-            ' aria-label="Add ' + escapeHtml(p.filename) + ' to download basket">Add</button>' +
+          basketButton +
           '<a class="product-download" href="' + escapeHtml(p.downloadUrl) + '" rel="noopener noreferrer" target="_blank"' +
             ' aria-label="Download ' + escapeHtml(p.filename) + ' from the MAST archive">Download</a>' +
         '</div>' +
@@ -731,7 +734,7 @@
       return {
         filename: p.filename, dataUri: p.dataUri, downloadUrl: p.downloadUrl,
         sizeBytes: p.sizeBytes, sizeLabel: p.sizeLabel, filters: p.filters,
-        categoryLabel: p.categoryLabel, recommended: p.recommended,
+        category: p.category, categoryLabel: p.categoryLabel, recommended: p.recommended,
         hasPolarizer: !!p.hasPolarizer, channelColor: p.channelColor || ''
       };
     }));
@@ -1226,6 +1229,10 @@
       if (!list || !list.dataset.products || !currentSearch) return;
       var all = JSON.parse(list.dataset.products);
       var product = all[parseInt(singleAdd.dataset.index, 10)];
+      if (!product || product.category !== 'combined' || !/\.fits(?:\.gz)?$/i.test(product.filename || '')) {
+        setStatus('Only combined science FITS files can be added to the processing ZIP basket. Use Download for original archive files.', true);
+        return;
+      }
       var groupCard = singleAdd.closest('.finder-group');
       var gIndex = groupCard ? parseInt(groupCard.dataset.groupIndex, 10) : -1;
       var g = gIndex >= 0 ? currentSearch.groups[gIndex] : {};
