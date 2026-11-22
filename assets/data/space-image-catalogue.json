@@ -37,7 +37,7 @@
           "filename": "hst_13926_06_wfc3_uvis_f502n_ick906_drc.fits",
           "filter": "F502N",
           "channel": "blue",
-          "status": "live-header-validated",
+          "status": "full-zip-crc-validated",
           "scienceWidth": 6420,
           "scienceHeight": 6555,
           "bitpix": -32,
@@ -47,7 +47,7 @@
           "filename": "hst_13926_06_wfc3_uvis_f657n_ick906_drc.fits",
           "filter": "F657N",
           "channel": "green",
-          "status": "live-header-validated",
+          "status": "full-zip-crc-validated",
           "scienceWidth": 6420,
           "scienceHeight": 6555,
           "bitpix": -32,
@@ -57,14 +57,14 @@
           "filename": "hst_13926_06_wfc3_uvis_f673n_ick906_drc.fits",
           "filter": "F673N",
           "channel": "red",
-          "status": "live-header-validated",
+          "status": "full-zip-crc-validated",
           "scienceWidth": 6420,
           "scienceHeight": 6555,
           "bitpix": -32,
           "sourceSizeBytes": 505154880
         }
       ],
-      "note": "All three STScI HAP DRC mosaics were retrieved by HTTP range in GitHub Actions. Their real FITS SCI headers confirm WFC3, the intended distinct filters, identical 6420×6555 image dimensions, matching WCS field, and finite nonzero sample pixels. The production PHP FITS inspector confirmed filters and sky overlap for all three. Full ZIP transfer, full-image target coverage, and Siril colour processing remain untested; not marked as FITS-verified.",
+      "note": "On 22 Nov 2026 GitHub Actions retrieved all three Hubble HAP DRC products, validated their FITS filters, WCS overlap, 6420×6555 SCI planes and nonzero sample pixels, then streamed the full 505,035,982-byte three-channel ZIP. All three extracted FITS files passed unzip CRC tests. Siril registration and full-image visual coverage still require a user test. Public catalogue FITS-verified status remains withheld until then.",
       "fitsDocumentationUrl": "https://archive.stsci.edu/contents/newsletters/december-2020/hap-single-visit-mosaics-now-available",
       "alternativeArchiveProducts": [
         {
@@ -93,6 +93,13 @@
       "headerValidation": {
         "date": "2026-11-22",
         "githubWorkflow": "https://github.com/belgn1978/our-astro-journey/actions/runs/45032369757",
+        "status": "passed"
+      },
+      "zipValidation": {
+        "date": "2026-11-22",
+        "bytes": 505035982,
+        "scienceFiles": 3,
+        "githubWorkflow": "https://github.com/belgn1978/our-astro-journey/actions/runs/45032551299",
         "status": "passed"
       }
     },
