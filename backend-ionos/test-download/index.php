@@ -13,7 +13,7 @@ try {
         @set_time_limit(900);
         $raw=(string)file_get_contents('php://input');if(strlen($raw)>32000)throw new RuntimeException('Download selection is too large.');
         $body=json_decode($raw,true,32,JSON_THROW_ON_ERROR);$items=$body['items']??[];
-        if(!is_array($items)||count($items)!==3)throw new RuntimeException('Choose exactly three combined FITS images with different filters for a colour ZIP.');
+        ColourSetSelection::validateItems($items);
         $prepared=[];$names=[];$footprints=[];$seen=[];$seenFilters=[];$target=trim((string)($body['targetLabel']??''));
         if($target===''||strlen($target)>200)throw new RuntimeException('Choose a target before preparing the ZIP.');
         $instrument='';$total=0;
@@ -24,8 +24,7 @@ try {
             $reader=new MastRanges($uri);
             $image=ScienceFits::inspect(function(int $start,int $length)use($reader){return [$reader->range($start,$length),$reader->total];});
             $v=$image['values'];$filters=ScienceFits::filters($v);$expected=array_map('strtoupper',$item['filters']??[]);
-            if(count($filters)!==1||count($expected)!==1||$filters[0]!==$expected[0])throw new RuntimeException($filename.': the actual FITS filter does not match the selected channel. No ZIP was created.');
-            if(isset($seenFilters[$filters[0]]))throw new RuntimeException('A colour ZIP needs three different science filters. Duplicate: '.$filters[0]);$seenFilters[$filters[0]]=true;
+            try { ColourSetSelection::validateActualFilter($filters,$expected,$seenFilters); } catch (RuntimeException $e) { throw new RuntimeException($filename.': '.$e->getMessage()); }
             $scope=strtoupper(trim($v['TELESCOP']??''));$inst=strtoupper(trim($v['INSTRUME']??''));
             if(!in_array($scope,['HST','JWST'],true)||$inst==='')throw new RuntimeException('Missing telescope/instrument metadata in the science product.');
             $identity=$scope.'/'.$inst;
