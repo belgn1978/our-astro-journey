@@ -18,6 +18,15 @@ assert.throws(()=>extract(Buffer.concat([primary,sci,sci])),/several SCI/);
 assert.throws(()=>extract(Buffer.concat([primary,sci]).subarray(0,5800)),/Incomplete/);
 const filePrimary=hdu({SIMPLE:'T',BITPIX:16,NAXIS:2,NAXIS1:2,NAXIS2:2},Buffer.alloc(8));assert.equal(extract(filePrimary).width,2);
 assert.throws(()=>extract(Buffer.concat([primary,hdu({XTENSION:"'BINTABLE'",BITPIX:8,NAXIS:2,NAXIS1:1,NAXIS2:1,PCOUNT:0,GCOUNT:1,EXTNAME:"'SCI'",ZIMAGE:'T'},Buffer.alloc(1))])),/No uncompressed/);
+// Documented archive filenames are candidates, not claims of verified science data.
+const catalogue=JSON.parse(fs.readFileSync(require.resolve('../assets/data/space-image-catalogue.json'),'utf8'));
+const pillars=catalogue.images.find(x=>x.id==='pillars-hubble-2015');
+assert.equal(pillars.fitsProducts.length,3);
+assert.deepEqual(pillars.fitsProducts.map(x=>x.filter),['F502N','F657N','F673N']);
+assert.notEqual(pillars.status,'fits-verified');
+assert(pillars.fitsProducts.every(x=>x.status==='documented-not-validated' && /_drc\\.fits$/.test(x.filename)));
+// Candidate filenames alone must never increase the FITS-verified catalogue counter.
+assert.equal(catalogue.images.filter(x=>x.status==='fits-verified').length,0);
 // Run the real browser code with inert DOM elements, exposing functions only in this test VM.
 const storage=new Map(), elements=new Map();function el(){return {hidden:true,value:'recommended',dataset:{},classList:{add(){},remove(){},toggle(){}},addEventListener(){},setAttribute(){},querySelector(){return null;}};}
 const document={getElementById(id){if(!elements.has(id))elements.set(id,el());return elements.get(id);},querySelectorAll(){return []},addEventListener(){},querySelector(){return null}};
