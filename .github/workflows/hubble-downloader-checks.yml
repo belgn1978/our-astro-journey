@@ -1,5 +1,8 @@
 name: Hubble downloader checks
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - fix/hubble-product-basket-safety-20261122
