@@ -28,7 +28,7 @@ assert(pillars.fitsProducts.every(x=>x.status==='documented-not-validated' && /_
 // Candidate filenames alone must never increase the FITS-verified catalogue counter.
 assert.equal(catalogue.images.filter(x=>x.status==='fits-verified').length,0);
 // Run the real browser code with inert DOM elements, exposing functions only in this test VM.
-const storage=new Map(), elements=new Map();function el(){return {hidden:true,value:'recommended',dataset:{},classList:{add(){},remove(){},toggle(){}},addEventListener(){},setAttribute(){},querySelector(){return null;}};}
+const storage=new Map(), elements=new Map();function el(){return {hidden:true,value:'recommended',dataset:{},classList:{add(){},remove(){},toggle(){}},addEventListener(type,fn){(this.listeners||(this.listeners={}))[type]=fn;},setAttribute(){},querySelector(){return null;}};}
 const document={getElementById(id){if(!elements.has(id))elements.set(id,el());return elements.get(id);},querySelectorAll(){return []},addEventListener(){},querySelector(){return null}};
 const window={location:{search:'',hostname:'example.org'},localStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)}};
 const ctx={fetch:async()=>({ok:true,json:async()=>({success:true,version:7,streamingZip:true})}),document,window,URLSearchParams,URL,Blob,setTimeout,clearTimeout,TextEncoder,TextDecoder,console};
@@ -66,6 +66,15 @@ assert.equal(t.addToBasket([good],{targetLabel:'M16'}),0);
 assert.equal(t.addToBasket([{...good,filename:'valid2_i2d.fits',dataUri:'mast:JWST/product/valid2_i2d.fits'}],{targetLabel:'M16'}),1);
 assert.equal(t.loadBasket().length,2);
 assert.equal(t.loadBasket()[1].category,'combined');
+// The starter button must load exactly three real MAST combined science products.
+const starter=elements.get('pillars-load-colour-set');
+assert.equal(typeof starter.listeners.click,'function');
+starter.listeners.click();
+const starterBasket=t.loadBasket();
+assert.equal(starterBasket.length,3);
+assert.deepEqual(Array.from(starterBasket.map(x=>x.filters[0])),['F502N','F657N','F673N']);
+assert(starterBasket.every(x=>x.category==='combined'&&x.targetLabel==='Pillars of Creation'&&x.dataUri.startsWith('mast:HST/product/')));
+assert.equal(elements.get('basket-count').textContent,'3');
 const filters=['F502N','F657N','F673N'];const group={telescope:'HST',instrument:'WFC3/UVIS',observations:filters.map((f,i)=>({obsid:String(i+1),filters:[f],ra:274.7,dec:-13.8,exposureSeconds:500}))};
 function products(names=filters.map((f,i)=>`obs${i}_drc.fits`)) {return {results:filters.map((f,i)=>({obsid:String(i+1),products:[{filename:names[i],dataUri:'mast:HST/product/'+names[i],category:'combined',subGroup:'DRC',filters:[f],sizeBytes:100}]}))};}
 let selected=t.normaliseProductResults(products(),'1,2,3',group);assert.equal(selected.recommendedCount,3);assert.equal(new Set(selected.recommended.map(p=>p.filters[0])).size,3);
