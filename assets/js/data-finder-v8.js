@@ -944,7 +944,7 @@
     var perId = {};
     selectedIds.forEach(function (id) {
       perId[id] = merged.filter(function (p) {
-        return String(p._obsid) === id && p.category === 'combined' && productPreferenceScore(p) >= 78;
+        return String(p._obsid) === id && p.category === 'combined' && productPreferenceScore(p) >= 78 && /^mast:(?:HST|JWST)\/product\/[A-Za-z0-9._-]+\.fits$/.test(p.dataUri || '');
       }).sort(function (a, b) {
         var scoreDiff = productPreferenceScore(b) - productPreferenceScore(a);
         if (scoreDiff) return scoreDiff;
