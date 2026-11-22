@@ -52,8 +52,29 @@
           "status": "documented-not-validated"
         }
       ],
-      "note": "STScI MAST documentation identifies these three HAP combined mosaic filenames for the 2015 colour image. Actual product retrieval, FITS header/pixel checks, target coverage, and end-to-end Siril validation are still pending; do not label as FITS-verified.",
-      "fitsDocumentationUrl": "https://archive.stsci.edu/contents/newsletters/december-2020/hap-single-visit-mosaics-now-available"
+      "note": "STScI documents the three HAP DRC mosaics and separately links three Heritage HLSP DRZ mosaics for the same filters. Product bytes and SCI footprints remain untested. The current ZIP API accepts only mast:HST/JWST product URIs; the Heritage HLSP links cannot be submitted directly. No verified ZIP yet.",
+      "fitsDocumentationUrl": "https://archive.stsci.edu/contents/newsletters/december-2020/hap-single-visit-mosaics-now-available",
+      "alternativeArchiveProducts": [
+        {
+          "filter": "F502N",
+          "filename": "hlsp_heritage_hst_wfc3-uvis_m16_f502n_v1_drz.fits",
+          "source": "STScI Hubble Heritage M16 Data Access",
+          "status": "linked-not-validated"
+        },
+        {
+          "filter": "F657N",
+          "filename": "hlsp_heritage_hst_wfc3-uvis_m16_f657n_v1_drz.fits",
+          "source": "STScI Hubble Heritage M16 Data Access",
+          "status": "linked-not-validated"
+        },
+        {
+          "filter": "F673N",
+          "filename": "hlsp_heritage_hst_wfc3-uvis_m16_f673n_v1_drz.fits",
+          "source": "STScI Hubble Heritage M16 Data Access",
+          "status": "linked-not-validated"
+        }
+      ],
+      "alternativeArchiveUrl": "https://archive.stsci.edu/prepds/heritage/m16/datalist.html"
     },
     {
       "id": "pillars-webb-2022",
