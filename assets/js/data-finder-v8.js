@@ -1272,6 +1272,17 @@
     if (!items.length) return;
     var targets = Array.from(new Set(items.map(function (item) { return item.targetLabel; })));
     if (targets.length !== 1) { zipMessage.textContent = 'Keep one target per ZIP. Clear the basket and add one target’s colour set.'; return; }
+    // A colour-processing ZIP must have exactly three distinct, known filters.
+    // The backend also validates the actual FITS headers and footprints.
+    var channels = items.map(function (item) {
+      return Array.isArray(item.filters) && item.filters.length === 1
+        ? normaliseFilterName(item.filters[0]) : '';
+    });
+    if (items.length !== 3 || channels.some(function (filter) { return !filter; }) ||
+        new Set(channels).size !== 3) {
+      zipMessage.textContent = 'Choose exactly three combined FITS images with three different filters for a colour ZIP. No download was started.';
+      return;
+    }
     var revision = zipRevision;
     basketZipBtn.disabled = true;
     zipReadyLink.hidden = true;
