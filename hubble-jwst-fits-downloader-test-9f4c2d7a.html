@@ -174,7 +174,7 @@
             <p>A documented Hubble WFC3 mosaic using three matching science images: F502N (blue), F657N (green) and F673N (red). The original FITS headers, filter identities, dimensions and overlapping sky fields have been checked against the live MAST archive. This is a test dataset, not a finished colour image.</p>
             <p><strong>About 505 MB</strong> for the three extracted science images in one ZIP. Allow additional free space for processing in Siril.</p>
             <button type="button" id="pillars-load-colour-set" class="button button-secondary">Load Pillars colour set (replaces basket)</button>
-            <p class="finder-note">The original three archive products are approximately 505 MB each. This processing ZIP extracts only their science images. Full-image visual inspection and Siril alignment are still to be tested.</p>
+            <p class="finder-note">The original three archive products are approximately 505 MB each. This processing ZIP extracts only their science images. The three science images have identical WCS coordinates at the Pillars and nearby sample positions. In Siril, load Red F673N, Green F657N and Blue F502N, but do not click Align in Image compositing: its star-based registration failed on this sparse narrowband dataset. Start with the native shared pixel grid. Adjust each channel brightness separately; the green F657N emission is much stronger. Full-image visual inspection and final processing are still being tested.</p>
           </article>
         </div>
       </section>
