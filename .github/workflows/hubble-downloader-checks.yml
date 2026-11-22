@@ -1,0 +1,31 @@
+name: Hubble downloader checks
+on:
+  push:
+    branches:
+      - fix/hubble-product-basket-safety-20261122
+    paths:
+      - 'assets/js/data-finder-v8.js'
+      - 'assets/js/fits-science.js'
+      - 'tests/hubble-download.test.cjs'
+      - 'tests/fits-zip.test.php'
+      - 'backend-ionos/test-download/**'
+      - '.github/workflows/hubble-downloader-checks.yml'
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate JavaScript syntax
+        run: node --check assets/js/data-finder-v8.js && node --check assets/js/space-image-catalogue.js
+      - name: Browser logic and FITS fixture regressions
+        run: node tests/hubble-download.test.cjs
+      - name: Validate PHP syntax
+        run: php -l backend-ionos/test-download/index.php && php -l backend-ionos/test-download/FitsZip.php
+      - name: Validate FITS ZIP fixture
+        run: php tests/fits-zip.test.php /tmp/hubble-test-fits.zip
