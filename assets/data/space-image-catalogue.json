@@ -37,22 +37,34 @@
           "filename": "hst_13926_06_wfc3_uvis_f502n_ick906_drc.fits",
           "filter": "F502N",
           "channel": "blue",
-          "status": "documented-not-validated"
+          "status": "live-header-validated",
+          "scienceWidth": 6420,
+          "scienceHeight": 6555,
+          "bitpix": -32,
+          "sourceSizeBytes": 505154880
         },
         {
           "filename": "hst_13926_06_wfc3_uvis_f657n_ick906_drc.fits",
           "filter": "F657N",
           "channel": "green",
-          "status": "documented-not-validated"
+          "status": "live-header-validated",
+          "scienceWidth": 6420,
+          "scienceHeight": 6555,
+          "bitpix": -32,
+          "sourceSizeBytes": 505154880
         },
         {
           "filename": "hst_13926_06_wfc3_uvis_f673n_ick906_drc.fits",
           "filter": "F673N",
           "channel": "red",
-          "status": "documented-not-validated"
+          "status": "live-header-validated",
+          "scienceWidth": 6420,
+          "scienceHeight": 6555,
+          "bitpix": -32,
+          "sourceSizeBytes": 505154880
         }
       ],
-      "note": "Exact Heritage FITS filenames and links confirmed on STScI M16 Data Access page (2015). Direct fetch returned HTTP 403 in the current retrieval environment, so bytes and science coverage are not validated. Current ZIP API only accepts MAST product URIs; no verified ZIP yet.",
+      "note": "All three STScI HAP DRC mosaics were retrieved by HTTP range in GitHub Actions. Their real FITS SCI headers confirm WFC3, the intended distinct filters, identical 6420×6555 image dimensions, matching WCS field, and finite nonzero sample pixels. The production PHP FITS inspector confirmed filters and sky overlap for all three. Full ZIP transfer, full-image target coverage, and Siril colour processing remain untested; not marked as FITS-verified.",
       "fitsDocumentationUrl": "https://archive.stsci.edu/contents/newsletters/december-2020/hap-single-visit-mosaics-now-available",
       "alternativeArchiveProducts": [
         {
@@ -77,7 +89,12 @@
           "status": "linked-not-validated"
         }
       ],
-      "alternativeArchiveUrl": "https://archive.stsci.edu/prepds/heritage/m16/datalist.html"
+      "alternativeArchiveUrl": "https://archive.stsci.edu/prepds/heritage/m16/datalist.html",
+      "headerValidation": {
+        "date": "2026-11-22",
+        "githubWorkflow": "https://github.com/belgn1978/our-astro-journey/actions/runs/45032369757",
+        "status": "passed"
+      }
     },
     {
       "id": "pillars-webb-2022",
