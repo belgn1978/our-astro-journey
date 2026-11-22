@@ -88,7 +88,45 @@ def main():
     records = [inspect(flt) for flt in FILTERS]
     dimensions = {(r["NAXIS1"], r["NAXIS2"]) for r in records}
     print("Matching SCI dimensions:", len(dimensions) == 1)
-    print("All three FITS science headers and range reads validated. Pixel-field coverage still needs full-image review.")
+    # Inspect the *actual* WCS at the published 2015 Pillars position.
+    # Matching NAXIS dimensions and overlapping bounding boxes do not imply
+    # matching pixel grids. Astropy applies SIP distortion if present.
+    from astropy.wcs import WCS
+    from astropy.io import fits
+    from astropy.coordinates import SkyCoord
+    import astropy.units as u
+    target = SkyCoord("18h18m52.72s", "-13d50m21.97s", frame="icrs")
+    grids = []
+    for record in records:
+        header = fits.Header()
+        for key, raw in record.items():
+            if len(key) > 8 or not key:
+                continue
+            try:
+                header[key] = int(raw) if str(raw).lstrip("+-").isdigit() else float(raw)
+            except (ValueError, TypeError):
+                header[key] = raw
+        grids.append(WCS(header, naxis=2))
+    centres = []
+    for flt, record, wcs in zip(FILTERS, records, grids):
+        x, y = wcs.world_to_pixel(target)
+        inside = 0 <= x < int(record["NAXIS1"]) and 0 <= y < int(record["NAXIS2"])
+        centres.append((x, y))
+        print(f"Pillars sky position in {flt.upper()}: x={x:.2f} y={y:.2f} inside={inside}")
+        if not inside:
+            raise ValueError(f"{flt}: published Pillars position falls outside SCI image")
+    for i in range(1, len(grids)):
+        delta = math.dist(centres[0], centres[i])
+        print(f"WCS pixel offset at Pillars F502N -> {FILTERS[i].upper()}: {delta:.3f} pixels")
+        # Evaluate local sky positions too: identical centres can hide
+        # rotation, scale or nonlinear distortion differences.
+        for dx, dy in ((-700, 0), (700, 0), (0, -700), (0, 700)):
+            sky = grids[0].pixel_to_world(centres[0][0] + dx, centres[0][1] + dy)
+            x2, y2 = grids[i].world_to_pixel(sky)
+            local = math.dist((x2, y2), (centres[0][0] + dx, centres[0][1] + dy))
+            print(f"  local displacement at ({dx:+d},{dy:+d}): {local:.3f} pixels")
+    print("WCS diagnostic complete; inspect offsets before claiming images are co-registered.")
+
 
 
 if __name__ == "__main__":

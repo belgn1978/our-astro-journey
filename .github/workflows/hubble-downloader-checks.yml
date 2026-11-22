@@ -35,8 +35,9 @@ jobs:
         run: php -l backend-ionos/test-download/index.php && php -l backend-ionos/test-download/FitsZip.php
       - name: Validate FITS ZIP fixture
         run: php tests/fits-zip.test.php /tmp/hubble-test-fits.zip
-      - name: Inspect real Pillars FITS headers, WCS and sample pixels
-        continue-on-error: true
+      - name: Install WCS validation dependency
+        run: python3 -m pip install --user astropy
+      - name: Inspect Pillars location and cross-filter WCS alignment
         run: python3 tests/probe-pillars-mast.py
       - name: Validate live MAST files with actual PHP ZIP backend inspector
         continue-on-error: true
