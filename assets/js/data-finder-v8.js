@@ -314,6 +314,30 @@
     return added;
   }
 
+  // Curated starter set: these exact Hubble HAP products passed live MAST
+  // FITS header/filter/WCS checks. Full-image Siril validation remains pending.
+  var pillarsStarterButton = document.getElementById('pillars-load-colour-set');
+  if (pillarsStarterButton) pillarsStarterButton.addEventListener('click', function () {
+    var filters = ['F502N', 'F657N', 'F673N'];
+    var colours = ['BLUE', 'GREEN', 'RED'];
+    var products = filters.map(function (filter, index) {
+      var filename = 'hst_13926_06_wfc3_uvis_' + filter.toLowerCase() + '_ick906_drc.fits';
+      var dataUri = 'mast:HST/product/' + filename;
+      return {
+        filename: filename, dataUri: dataUri,
+        downloadUrl: 'https://mast.stsci.edu/api/v0.1/Download/file?uri=' + encodeURIComponent(dataUri),
+        category: 'combined', categoryLabel: 'Combined Hubble science image',
+        filters: [filter], channelColor: colours[index],
+        sizeBytes: 6420 * 6555 * 4, sizeLabel: '160.5 MiB extracted science plane'
+      };
+    });
+    saveBasket([]);
+    var added = addToBasket(products, { telescope: 'HST', instrument: 'WFC3/UVIS', targetLabel: 'Pillars of Creation' });
+    setStatus(added === 3
+      ? 'Loaded the three Hubble Pillars filters. Open the basket and choose Download processing FITS (.zip).'
+      : 'Could not load all three science images; please reload the test page.');
+  });
+
   function removeFromBasket(index) {
     var items = loadBasket();
     items.splice(index, 1);
