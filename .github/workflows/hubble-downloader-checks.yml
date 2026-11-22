@@ -13,6 +13,7 @@ on:
       - 'tests/fits-zip.test.php'
       - 'tests/probe-pillars-mast.py'
       - 'tests/probe-live-pillars-php.php'
+      - 'tests/probe-live-pillars-zip.php'
       - 'backend-ionos/test-download/**'
       - '.github/workflows/hubble-downloader-checks.yml'
   workflow_dispatch: {}
@@ -40,3 +41,10 @@ jobs:
       - name: Validate live MAST files with actual PHP ZIP backend inspector
         continue-on-error: true
         run: php tests/probe-live-pillars-php.php
+      - name: End-to-end full three-channel FITS ZIP stream and CRC validation
+        timeout-minutes: 12
+        run: |
+          php tests/probe-live-pillars-zip.php /tmp/pillars-live-processing.zip
+          unzip -t /tmp/pillars-live-processing.zip
+          unzip -Z1 /tmp/pillars-live-processing.zip
+          rm -f /tmp/pillars-live-processing.zip
