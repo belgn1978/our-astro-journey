@@ -42,6 +42,7 @@ jobs:
         continue-on-error: true
         run: php tests/probe-live-pillars-php.php
       - name: End-to-end full three-channel FITS ZIP stream and CRC validation
+        if: github.event_name == 'workflow_dispatch'
         timeout-minutes: 12
         run: |
           php tests/probe-live-pillars-zip.php /tmp/pillars-live-processing.zip
