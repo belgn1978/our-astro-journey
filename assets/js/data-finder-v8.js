@@ -718,7 +718,7 @@
           (p.description ? ' · ' + escapeHtml(p.description) : '') +
           '</span>'
         : '';
-      var isCombinedFits = p.category === 'combined' && /_(?:drc|drz|drw|i2d)\.fits$/i.test(p.filename || '');
+      var isCombinedFits = p.category === 'combined' && /_(?:drc|drz|drw|i2d)\.fits$/i.test(p.filename || '') && /^mast:(?:HST|JWST)\/product\/[A-Za-z0-9._-]+\.fits$/.test(p.dataUri || '');
       var basketButton = isCombinedFits
         ? '<button type="button" class="product-add" data-obsid="' + escapeHtml(result.obsid) + '" data-index="' + i + '" aria-label="Add ' + escapeHtml(p.filename) + ' to download basket">Add</button>'
         : '<span class="product-advanced">Archive file only</span>';
