@@ -33,6 +33,10 @@ const document={getElementById(id){if(!elements.has(id))elements.set(id,el());re
 const window={location:{search:'',hostname:'example.org'},localStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)}};
 const ctx={fetch:async()=>({ok:true,json:async()=>({success:true,version:7,streamingZip:true})}),document,window,URLSearchParams,URL,Blob,setTimeout,clearTimeout,TextEncoder,TextDecoder,console};
 let code=fs.readFileSync(require.resolve('../assets/js/data-finder-v8.js'),'utf8');code=code.replace('  var initialTarget =', '  window.test = { normaliseProductResults, selectColourObsids, productPreferenceScore, readyFitsFilename, shellQuote, archiveTargetName, renderProducts, loadBasket, addToBasket };\n  var initialTarget =');vm.runInNewContext(code,ctx);const t=window.test;
+// Ensure the colour ZIP cannot silently be prepared with one/two channels or duplicate filters.
+assert.match(code,/items\.length !== 3/);
+assert.match(code,/new Set\(channels\)\.size !== 3/);
+
 // A preview or an individual exposure must never offer the processing-ZIP Add button.
 const productContainer={innerHTML:'',dataset:{}};
 t.renderProducts(productContainer, {telescope:'HST'}, {
