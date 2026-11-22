@@ -40,12 +40,16 @@ t.renderProducts(productContainer, {telescope:'HST'}, {
  products:[
   {filename:'preview.jpg',category:'preview',categoryLabel:'Preview',sizeLabel:'12 KB',downloadUrl:'https://example.org/preview.jpg'},
   {filename:'exposure_flc.fits',category:'calibrated',categoryLabel:'Calibrated exposure',sizeLabel:'8 MB',downloadUrl:'https://example.org/exposure_flc.fits'},
-  {filename:'combined_drc.fits',category:'combined',categoryLabel:'Combined image',sizeLabel:'30 MB',downloadUrl:'https://example.org/combined_drc.fits'}
+  {filename:'combined_drc.fits',dataUri:'mast:HST/product/combined_drc.fits',category:'combined',categoryLabel:'Combined image',sizeLabel:'30 MB',downloadUrl:'https://example.org/combined_drc.fits'}
  ]
 },'recommended');
 assert.equal((productContainer.innerHTML.match(/class="product-add"/g)||[]).length,1);
 assert.equal((productContainer.innerHTML.match(/Archive file only/g)||[]).length,2);
 assert.equal(JSON.parse(productContainer.dataset.products)[2].category,'combined');
+const withoutUri={...JSON.parse(productContainer.dataset.products)[2],dataUri:''};
+t.renderProducts(productContainer,{telescope:'HST'},{obsid:'42',totalScienceProducts:1,recommendedCount:0,products:[withoutUri]},'recommended');
+assert.equal((productContainer.innerHTML.match(/class="product-add"/g)||[]).length,0);
+
 // A basket restored from a previous test version must discard unsafe archive products.
 const basketKey='oaj-data-finder-basket-v8';
 const good={filename:'valid_drc.fits',dataUri:'mast:HST/product/valid_drc.fits',category:'combined',filters:['F502N'],downloadUrl:'https://mast.stsci.edu/example'};
