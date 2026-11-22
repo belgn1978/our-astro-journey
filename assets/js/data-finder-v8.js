@@ -708,7 +708,7 @@
           (p.description ? ' · ' + escapeHtml(p.description) : '') +
           '</span>'
         : '';
-      var isCombinedFits = p.category === 'combined' && /\.fits(?:\.gz)?$/i.test(p.filename || '');
+      var isCombinedFits = p.category === 'combined' && /_(?:drc|drz|drw|i2d)\.fits$/i.test(p.filename || '');
       var basketButton = isCombinedFits
         ? '<button type="button" class="product-add" data-obsid="' + escapeHtml(result.obsid) + '" data-index="' + i + '" aria-label="Add ' + escapeHtml(p.filename) + ' to download basket">Add</button>'
         : '<span class="product-advanced">Archive file only</span>';
@@ -1229,7 +1229,7 @@
       if (!list || !list.dataset.products || !currentSearch) return;
       var all = JSON.parse(list.dataset.products);
       var product = all[parseInt(singleAdd.dataset.index, 10)];
-      if (!product || product.category !== 'combined' || !/\.fits(?:\.gz)?$/i.test(product.filename || '')) {
+      if (!product || product.category !== 'combined' || !/_(?:drc|drz|drw|i2d)\.fits$/i.test(product.filename || '')) {
         setStatus('Only combined science FITS files can be added to the processing ZIP basket. Use Download for original archive files.', true);
         return;
       }
