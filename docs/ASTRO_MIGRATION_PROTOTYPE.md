@@ -1,6 +1,6 @@
 # Astro migration prototype
 
-This local-only prototype builds three existing public routes with Astro's static output:
+This prototype branch builds three existing public routes with Astro's static output:
 
 - `/` — homepage
 - `/articles.html` — article listing
@@ -19,9 +19,7 @@ npm run build
 npm run preview
 ```
 
-The static build is written to `dist/`. The build copies only the assets and legacy legal pages needed by the prototype. The production deployment workflows, GitHub Pages settings, DNS, analytics property, and live site were not changed.
-
-The branch exists only in this local checkout. Do not push or deploy it as part of this review. GitHub Pages publishing settings were not available through the repository API, so production safety relies on keeping this prototype local and not invoking deployment workflows.
+The static build is written to `dist/`. The build copies only the assets and legacy legal pages needed by the prototype. The prototype was pushed to the `astro-migration` branch for review. The production deployment workflows, GitHub Pages settings, DNS, analytics property, and live site were not changed. The branch has not been merged or deployed. GitHub Pages publishing settings were not available through the repository API; keep the prototype undeployed during review and do not invoke deployment workflows.
 
 ## Review notes
 
