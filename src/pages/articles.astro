@@ -1,0 +1,59 @@
+---
+import { Picture } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import dvoHero from '../../assets/images/interviews/death-valley-observatories/dvo-observatory-desert-hero.jpg';
+
+const canonical = 'https://ourastrojourney.co.uk/articles.html';
+const description = 'Explore original astronomy articles, remote observatory interviews, astrophotography features and the science projects amateur astronomers can support.';
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Astronomy Articles and Observatory Features',
+  url: canonical,
+  inLanguage: 'en-GB',
+  hasPart: [{
+    '@type': 'Article',
+    headline: 'Inside Death Valley Observatories',
+    url: 'https://ourastrojourney.co.uk/reviews/entries/death-valley-observatories-interview.html',
+  }],
+};
+---
+
+<BaseLayout
+  title="Astronomy Articles, Observatory Interviews & Research | Our Astro Journey"
+  description={description}
+  canonical={canonical}
+  image="https://ourastrojourney.co.uk/assets/images/interviews/death-valley-observatories/dvo-observatory-desert-hero.jpg"
+  imageAlt="Death Valley Observatories buildings in the Nevada desert"
+  bodyClass="page-articles"
+  currentPage="articles"
+  structuredData={structuredData}
+>
+  <main id="page-main" class="article-wrap">
+    <header class="article-hero">
+      <p class="article-eyebrow">Our Astro Journey · Features</p>
+      <h1>Astronomy Articles</h1>
+      <p>Beyond equipment reviews: conversations with observatory teams, astrophotography stories and the science that connects amateur astronomers with professional research.</p>
+    </header>
+    <section aria-label="Latest articles" class="article-grid">
+      <article class="article-card">
+        <a class="article-card-image" href="/reviews/entries/death-valley-observatories-interview.html" aria-label="Read Inside Death Valley Observatories">
+          <Picture
+            src={dvoHero}
+            alt="Death Valley Observatories buildings in the Nevada desert"
+            widths={[320, 640, 960, 1280]}
+            sizes="(max-width: 720px) calc(100vw - 2.5rem), 520px"
+            formats={['avif', 'webp']}
+            loading="lazy"
+          />
+        </a>
+        <div class="article-card-copy">
+          <p class="article-card-meta">Observatory feature · November 2026</p>
+          <h2><a href="/reviews/entries/death-valley-observatories-interview.html">Inside Death Valley Observatories</a></h2>
+          <p>How a remote Nevada observatory hosts telescopes, offers rentals and supports scientific observing under dark skies.</p>
+          <a class="article-read-link" href="/reviews/entries/death-valley-observatories-interview.html">Read the feature</a>
+        </div>
+      </article>
+    </section>
+  </main>
+</BaseLayout>

@@ -1,0 +1,102 @@
+---
+import { Picture } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import homeRest from '../content/home-rest.html?raw';
+import homeHero from '../../assets/images/branding/hero-ing.jpg';
+
+const canonical = 'https://ourastrojourney.co.uk/';
+const description = 'Beginner astronomy and astrophotography in plain English, with smart telescope guides, honest reviews, planning tools, galleries and practical resources.';
+const migratedPaths = new Set(['/', '/index.html', '/articles.html', '/reviews/entries/death-valley-observatories-interview.html']);
+const homeContent = homeRest.replace(/href="([^"]+)"/g, (_match, href) => {
+  if (href.startsWith('#') || /^(https?:|mailto:|tel:)/i.test(href)) return `href="${href}"`;
+  const resolved = new URL(href, 'https://ourastrojourney.co.uk/');
+  if (migratedPaths.has(resolved.pathname)) {
+    const pathname = resolved.pathname === '/index.html' ? '/' : resolved.pathname;
+    return `href="${pathname}${resolved.search}${resolved.hash}"`;
+  }
+  return `href="${resolved.href}"`;
+});
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${canonical}#organization`,
+      name: 'Our Astro Journey',
+      url: canonical,
+      logo: `${canonical}assets/images/branding/logo.png`,
+      sameAs: ['https://www.instagram.com/our.astro.journey', 'https://www.threads.net/our.astro.journey'],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${canonical}#website`,
+      url: canonical,
+      name: 'Our Astro Journey',
+      description,
+      publisher: { '@id': `${canonical}#organization` },
+      creator: { '@id': `${canonical}#person` },
+      inLanguage: 'en-GB',
+    },
+    { '@type': 'Person', '@id': `${canonical}#person`, name: 'Matt Brambley', url: canonical },
+    {
+      '@type': 'Blog',
+      '@id': `${canonical}#blog`,
+      name: 'Our Astro Journey',
+      description: 'Beginner astrophotography content covering moon photography, nebula and galaxy imaging, weather planning, dark sky locations, astronomy resources, and solar eclipse safety.',
+      url: canonical,
+      author: { '@id': `${canonical}#person` },
+      inLanguage: 'en-GB',
+    },
+    {
+      '@type': 'ItemList',
+      '@id': `${canonical}#latest-updates`,
+      name: 'Latest site updates',
+      itemListOrder: 'https://schema.org/ItemListOrderDescending',
+      numberOfItems: 3,
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, url: 'https://ourastrojourney.co.uk/hubble-jwst-fits-downloader.html', name: 'Hubble & JWST Image Data Downloader' },
+        { '@type': 'ListItem', position: 2, url: 'https://ourastrojourney.co.uk/start-here.html', name: 'Start Here and beginner learning pages' },
+        { '@type': 'ListItem', position: 3, url: 'https://ourastrojourney.co.uk/beginner-learning-path.html', name: 'Beginner astronomy learning path' },
+      ],
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Beginner Astronomy & Smart Telescope Guides | Our Astro Journey"
+  description={description}
+  canonical={canonical}
+  image="https://ourastrojourney.co.uk/assets/images/branding/hero-ing.jpg"
+  imageAlt="Our Astro Journey night sky hero image"
+  bodyClass="page-home"
+  currentPage="home"
+  isHome={true}
+  structuredData={structuredData}
+>
+  <main id="page-main" role="main">
+    <section id="section-cta">
+      <div class="cta-container">
+        <Picture
+          src={homeHero}
+          alt="Night sky starfield background"
+          class="cta-img"
+          widths={[480, 800, 1200, 1600, 2400]}
+          sizes="(max-width: 760px) 92vw, 520px"
+          formats={['avif', 'webp']}
+          loading="eager"
+          fetchpriority="high"
+        />
+        <h1 id="cta-heading">Beginner Astrophotography in the UK</h1>
+        <h2 id="cta-subheading">Follow our astro journey as we learn moon photography, deep-sky imaging, weather planning, and dark sky exploration.</h2>
+        <div class="hero-actions">
+          <a class="button" href="https://ourastrojourney.co.uk/start-here.html">Start here</a>
+          <a class="button" href="https://ourastrojourney.co.uk/gallery.html">Explore galleries</a>
+          <a class="button button-secondary" href="https://ourastrojourney.co.uk/about.html">About our journey</a>
+          <a class="button oaj-support-hero" href="#support-oaj">Support our journey</a>
+        </div>
+      </div>
+    </section>
+    <Fragment set:html={homeContent} />
+  </main>
+</BaseLayout>

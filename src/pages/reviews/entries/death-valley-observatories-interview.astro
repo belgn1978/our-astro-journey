@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import DvoArticle from '../../../components/DvoArticle.astro';
+
+const canonical = 'https://ourastrojourney.co.uk/reviews/entries/death-valley-observatories-interview.html';
+const title = 'Inside Death Valley Observatories | Remote Astronomy in Nevada';
+const description = 'Inside Death Valley Observatories in Nevada: how remote telescope hosting and rentals work, its dark skies, equipment, team and scientific observing projects.';
+const image = 'https://ourastrojourney.co.uk/assets/images/interviews/death-valley-observatories/dvo-observatory-desert-hero.jpg';
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Inside Death Valley Observatories: Remote Astronomy in Nevada',
+  description: 'A feature on Death Valley Observatories, its remote telescope hosting and rentals, dark skies and science projects.',
+  datePublished: '2026-11-21',
+  dateModified: '2026-11-22',
+  inLanguage: 'en-GB',
+  mainEntityOfPage: canonical,
+  author: { '@type': 'Organization', name: 'Our Astro Journey', url: 'https://ourastrojourney.co.uk/' },
+  publisher: { '@type': 'Organization', name: 'Our Astro Journey', url: 'https://ourastrojourney.co.uk/' },
+  image: [image],
+  about: [
+    { '@type': 'Thing', name: 'Remote observatory' },
+    { '@type': 'Thing', name: 'Astrophotography' },
+    { '@type': 'Thing', name: 'Citizen science' },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} image={image} imageAlt="Death Valley Observatories buildings beneath the mountains of western Nevada" type="article" bodyClass="page-dvo" currentPage="dvo" structuredData={structuredData}>
+  <DvoArticle />
+</BaseLayout>

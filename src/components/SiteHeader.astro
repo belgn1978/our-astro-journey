@@ -1,0 +1,37 @@
+---
+interface Props { currentPage?: 'home' | 'articles' | 'dvo' }
+const { currentPage } = Astro.props;
+const live = 'https://ourastrojourney.co.uk';
+const links = [
+  ['Tools', `${live}/tools.html`],
+  ['Gallery', `${live}/gallery.html`],
+  ['Reviews', `${live}/reviews.html`],
+  ['Resources', `${live}/useful-resources.html`],
+  ['News', `${live}/news.html`],
+  ['Articles', '/articles.html'],
+  ['Discounts & Deals', `${live}/affiliate-links.html`],
+  ['About', `${live}/about.html`],
+  ['Contact', `${live}/contact.html`],
+];
+---
+<a class="skip-link" href="#page-main">Skip to main content</a>
+<header id="header-main">
+  <div class="logo-container">
+    <a href="/" class="nav-link logo-link" id="logo" aria-label="Our Astro Journey home">
+      <img src="/assets/images/branding/logo.png" alt="Our Astro Journey" class="logo-img" width="1408" height="768" />
+    </a>
+  </div>
+  <button type="button" id="mobile-menu-button" class="mobile-menu-toggle" aria-label="Open navigation menu" aria-controls="mobile-navigation-main" aria-expanded="false">
+    <span class="menu-glyph" aria-hidden="true">☰</span>
+  </button>
+  <nav id="navigation-main" aria-label="Primary navigation">
+    {links.map(([label, href]) => <a href={href} class="nav-link" aria-current={((currentPage === 'articles' && href === '/articles.html') || (currentPage === 'dvo' && href === '/articles.html')) ? 'page' : undefined}>{label}</a>)}
+    <a href={`${currentPage === 'home' ? '' : live}/#support-oaj`} class="nav-link oaj-support-nav">Support us</a>
+  </nav>
+  <nav id="mobile-navigation-main" class="mobile-navigation" aria-label="Mobile primary navigation" aria-hidden="true" inert>
+    <button type="button" id="mobile-menu-close" class="mobile-menu-close" aria-label="Close navigation menu"><span aria-hidden="true">×</span></button>
+    {links.map(([label, href]) => <a href={href} class="nav-link mobile-nav-link">{label}</a>)}
+    <a href={`${currentPage === 'home' ? '' : live}/#support-oaj`} class="nav-link mobile-nav-link oaj-support-nav">Support us</a>
+  </nav>
+</header>
+<div id="mobile-nav-backdrop" class="mobile-nav-backdrop" aria-hidden="true"></div>

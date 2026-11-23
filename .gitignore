@@ -1,1 +1,4 @@
 .private/
+node_modules/
+dist/
+.astro/

@@ -1,0 +1,52 @@
+---
+import { getImage } from 'astro:assets';
+import mainHtml from '../content/dvo-main.html?raw';
+
+const imageModules = import.meta.glob('../../assets/images/interviews/death-valley-observatories/*.{jpg,jpeg}', {
+  eager: true,
+  import: 'default',
+});
+
+const responsiveImages = new Map();
+await Promise.all(Object.entries(imageModules).map(async ([path, image]) => {
+  const fileName = path.split('/').pop();
+  const widths = [480, 800, 1200, 1600].filter((width) => width < image.width);
+  widths.push(image.width);
+  const uniqueWidths = [...new Set(widths)].sort((a, b) => a - b);
+  const outputs = await Promise.all(uniqueWidths.map((width) => getImage({
+    src: image,
+    width,
+    format: 'webp',
+    quality: 78,
+  })));
+  responsiveImages.set(fileName, {
+    width: image.width,
+    height: image.height,
+    srcset: outputs.map((output, index) => `${output.src} ${uniqueWidths[index]}w`).join(', '),
+  });
+}));
+
+const imagePrefix = '../../assets/images/interviews/death-valley-observatories/';
+const contentWithImages = mainHtml.replace(/<img\b[^>]*>/gi, (tag) => {
+  const source = tag.match(/\bsrc="([^"]+)"/i)?.[1];
+  if (!source || !source.startsWith(imagePrefix)) return tag;
+
+  const fileName = decodeURIComponent(source.slice(imagePrefix.length));
+  const optimized = responsiveImages.get(fileName);
+  if (!optimized) return tag;
+
+  const alt = tag.match(/\balt="([^"]*)"/i)?.[1] ?? '';
+  const safeAlt = alt.replaceAll('&', '&amp;').replaceAll('"', '&quot;');
+  const original = `/assets/images/interviews/death-valley-observatories/${encodeURI(fileName)}`;
+  const isHero = fileName === 'dvo-observatory-desert-hero.jpg';
+  const loading = isHero ? 'eager' : 'lazy';
+  const priority = isHero ? ' fetchpriority="high"' : '';
+  const sizes = isHero
+    ? '(max-width: 1100px) calc(100vw - 2rem), 1068px'
+    : '(max-width: 820px) calc(100vw - 2rem), 790px';
+
+  return `<picture><source type="image/webp" srcset="${optimized.srcset}" sizes="${sizes}"><img src="${original}" alt="${safeAlt}" width="${optimized.width}" height="${optimized.height}" loading="${loading}" decoding="async"${priority}></picture><a class="full-resolution-link" href="${original}" target="_blank" rel="noopener noreferrer">View full-resolution original</a>`;
+});
+const content = contentWithImages.replace('<main>', '<main id="page-main">');
+---
+<Fragment set:html={content} />

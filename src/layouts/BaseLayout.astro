@@ -1,0 +1,64 @@
+---
+import '../styles/prototype.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  canonical: string;
+  image: string;
+  imageAlt?: string;
+  type?: 'website' | 'article';
+  bodyClass?: string;
+  currentPage?: 'home' | 'articles' | 'dvo';
+  isHome?: boolean;
+  structuredData?: Record<string, unknown> | Record<string, unknown>[];
+}
+const { title, description, canonical, image, imageAlt = title, type = 'website', bodyClass = '', currentPage, isHome = false, structuredData } = Astro.props;
+const jsonLd = structuredData ? JSON.stringify(structuredData).replace(/</g, '\\u003c') : undefined;
+---
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <meta name="description" content={description} />
+    <meta name="author" content="Matt Brambley" />
+    <meta name="theme-color" content="#050812" />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en-GB" href={canonical} />
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="Our Astro Journey" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:secure_url" content={image} />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/branding/favicon-32x32.png" />
+    <link rel="stylesheet" href="/assets/css/reset.css" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
+    {isHome && <link rel="stylesheet" href="/assets/css/support.css" />}
+    {isHome && <meta name="google-site-verification" content="dpjt1n2T9-E4MhPQJ5DMY9DRUibkKm5IDaVuImVNBQY" />}
+    <script is:inline src="/assets/js/analytics-control.js" defer></script>
+    {jsonLd && <script type="application/ld+json" set:html={jsonLd} />}
+    <slot name="head" />
+    <title>{title}</title>
+  </head>
+  <body class={bodyClass}>
+    <SiteHeader currentPage={currentPage} />
+    <slot />
+    <SiteFooter />
+    <script is:inline src="/assets/js/site-shell.js" defer></script>
+    {isHome && <script is:inline src="/assets/js/support.js" defer></script>}
+    {isHome && <script is:inline>if (window.location.pathname === '/index.html') { window.location.replace('/' + window.location.search + window.location.hash); }</script>}
+  </body>
+</html>
