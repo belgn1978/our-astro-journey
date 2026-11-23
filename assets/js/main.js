@@ -1066,8 +1066,8 @@ function ensureFooterLegalLinks() {
     legal.className = 'footer-legal';
     legal.setAttribute('aria-label', 'Legal');
     legal.innerHTML =
-      '<a href="./privacy.html">Privacy</a>' +
-      '<a href="./terms.html">Terms</a>' +
+      '<a href="/privacy.html">Privacy</a>' +
+      '<a href="/terms.html">Terms</a>' +
       '<button type="button" class="footer-cookie-settings" data-cookie-settings>Cookie settings</button>';
 
     const copyright = footerContent.querySelector('.copyright-container');
