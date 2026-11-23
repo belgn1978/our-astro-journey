@@ -8,6 +8,10 @@ interface Props {
   description: string;
   canonical: string;
   image: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  twitterTitle?: string;
+  twitterDescription?: string;
   imageAlt?: string;
   type?: 'website' | 'article';
   bodyClass?: string;
@@ -15,7 +19,7 @@ interface Props {
   isHome?: boolean;
   structuredData?: Record<string, unknown> | Record<string, unknown>[];
 }
-const { title, description, canonical, image, imageAlt = title, type = 'website', bodyClass = '', currentPage, isHome = false, structuredData } = Astro.props;
+const { title, description, canonical, image, ogTitle = title, ogDescription = description, twitterTitle = title, twitterDescription = description, imageAlt = title, type = 'website', bodyClass = '', currentPage, isHome = false, structuredData } = Astro.props;
 const jsonLd = structuredData ? JSON.stringify(structuredData).replace(/</g, '\\u003c') : undefined;
 ---
 <!doctype html>
@@ -33,15 +37,15 @@ const jsonLd = structuredData ? JSON.stringify(structuredData).replace(/</g, '\\
     <meta property="og:type" content={type} />
     <meta property="og:site_name" content="Our Astro Journey" />
     <meta property="og:locale" content="en_GB" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
+    <meta property="og:title" content={ogTitle} />
+    <meta property="og:description" content={ogDescription} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={image} />
     <meta property="og:image:secure_url" content={image} />
     <meta property="og:image:alt" content={imageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:title" content={twitterTitle} />
+    <meta name="twitter:description" content={twitterDescription} />
     <meta name="twitter:image" content={image} />
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/branding/favicon-32x32.png" />
     <link rel="stylesheet" href="/assets/css/reset.css" />
